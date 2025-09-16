@@ -89,6 +89,11 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL }}
           BASE_PATH: ${{ vars.BASE_PATH }}
 
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.BUILD_PATH }}/dist
+
       # IMPORTANT: Always save Astro cache so new variants produced this run are kept.
       # Append run_id to avoid "already exists", and rely on the restore prefix above to pick the newest next time.
       - name: Save Astro cache (always)
@@ -96,6 +101,7 @@ jobs:
         with:
           path: ${{ env.BUILD_PATH }}/node_modules/.astro
           key: ${{ runner.os }}-astro-cache-${{ env.CACHE_KEY }}-${{ hashFiles('**/astro.config.*','**/package-lock.json','**/pnpm-lock.yaml','**/yarn.lock','public/**/*.{png,jpg,jpeg,webp,avif,gif,svg}','src/assets/**/*.{png,jpg,jpeg,webp,avif,gif,svg}','content/**/*.{png,jpg,jpeg,webp,avif,gif,svg}') }}-${{ github.run_id }}
+
 
   deploy:
     needs: build
