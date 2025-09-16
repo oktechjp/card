@@ -3,9 +3,52 @@ import { encodeQR } from "qr"
 import { formToJSON, jsonToForm } from "@/utils/form";
 import { decryptDocument, encryptDocument } from "@/utils/safeDoc";
 import { useAsyncMemo } from "@/hooks/useAsyncMemo";
+import { CardDisplay } from "./CardDisplay";
 
 const DOC_TYPE = 'card'
 const DOC_VERSION = 1
+
+export const ColorType = {
+    red: "Red",
+    green: "Green",
+    blue: "Blue",
+    ocre: "Ocre",
+    torquoise: "Torqouise",
+    violet: "Violet",
+    cyan: "Cyan",
+    magenta: "Magenta",
+    yellow: "Yellow",
+} as const
+
+export const CountryType = {
+    at: 'Austria',
+    uk: 'United Kingdom',
+    sa: 'Saudi Arabia',
+} as const
+
+/* Todo: many other regions to add */
+export const RegionType = {
+    'osaka-pref': 'Osaka Pref',
+    'osaka-city': 'Osaka City',
+    'kyoto-pref': 'Kyoto Pref',
+    'kyoto-city': 'Kyoto City',
+} as const
+
+export type CardType = {
+    surname?: string
+    surname_kana?: string
+    firstname?: string
+    firstname_kana?: string
+    callname?: string
+    callname_kana?: string
+    subtitle?: string
+    description?: string
+    url?: string
+    email?: string
+    color: keyof typeof ColorType
+    country?: keyof typeof CountryType
+    region?: keyof typeof RegionType
+}
 
 export const Card = () => {
     const formRef = useRef<HTMLFormElement>(null)
@@ -40,14 +83,15 @@ export const Card = () => {
         currentJSON()
     }
     return <>
+        <CardDisplay json={json as CardType} />
         <form ref={formRef} onInput={handleFormChange}>
             <div>
                 <label htmlFor="surname">Surname</label>
                 <input name="surname" type="text" />
             </div>
             <div>
-                <label htmlFor="surname-kana">Surname Kana</label>
-                <input name="surname-kana" type="text" />
+                <label htmlFor="surname_kana">Surname Kana</label>
+                <input name="surname_kana" type="text" />
             </div>
             <div>
                 <label htmlFor="firstname">Firstname</label>
@@ -70,19 +114,19 @@ export const Card = () => {
                 <input name="subtitle" type="text" />
             </div>
             <div>
-                <label htmlFor="url">URL</label>
-                <input name="url" type="url" />
-            </div>
-            <div>
                 <label htmlFor="email">Email</label>
                 <input name="email" type="email" />
             </div>
             <div>
-                <label htmlFor="type">Type</label>
-                <select name="type">
-                    <option value="osaka">Osaka</option>
-                    <option value="kyoto">Kyoto</option>
-                    <option value="kobe">Kobe</option>
+                <label htmlFor="url">URL</label>
+                <input name="url" type="url" />
+            </div>
+            <div>
+                <label htmlFor="color">Color</label>
+                <select name="color">
+                    {Object.entries(ColorType).map(([key, value]) => 
+                        <option key={key} value={key}>{value}</option>
+                    )}
                 </select>
             </div>
             <div>
@@ -93,20 +137,18 @@ export const Card = () => {
                 <label htmlFor="country">Country</label>
                 <select name="country">
                     <option value="">-</option>
-                    <option value="at">Austria</option>
-                    <option value="uk">United Kingdom</option>
-                    <option value="sa">Saudi Arabia</option>
+                    {Object.entries(CountryType).map(([key, value]) =>
+                        <option key={key} value={key}>{value}</option>
+                    )}
                 </select>
             </div>
             <div>
                 <label htmlFor="region">Region</label>
                 <select name="region">
                     <option value="">-</option>
-                    <option value="osaka-pref">Osaka Pref.</option>
-                    <option value="osaka-city">Osaka City</option>
-                    <option value="kyoto-pref">Kyoto Pref</option>
-                    <option value="kyoto-city">Kyoto City</option>
-                    {/* Todo: many other regions to add */}
+                    {Object.entries(RegionType).map(([key, value]) =>
+                        <option key={key} value={key}>{value}</option>
+                    )}
                 </select>
             </div>
         </form>

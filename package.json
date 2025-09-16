@@ -11,11 +11,14 @@
   "dependencies": {
     "@astrojs/react": "^4.3.1",
     "astro": "^5.13.7",
+    "css-layout": "^1.1.1",
+    "prop-types": "^15.8.1",
     "qr": "^0.5.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
+    "@types/prop-types": "^15.7.15",
     "@types/react": "^19.1.13"
   }
 }
