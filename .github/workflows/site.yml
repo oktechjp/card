@@ -1,0 +1,110 @@
+name: Deploy Astro site to Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    environment: github-pages
+    env:
+      BUILD_PATH: ${{ vars.BUILD_PATH || '.' }}
+      SITE_URL: ${{ vars.SITE_URL }}
+      BASE_PATH: ${{ vars.BASE_PATH }}
+      CACHE_KEY: ${{ vars.CACHE_KEY || 'v1' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Detect package manager
+        id: detect-package-manager
+        run: |
+          if [ -f "${{ github.workspace }}/${{ env.BUILD_PATH }}/yarn.lock" ]; then
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+            echo "command=install" >> $GITHUB_OUTPUT
+            echo "runner=yarn" >> $GITHUB_OUTPUT
+            echo "lockfile=yarn.lock" >> $GITHUB_OUTPUT
+          elif [ -f "${{ github.workspace }}/${{ env.BUILD_PATH }}/package-lock.json" ]; then
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "command=ci" >> $GITHUB_OUTPUT
+            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
+            echo "lockfile=package-lock.json" >> $GITHUB_OUTPUT
+          else
+            echo "Unable to determine package manager" >&2
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: ${{ steps.detect-package-manager.outputs.manager }}
+          cache-dependency-path: ${{ env.BUILD_PATH }}/${{ steps.detect-package-manager.outputs.lockfile }}
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Install dependencies
+        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+        working-directory: ${{ env.BUILD_PATH }}
+
+      # ===== Astro image/asset cache (default: node_modules/.astro) =====
+      # Restore the newest cache in the family (keyed by inputs),
+      # even if the exact key doesn't exist yet.
+      - name: Restore Astro cache
+        id: astro-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.BUILD_PATH }}/node_modules/.astro
+          key: ${{ runner.os }}-astro-cache-${{ env.CACHE_KEY }}-${{ hashFiles('**/astro.config.*','**/package-lock.json','**/pnpm-lock.yaml','**/yarn.lock','public/**/*.{png,jpg,jpeg,webp,avif,gif,svg}','src/assets/**/*.{png,jpg,jpeg,webp,avif,gif,svg}','content/**/*.{png,jpg,jpeg,webp,avif,gif,svg}') }}
+          restore-keys: |
+            ${{ runner.os }}-astro-cache-${{ env.CACHE_KEY }}-
+
+      - name: Print env
+        run: |
+          echo "vars.SITE_URL='${{ vars.SITE_URL }}'"
+          echo "env SITE_URL='$SITE_URL'"
+          echo "env BASE_PATH='$BASE_PATH'"
+
+      - name: Build with Astro
+        run: ${{ steps.detect-package-manager.outputs.runner }} astro build
+        working-directory: ${{ env.BUILD_PATH }}
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          BASE_PATH: ${{ vars.BASE_PATH }}
+
+      # IMPORTANT: Always save Astro cache so new variants produced this run are kept.
+      # Append run_id to avoid "already exists", and rely on the restore prefix above to pick the newest next time.
+      - name: Save Astro cache (always)
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.BUILD_PATH }}/node_modules/.astro
+          key: ${{ runner.os }}-astro-cache-${{ env.CACHE_KEY }}-${{ hashFiles('**/astro.config.*','**/package-lock.json','**/pnpm-lock.yaml','**/yarn.lock','public/**/*.{png,jpg,jpeg,webp,avif,gif,svg}','src/assets/**/*.{png,jpg,jpeg,webp,avif,gif,svg}','content/**/*.{png,jpg,jpeg,webp,avif,gif,svg}') }}-${{ github.run_id }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
