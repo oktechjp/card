@@ -39,7 +39,7 @@ export const Card = () => {
         currentJSON()
     }
     return <>
-        <CardDisplay json={json as CardType} />
+        <CardDisplay key={JSON.stringify(json)} json={json as CardType} />
         <form ref={formRef} onInput={handleFormChange}>
             <div>
                 <label htmlFor="surname">Surname</label>
