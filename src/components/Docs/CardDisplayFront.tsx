@@ -47,8 +47,8 @@ export function CardDisplayFront({ json, link, isCut }: CardDisplayVariantProps)
                 font-weight: bold;
             }
         `}</style>
-        <Layout style={{ marginTop: 35, width: 883, alignItems: "flex-end", flexDirection: "column" }}>
-            <text style={{ fontSize: 14, fill: '#999' }}>{link}</text>
+        <Layout style={{ width: 883, alignItems: "flex-end", flexDirection: "column" }}>
+            <text style={{ fontSize: 14, marginTop: 40, fill: '#999' }}>{link}</text>
         </Layout>
         <image href="https://public.oktech.jp/images/logo-and-design/OKTech-logo-onlight-rgb.svg" width={200} x={20} y={20} />
         <Layout style={{ flexDirection: 'column', justifyContent: 'center', height: 580, paddingLeft: 140 }} className='text-block'>
