@@ -66,28 +66,42 @@ interface Zoom {
     y: number
 }
 
-function toComputeNode(elem: ChildNode | undefined | null, lookup: Map<SVGElement, ComputeNode>, zoom: Zoom): ComputeNode | undefined {
-    if (!elem) {
-        return undefined
-    }
-    if (elem instanceof SVGElement) {
-        const computeNode = {
-            style: svgNodeToNodeStyle(elem, zoom),
-            children: Array.from(elem.childNodes, child => toComputeNode(child, lookup, zoom)).filter(Boolean) as ComputeNode[]
+function toComputeNode(elem: SVGElement, computeNode: ComputeNode, lookup: Map<SVGElement, ComputeNode>, zoom: Zoom): boolean {
+    let changed = svgNodeToNodeStyle(elem, zoom, computeNode.style)
+    let index = 0
+    for (const child of elem.childNodes) {
+        if (!child || !(child instanceof SVGElement)) {
+            continue
         }
-        lookup.set(elem, computeNode)
-        return computeNode
+        let node = computeNode.children[index]
+        if (!node) {
+            node = {
+                style: {},
+                children: []
+            }
+            changed = true
+            computeNode.children[index] = node
+        }
+        if (toComputeNode(child, node, lookup, zoom)) {
+            changed = true
+        }
+        index += 1
     }
+    // Remove old nodes that exceed the current need
+    const removed = computeNode.children.splice(index, Number.MAX_SAFE_INTEGER)
+    changed ||= removed.length > 0
+    lookup.set(elem, computeNode)
+    return changed
 }
 
-function svgNodeToNodeStyle(node: SVGElement, zoom: Zoom): ComputeNodeStyle {
-    const { width, height } = node.getBoundingClientRect()
+function svgNodeToNodeStyle(node: SVGElement, zoom: Zoom, style: ComputeNodeStyle): boolean {
+    const bounds = node.getBoundingClientRect()
     const styleMap = node.computedStyleMap()
     const w = getStyleNum(styleMap, 'width')
     const h = getStyleNum(styleMap, 'height')
-    return {
-        width: w ? w / zoom.x : ((node instanceof SVGGElement) ? undefined : width),
-        height: h ? h / zoom.y : ((node instanceof SVGGElement) ? undefined : height),
+    const newStyle: ComputeNodeStyle = {
+        width: w ? w : ((node instanceof SVGGElement) ? undefined : bounds.width * zoom.x),
+        height: h ? h : ((node instanceof SVGGElement) ? undefined : bounds.height * zoom.y),
         minWidth: getStyleNum(styleMap, 'min-width'),
         maxWidth: getStyleNum(styleMap, 'max-width'),
         paddingLeft: getStyleNum(styleMap, 'padding-left'),
@@ -106,6 +120,15 @@ function svgNodeToNodeStyle(node: SVGElement, zoom: Zoom): ComputeNodeStyle {
         flexWrap: getStyleKw(styleMap, 'flex-wrap', ['wrap', 'nowrap'] as const, 'wrap'),
         justifyContent: getStyleKw(styleMap, 'justify-content', ['flex-start', 'flex-end', 'center', 'space-between', 'space-around'] as const, 'normal'),
     }
+    let changed = false
+    for(const [rawKey, value] of Object.entries(newStyle)) {
+        const key = rawKey as keyof ComputeNodeStyle
+        if (style[key] !== value) {
+            changed = true
+            style[key] = value
+        }
+    }
+    return changed
 }
 
 function isInstanceOf<Types extends Function[]>(node: any, ...types: Types): node is Types[number] {
@@ -120,25 +143,26 @@ function isInstanceOf<Types extends Function[]>(node: any, ...types: Types): nod
 function applyLayout(node: SVGElement, layout: ComputeNodeLayout, zoom: { x: number, y: number }) {
     if (node instanceof SVGCircleElement) {
         const r = getStyleNum(node.computedStyleMap(), 'r') ?? 0
-        node.setAttribute('cx', ((layout.left + r) * zoom.x).toString())
-        node.setAttribute('cy', ((layout.top + r) * zoom.y).toString())
+        node.setAttribute('cx', ((layout.left + r)).toString())
+        node.setAttribute('cy', ((layout.top + r)).toString())
         return
     }
     if (node instanceof SVGEllipseElement) {
         const map = node.computedStyleMap()
         const rx = getStyleNum(map, 'rx') ?? 0
         const ry = getStyleNum(map, 'ry') ?? 0
-        node.setAttribute('cx', ((layout.left + rx) * zoom.x).toString())
-        node.setAttribute('cy', ((layout.top + ry) * zoom.y).toString())
+        node.setAttribute('cx', ((layout.left + rx)).toString())
+        node.setAttribute('cy', ((layout.top + ry)).toString())
         return
     }
     if (isInstanceOf(node, SVGGElement, SVGPathElement, SVGPolygonElement, SVGPolylineElement)) {
-        node.setAttribute('transform', `translate(${layout.left * zoom.x}, ${layout.top * zoom.y})`)
+        node.setAttribute('transform', `translate(${layout.left}, ${layout.top})`)
+        node.style.position = 'absolute'
         return
     }
     if (node instanceof SVGElement) {
-        node.setAttribute('x', (layout.left * zoom.x).toString())
-        node.setAttribute('y', (layout.top * zoom.y).toString())
+        node.setAttribute('x', (layout.left).toString())
+        node.setAttribute('y', (layout.top).toString())
     }
 }
 
@@ -159,19 +183,32 @@ export const Layout = ({ children, ref, ...rest }: LayoutProps) => {
             x: 100 / zoomRect.width,
             y: 100 / zoomRect.height
         }
-        const computeMap = new Map<SVGElement, ComputeNode>()
-        const node = toComputeNode(childRef.current, computeMap, zoom)
-        if (!node) {
+        const root = childRef.current
+        if (!root) {
             return
         }
-        computeLayout(node)
-        console.log(node)
-        for (const [elem, node] of computeMap) {
-            if (!node.layout) {
-                continue
-            }
-            applyLayout(elem, node.layout, zoom)
+        const rootNode: ComputeNode = {
+            style: {},
+            children: []
         }
+        const rerender = () => {
+            const computeMap = new Map<SVGElement, ComputeNode>()
+            const changed = toComputeNode(root, rootNode, computeMap, zoom)
+            if (!changed) {
+                return
+            }
+            computeLayout(rootNode)
+            for (const [elem, node] of computeMap) {
+                if (!node.layout) {
+                    continue
+                }
+                applyLayout(elem, node.layout, zoom)
+            }
+        }
+        // Need to rerender if things change...
+        rerender()
+        let int = setInterval(rerender, 100)
+        return () => clearInterval(int)
     }, [])
     
     return <>

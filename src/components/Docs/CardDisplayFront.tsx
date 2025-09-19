@@ -4,10 +4,7 @@ import NotoSansJP from '@/utils/NotoSansJP'
 import clsx from 'clsx'
 import { useAsyncMemo } from '@/hooks/useAsyncMemo'
 import encodeQR from 'qr'
-import { Fragment } from 'react'
 import { encode, toBase64 } from '@/utils/buffer'
-
-let _init: Promise<void> | null = null
 
 type BigProps = {
 kana?: string, text?: string, className?: string

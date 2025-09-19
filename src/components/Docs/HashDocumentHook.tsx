@@ -1,5 +1,5 @@
 import { useAsyncMemo } from "@/hooks/useAsyncMemo"
-import { useEffect, useState, type ReactElement } from "react"
+import { createElement, useEffect, useState, type ReactElement } from "react"
 import { CardDisplay } from "./CardDisplay"
 import { fetchDocument } from "@/utils/safeDoc"
 
@@ -20,7 +20,7 @@ const useHash = (hook: (hash: string) => void, interval: number = 100) => {
     }, [])
 }
 
-const KnownTypes: { [type: string]: (props: { json: any }) => ReactElement } = {
+const KnownTypes: { [type: string]: (props: { json: any, link: string }) => ReactElement } = {
     'card': CardDisplay
 }
 
@@ -38,7 +38,10 @@ export function HashDocumentHook () {
         }
         const json = await fetchDocument(possibleDoc)
         const type = KnownTypes[json.type]
-        return type({ json: json.data })
+        return createElement(
+            type,
+            { json: json.data, link: document.location.href }
+        )
     }, [possibleDoc])
     if (doc.state === 'loading') {
         return <>Loading...</>

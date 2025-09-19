@@ -21,10 +21,6 @@ export const Card = () => {
         async () => encrypted.data ? decryptDocument(encrypted.data.privateKey, encrypted.data.encrypted) : null,
         [encrypted.data]
     )
-    const qrCode = useAsyncMemo(
-        async () => encrypted.data ? encodeQR(encrypted.data.link, 'svg') : null,
-        [encrypted.data]
-    )
     const currentJSON = () => {
         const json = formToJSON(formRef.current!)
         const jsonString = JSON.stringify(json, null, 2)
@@ -38,8 +34,11 @@ export const Card = () => {
         jsonToForm(jsonRef.current!.value, formRef.current!)
         currentJSON()
     }
+    if (!encrypted.data) {
+        return <>Decrypting</>
+    }
     return <>
-        <CardDisplay key={JSON.stringify(json)} json={json as CardType} />
+        <CardDisplay link={encrypted.data.link} key={JSON.stringify(json)} json={json as CardType} />
         <form ref={formRef} onInput={handleFormChange}>
             <div>
                 <label htmlFor="surname">Surname</label>
@@ -118,12 +117,8 @@ export const Card = () => {
             {decrypted.loading ? "Loading..." : decrypted.state === 'error' ? decrypted.error.toString() : "OK"}<br />
             <textarea cols={50} rows={15} ref={decryptedRef} disabled defaultValue={decrypted.data ? JSON.stringify(decrypted.data, null, 2) : ''} />
         </div>
-        {
-            encrypted.data &&
-            <div>
-                <a href={encrypted.data.link}>{encrypted.data.link}</a>
-            </div>
-        }
-        <div dangerouslySetInnerHTML={{ __html: qrCode.data ?? '' }}></div>
+        <div>
+            <a href={encrypted.data.link}>{encrypted.data.link}</a>
+        </div>
     </>
 }
