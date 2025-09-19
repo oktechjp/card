@@ -23,9 +23,9 @@ export function CardEditor () {
     }
     const discardCard = () => {
         if (confirm(`Delete Card ${hash}`)) {
-            exportCards(knownCards.filter(card => card === hash))
-            setHash('')
+            exportCards(knownCards.filter(card => card !== hash))
             localStorage.removeItem(getLocalStorageDocKey(hash))
+            setHash('')
         }
     }
     return <>
