@@ -6,38 +6,38 @@ export type LayoutProps = {
     ref?: Ref<SVGGElement>
 } & SVGProps<SVGGElement>
 
-
-function getStyleNum(map: StylePropertyMapReadOnly, name: string): number | undefined {
-    const prop = map.get(name)
+function getStyleNum(map: CSSStyleDeclaration, name: keyof CSSStyleDeclaration): number | undefined {
+    const prop = map[name]
     if (!prop) return undefined
-    if (prop instanceof CSSNumericValue) {
-        return prop.to("px").value
+    if (typeof prop === 'number') {
+        return prop
     }
-    if (prop instanceof CSSKeywordValue) {
-        if (prop.value === 'auto') {
+    if (typeof prop === 'string') {
+        if (name === 'flex' && prop == '0 1 auto') {
             return undefined
         }
-        if (prop.value === 'none') {
+        if ((name === 'width' || name === 'height') && prop === 'auto') {
             return undefined
         }
-    }
-    if (prop instanceof CSSStyleValue) {
-        if (name === 'flex' && prop.toString() === '0 1 auto') {
+        if (name === 'maxWidth' && prop === 'none') {
             return undefined
+        }
+        const px = /^(-?[0-9]+)px$/.exec(prop)
+        if (px) {
+            return parseInt(px[1])
         }
     }
     console.warn('Unexpected number value', prop, name, String(prop))
     return undefined
 }
 
-function getStyleKw<props extends string[]>(styleMap: StylePropertyMapReadOnly, name: string, options: props, standard: string): props[number] | undefined {
-    const prop = styleMap.get(name)
+function getStyleKw<props extends string[]>(styleMap: CSSStyleDeclaration, name: keyof CSSStyleDeclaration, options: props, standard: string): props[number] | undefined {
+    const prop = styleMap[name]
     if (!prop) {
         return undefined
     }
     const value = (
-        prop instanceof CSSKeywordValue ? prop.value :
-        prop instanceof CSSStyleValue ? prop.toString() :
+        typeof prop === 'string' ? prop :
         undefined
     )
     if (value) {
@@ -96,30 +96,33 @@ function toComputeNode(elem: SVGElement, computeNode: ComputeNode, lookup: Map<S
 }
 
 function svgNodeToNodeStyle(node: SVGElement, zoom: Zoom, style: ComputeNodeStyle): boolean {
+    if (! globalThis.getComputedStyle) {
+        return true 
+    }
     const bounds = node.getBoundingClientRect()
-    const styleMap = node.computedStyleMap()
+    const styleMap = globalThis.getComputedStyle(node)
     const w = getStyleNum(styleMap, 'width')
     const h = getStyleNum(styleMap, 'height')
     const newStyle: ComputeNodeStyle = {
         width: w ? w : ((node instanceof SVGGElement) ? undefined : bounds.width * zoom.x),
         height: h ? h : ((node instanceof SVGGElement) ? undefined : bounds.height * zoom.y),
-        minWidth: getStyleNum(styleMap, 'min-width'),
-        maxWidth: getStyleNum(styleMap, 'max-width'),
-        paddingLeft: getStyleNum(styleMap, 'padding-left'),
-        paddingRight: getStyleNum(styleMap, 'padding-right'),
-        paddingTop: getStyleNum(styleMap, 'padding-top'),
-        paddingBottom: getStyleNum(styleMap, 'padding-bottom'),
-        marginLeft: getStyleNum(styleMap, 'margin-left'),
-        marginRight: getStyleNum(styleMap, 'margin-right'),
-        marginTop: getStyleNum(styleMap, 'margin-top'),
-        marginBottom: getStyleNum(styleMap, 'margin-bottom'),
+        minWidth: getStyleNum(styleMap, 'minWidth'),
+        maxWidth: getStyleNum(styleMap, 'maxWidth'),
+        paddingLeft: getStyleNum(styleMap, 'paddingLeft'),
+        paddingRight: getStyleNum(styleMap, 'paddingRight'),
+        paddingTop: getStyleNum(styleMap, 'paddingTop'),
+        paddingBottom: getStyleNum(styleMap, 'paddingBottom'),
+        marginLeft: getStyleNum(styleMap, 'marginLeft'),
+        marginRight: getStyleNum(styleMap, 'marginRight'),
+        marginTop: getStyleNum(styleMap, 'marginTop'),
+        marginBottom: getStyleNum(styleMap, 'marginBottom'),
         position: getStyleKw(styleMap, 'position', ['absolute', 'relative'] as const, 'static'),
-        alignItems: getStyleKw(styleMap, 'align-items', ['flex-start', 'flex-end', 'center', 'stretch'] as const, 'normal'),
-        alignSelf: getStyleKw(styleMap, 'align-self', ['flex-start', 'flex-end', 'center', 'stretch'] as const, 'auto'),
+        alignItems: getStyleKw(styleMap, 'alignItems', ['flex-start', 'flex-end', 'center', 'stretch'] as const, 'normal'),
+        alignSelf: getStyleKw(styleMap, 'alignSelf', ['flex-start', 'flex-end', 'center', 'stretch'] as const, 'auto'),
         flex: getStyleNum(styleMap, 'flex'),
-        flexDirection: getStyleKw(styleMap, 'flex-direction', ['column', 'row'] as const, 'column'),
-        flexWrap: getStyleKw(styleMap, 'flex-wrap', ['wrap', 'nowrap'] as const, 'wrap'),
-        justifyContent: getStyleKw(styleMap, 'justify-content', ['flex-start', 'flex-end', 'center', 'space-between', 'space-around'] as const, 'normal'),
+        flexDirection: getStyleKw(styleMap, 'flexDirection', ['column', 'row'] as const, 'column'),
+        flexWrap: getStyleKw(styleMap, 'flexWrap', ['wrap', 'nowrap'] as const, 'wrap'),
+        justifyContent: getStyleKw(styleMap, 'justifyContent', ['flex-start', 'flex-end', 'center', 'space-between', 'space-around'] as const, 'normal'),
     }
     let changed = false
     for(const [rawKey, value] of Object.entries(newStyle)) {
@@ -143,13 +146,13 @@ function isInstanceOf<Types extends Function[]>(node: any, ...types: Types): nod
 
 export function move(node: SVGElement, left: number, top: number) {
     if (node instanceof SVGCircleElement) {
-        const r = getStyleNum(node.computedStyleMap(), 'r') ?? 0
+        const r = getStyleNum(globalThis.getComputedStyle(node), 'r') ?? 0
         node.setAttribute('cx', ((left + r)).toString())
         node.setAttribute('cy', ((top + r)).toString())
         return
     }
     if (node instanceof SVGEllipseElement) {
-        const map = node.computedStyleMap()
+        const map = globalThis.getComputedStyle(node)
         const rx = getStyleNum(map, 'rx') ?? 0
         const ry = getStyleNum(map, 'ry') ?? 0
         node.setAttribute('cx', ((left + rx)).toString())
@@ -205,7 +208,7 @@ export const Layout = ({ children, ref, ...rest }: LayoutProps) => {
                 if (!node.layout) {
                     continue
                 }
-                applyLayout(elem, node.layout, zoom)
+                applyLayout(elem, node.layout)
             }
         }
         // Need to rerender if things change...

@@ -6,11 +6,12 @@ import { useEffect, useMemo, useRef } from "react";
 import { move } from "../Util/Layout";
 import ShipporiAntique from "@/utils/ShipporiAntiqueB1";
 
+type SvgSizeElem = {
+    elem: SVGElement,
+    bounds: { width: number, height: number }
+}
 type SvgSizeElems<Props extends string[]> = {
-    [key in Props[number]]: {
-        elem: SVGElement,
-        bounds: { width: number, height: number }
-    } | undefined
+    [key in Props[number]]: SvgSizeElem | undefined
 }
 
 const ZOOM_WIDTH = 100
@@ -56,11 +57,12 @@ function useSvgSize<Props extends string[]>(
             }
             let prevDeps: any[] = []
             const render = () => {
-                const sizes = getSizes(elems, zoomElem)
-                const deps = Object.entries(sizes).reduce((result, [name, { elem, bounds }]) => {
+                const sizes = getSizes(elems)
+                const entries = Object.entries(sizes) as [name: string, sizeElem: SvgSizeElem][]
+                const deps = entries.reduce((result, [name, { elem, bounds }]) => {
                     result.push(name, elem, bounds.width, bounds.height)
                     return result
-                }, [])
+                }, [] as Array<string|number|SVGElement>)
                 let changed = false
                 if (prevDeps.length !== deps.length) {
                     changed = true
@@ -130,22 +132,14 @@ export function CardDisplayBack({ json, isCut }: CardDisplayVariantProps) {
 }
 
 function getSizes<Props extends string[]>(
-    elems: { [key in Props[number]]: SVGElement; },
-    zoomElem: SVGElement
+    elems: { [key in Props[number]]: SVGElement; }
 ): SvgSizeElems<Props> {
-    const zoomBounds = zoomElem.getBoundingClientRect()
-    const zoom: Zoom = {
-        x: zoomBounds.width / ZOOM_WIDTH,
-        y: zoomBounds.height / ZOOM_HEIGHT
-    };
-    return Object.fromEntries(Object.entries(elems).map(([name, elem]) => {
-        const bounds = (elem as SVGElement).getBoundingClientRect()
+    const entries = Object.entries(elems) as [name: Props[number], elem: SVGElement][]
+    return Object.fromEntries(entries.map(([name, elem]) => {
+        const { width, height } = (elem as SVGElement).getBoundingClientRect()
         return [name, {
             elem,
-            bounds: {
-                width: bounds.width,
-                height: bounds.height
-            }
+            bounds: { width, height }
         }]
-    }))
+    })) as SvgSizeElems<Props>
 }
