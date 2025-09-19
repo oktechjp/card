@@ -45,10 +45,19 @@ const Big = ({ kana, text, className, ref }: BigProps) => {
 
 export function CardDisplayFront({ json, link, isCut }: CardDisplayVariantProps) {
     const { zoom, ...refs } = useSvgSize(
-        ['description', 'link', 'subtitle', 'surname', 'firstname', 'main', 'email', 'url'] as const,
-        ({ description, link, subtitle, surname, firstname, main, email, url }) => {
+        ['bottom1', 'bottom2', 'description', 'link', 'subtitle', 'surname', 'firstname', 'main', 'email', 'url'] as const,
+        ({ bottom1, bottom2, description, link, subtitle, surname, firstname, main, email, url }) => {
+            let bottomX = 25
+            if (bottom1) {
+                bottom1.move(bottomX, CARD_HEIGHT - bottom1.bounds.height - 25)
+                bottomX += bottom1.bounds.width + 15
+            }
+            if (bottom2) {
+                bottom2.move(bottomX, CARD_HEIGHT - bottom2.bounds.height - 25)
+                bottomX += bottom2.bounds.width + 15
+            }
             if (description) {
-                description.move(25, CARD_HEIGHT - 25)
+                description.move(bottomX, CARD_HEIGHT - 25 - description.bounds.height * .1)
             }
             link?.move(CARD_WIDTH - link.bounds.width - 25, link.bounds.height + 25)
             let y = 0
@@ -66,7 +75,7 @@ export function CardDisplayFront({ json, link, isCut }: CardDisplayVariantProps)
                 y += 15
             }
             if (subtitle) {
-                subtitle.move(0, y + subtitle.bounds.height * .5)
+                subtitle.move(0, y + subtitle.bounds.height * .4)
                 y += subtitle.bounds.height + 25
             }
             if (email) {
@@ -88,6 +97,7 @@ export function CardDisplayFront({ json, link, isCut }: CardDisplayVariantProps)
         },
         [link]
     )
+    const { bottom1, bottom2 } = json
     return <CardSvg isCut={isCut} background="white">
         <style>{`
             ${NotoSansJP}
@@ -120,7 +130,8 @@ export function CardDisplayFront({ json, link, isCut }: CardDisplayVariantProps)
         </g>
         {json.description ? <text ref={refs.description} style={{ fontSize: 20 }}>{json.description}</text> : null}
         <text ref={refs.link} style={{ fontSize: 16, marginTop: 40, fill: '#999' }}>{link}</text>
-        
         {qrCode.data ? <image href={qrCode.data} width="100" height="100" opacity={0.7} x={CARD_WIDTH - 100 - 15} y={CARD_HEIGHT - 100 - 15} /> : null}
+        {bottom1 ? <image ref={refs.bottom1} href={`/svg/${bottom1}.svg`} height={20} /> : null}
+        {bottom2 ? <image ref={refs.bottom2} href={`/svg/${bottom2}.svg`} height={20} /> : null}
     </CardSvg>
 }

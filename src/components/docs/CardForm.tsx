@@ -1,9 +1,9 @@
-import { useRef, useState } from "react"
+import { useRef, useState, type ReactNode } from "react"
 import { formToJSON, jsonToForm } from "@/utils/form";
 import { decryptDocument, encryptDocument } from "@/utils/safeDoc";
 import { useAsyncMemo } from "@/hooks/useAsyncMemo";
 import { CardDisplay } from "@/components/docs/CardDisplay";
-import { ColorType, CountryType, DOC_TYPE, DOC_VERSION, RegionType, type CardType } from "@/docs/card";
+import { ColorType, CountryGroups, DOC_TYPE, DOC_VERSION, type CardType, type CountryGroup } from "@/docs/card";
 
 export const Card = () => {
     const formRef = useRef<HTMLFormElement>(null)
@@ -88,22 +88,12 @@ export const Card = () => {
                 <input name="description" type="text" />
             </div>
             <div>
-                <label htmlFor="country">Country</label>
-                <select name="country">
-                    <option value="">-</option>
-                    {Object.entries(CountryType).map(([key, value]) =>
-                        <option key={key} value={key}>{value}</option>
-                    )}
-                </select>
+                <label htmlFor="bottom1">Icon A</label>
+                <CountrySelect name="bottom1" />
             </div>
             <div>
-                <label htmlFor="region">Region</label>
-                <select name="region">
-                    <option value="">-</option>
-                    {Object.entries(RegionType).map(([key, value]) =>
-                        <option key={key} value={key}>{value}</option>
-                    )}
-                </select>
+                <label htmlFor="bottom2">Icon B</label>
+                <CountrySelect name="bottom2" />
             </div>
         </form>
         <textarea onInput={handleJsonChange} ref={jsonRef} /><br />
@@ -120,4 +110,25 @@ export const Card = () => {
             <a href={encrypted.data.link}>{encrypted.data.link}</a>
         </div>
     </>
+}
+
+export type CountrySelectProps = {
+    name: string
+}
+export function toOptionGroups(group: CountryGroup, parent?: string): ReactNode {
+    const name = parent ? `${parent} - ${group.name}` : group.name
+    const options = Object
+                .entries(group.countries ?? {})
+                .sort(([_, a], [__, b]) => a > b ? 1 : b > a ? -1 : 0)
+                .map(([value, name]) => <option key={value} value={value}>{name}</option>)
+    return <>
+        {options.length > 0 ? <optgroup label={name} key={name}>{options}</optgroup> : null}
+        {(group.groups ?? []).map(group => toOptionGroups(group, name))}
+    </>
+}
+function CountrySelect ({ name }: CountrySelectProps) {
+    return <select name={name}>
+        <option value="">-</option>
+        {CountryGroups.map(group => toOptionGroups(group))}
+    </select>
 }
