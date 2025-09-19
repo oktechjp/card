@@ -20,30 +20,31 @@ const useHash = (hook: (hash: string) => void, interval: number = 100) => {
     }, [])
 }
 
-const KnownTypes: { [type: string]: (json: any) => ReactElement } = {
-    'card': (json: any): ReactElement => {
-        return <CardDisplay json={json}/>
-    }
+const KnownTypes: { [type: string]: (props: { json: any }) => ReactElement } = {
+    'card': CardDisplay
 }
 
 export function HashDocumentHook () {
     const [possibleDoc, setPossibleDoc] = useState<string>()
     useHash((hash) => {
-        console.log({ hash })
         const match = /^#?([0Oo1IiLl23456789AaBbCcDdEeFfGgHhJjKkMmNnPpQqRrSsTtVvWwXxYyZ]{5}-[0Oo1IiLl23456789AaBbCcDdEeFfGgHhJjKkMmNnPpQqRrSsTtVvWwXxYyZ]{5}-[0Oo1IiLl23456789AaBbCcDdEeFfGgHhJjKkMmNnPpQqRrSsTtVvWwXxYyZ]{5}-[0Oo1IiLl23456789AaBbCcDdEeFfGgHhJjKkMmNnPpQqRrSsTtVvWwXxYyZ]{5})$/.exec(hash)
         if (match) {
             setPossibleDoc(match[1])
         }
     })
-    console.log('hi')
     const doc = useAsyncMemo(async () => {
         if (!possibleDoc) {
             return
         }
-        console.log({ possibleDoc })
-        const doc = await fetchDocument(possibleDoc)
-        const type = KnownTypes[doc.type]
-        return type(doc)
+        const json = await fetchDocument(possibleDoc)
+        const type = KnownTypes[json.type]
+        return type({ json: json.data })
     }, [possibleDoc])
-    return doc.data ?? <></>
+    if (doc.state === 'loading') {
+        return <>Loading...</>
+    }
+    if (doc.state === 'error') {
+        return <div>Error: {doc.error.toString()}</div>
+    }
+    return doc.data
 }

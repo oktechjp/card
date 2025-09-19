@@ -4,51 +4,7 @@ import { formToJSON, jsonToForm } from "@/utils/form";
 import { decryptDocument, encryptDocument } from "@/utils/safeDoc";
 import { useAsyncMemo } from "@/hooks/useAsyncMemo";
 import { CardDisplay } from "./CardDisplay";
-
-const DOC_TYPE = 'card'
-const DOC_VERSION = 1
-
-export const ColorType = {
-    red: "Red",
-    green: "Green",
-    blue: "Blue",
-    ocre: "Ocre",
-    torquoise: "Torqouise",
-    violet: "Violet",
-    cyan: "Cyan",
-    magenta: "Magenta",
-    yellow: "Yellow",
-} as const
-
-export const CountryType = {
-    at: 'Austria',
-    uk: 'United Kingdom',
-    sa: 'Saudi Arabia',
-} as const
-
-/* Todo: many other regions to add */
-export const RegionType = {
-    'osaka-pref': 'Osaka Pref',
-    'osaka-city': 'Osaka City',
-    'kyoto-pref': 'Kyoto Pref',
-    'kyoto-city': 'Kyoto City',
-} as const
-
-export type CardType = {
-    surname?: string
-    surname_kana?: string
-    firstname?: string
-    firstname_kana?: string
-    callname?: string
-    callname_kana?: string
-    subtitle?: string
-    description?: string
-    url?: string
-    email?: string
-    color: keyof typeof ColorType
-    country?: keyof typeof CountryType
-    region?: keyof typeof RegionType
-}
+import { ColorType, CountryType, DOC_TYPE, DOC_VERSION, RegionType, type CardType } from "@/docs/card";
 
 export const Card = () => {
     const formRef = useRef<HTMLFormElement>(null)

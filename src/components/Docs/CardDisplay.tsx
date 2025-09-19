@@ -1,37 +1,29 @@
-import { useAsyncMemo } from '@/hooks/useAsyncMemo'
-import Flexbox from '@/components/Util/svg-react-flex'
-import type { CardType } from './CardForm'
+import type { CardType } from '@/docs/card'
+import { Layout } from '@/components/Util/Layout'
 
 let _init: Promise<void> | null = null
 
-const Big = ({ kana, text, ref }: { kana?: string, text: string, ref?: React.Ref<any> }) => {
-    return 
+const Big = ({ kana, text }: { kana?: string, text?: string }) => {
+    if (!text) return <></>
+    return <g style={{ flexDirection: 'column', marginRight: 5 }}>
+        {kana ? <text>{kana}</text> : null}
+        <text>{text}</text>
+    </g>
 }
 
 export function CardDisplay ({ json }: { json: CardType }) {
-    
-    return <><svg viewBox='-15 -15 940 580' width="500">
+    return <>
+        <svg viewBox='-15 -15 940 580' width="500" style={{ border: '1px solid black'}}>
             <image href="https://public.oktech.jp/images/logo-and-design/OKTech-logo-onlight-rgb.svg" width={200} />
-            <Flexbox style={{ justifyContent: 'center', height: 540 }}>
-                <g>
-                    <Flexbox style={{ flexDirection: "row"  }}>
-                        {json.surname ? <g>
-                            <Flexbox>
-                                {json.surname_kana ? <text>{json.surname_kana}</text> : null}
-                                <text>{json.surname}</text>
-                            </Flexbox>
-                        </g> : null}
-                        {json.firstname ? <g>
-                            <Flexbox>
-                                {json.firstname_kana ? <text>{json.firstname_kana}</text> : null}
-                                <text>{json.firstname}</text>
-                            </Flexbox>
-                        </g> : null}
-                    </Flexbox>
+            <Layout style={{ flexDirection: 'column', justifyContent: 'center', height: 540 }}>
+                <g style={{ flexDirection: "row", alignItems: 'flex-end' }}>
+                    <Big text={json.surname}  kana={'surname-kana' in json ? (json['surname-kana'] as string) : json.surname_kana ?? undefined} />
+                    <Big text={json.firstname} kana={json.firstname_kana} />
                 </g>
-                {json.subtitle ? <text style={{ top: 6 }}>{json.subtitle}</text> : null}
-                {json.email ? <text>{json.email}</text> : null}
-                {json.url ? <text>{json.url}</text> : null}
-            </Flexbox>
-        </svg></>
+                {json.subtitle ? <g><text style={{ marginTop: 6 }}>{json.subtitle}</text></g> : null}
+                {json.email ? <g><text>{json.email}</text></g> : null}
+                {json.url ? <g><text>{json.url}</text></g> : null}
+            </Layout>
+        </svg>
+    </>
 }
