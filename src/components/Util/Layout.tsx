@@ -10,14 +10,6 @@ export type LayoutProps = {
 function getStyleNum(map: StylePropertyMapReadOnly, name: string): number | undefined {
     const prop = map.get(name)
     if (!prop) return undefined
-
-    // CSSImageValue
-    // CSSKeywordValue
-    // CSSNumericValue
-    // CSSPositionValue
-    // CSSTransformValue
-    // CSSUnparsedValue
-
     if (prop instanceof CSSNumericValue) {
         return prop.to("px").value
     }
@@ -77,7 +69,16 @@ function toComputeNode(elem: SVGElement, computeNode: ComputeNode, lookup: Map<S
         if (!node) {
             node = {
                 style: {},
-                children: []
+                children: [],
+                layout: {
+                    bottom: 0,
+                    left: 0,
+                    width: 0,
+                    height: 0,
+                    top: 0,
+                    right: 0,
+                    direction: 'ltr'
+                }
             }
             changed = true
             computeNode.children[index] = node
@@ -140,30 +141,32 @@ function isInstanceOf<Types extends Function[]>(node: any, ...types: Types): nod
     return false
 }
 
-function applyLayout(node: SVGElement, layout: ComputeNodeLayout, zoom: { x: number, y: number }) {
+export function move(node: SVGElement, left: number, top: number) {
     if (node instanceof SVGCircleElement) {
         const r = getStyleNum(node.computedStyleMap(), 'r') ?? 0
-        node.setAttribute('cx', ((layout.left + r)).toString())
-        node.setAttribute('cy', ((layout.top + r)).toString())
+        node.setAttribute('cx', ((left + r)).toString())
+        node.setAttribute('cy', ((top + r)).toString())
         return
     }
     if (node instanceof SVGEllipseElement) {
         const map = node.computedStyleMap()
         const rx = getStyleNum(map, 'rx') ?? 0
         const ry = getStyleNum(map, 'ry') ?? 0
-        node.setAttribute('cx', ((layout.left + rx)).toString())
-        node.setAttribute('cy', ((layout.top + ry)).toString())
+        node.setAttribute('cx', ((left + rx)).toString())
+        node.setAttribute('cy', ((top + ry)).toString())
         return
     }
     if (isInstanceOf(node, SVGGElement, SVGPathElement, SVGPolygonElement, SVGPolylineElement)) {
-        node.setAttribute('transform', `translate(${layout.left}, ${layout.top})`)
+        node.setAttribute('transform', `translate(${left}, ${top})`)
         node.style.position = 'absolute'
         return
     }
-    if (node instanceof SVGElement) {
-        node.setAttribute('x', (layout.left).toString())
-        node.setAttribute('y', (layout.top).toString())
-    }
+    node.setAttribute('x', left.toString())
+    node.setAttribute('y', top.toString())
+}
+
+function applyLayout(node: SVGElement, layout: ComputeNodeLayout) {
+    move(node, layout.left, layout.top)
 }
 
 export const Layout = ({ children, ref, ...rest }: LayoutProps) => {

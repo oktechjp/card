@@ -40,7 +40,7 @@ export function HashDocumentHook () {
         const type = KnownTypes[json.type]
         return createElement(
             type,
-            { json: json.data, link: document.location.href }
+            { json: json.data, link: `https://card.oktech.jp#${possibleDoc}` }
         )
     }, [possibleDoc])
     if (doc.state === 'loading') {

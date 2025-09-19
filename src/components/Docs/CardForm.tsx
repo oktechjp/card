@@ -1,5 +1,4 @@
 import { useRef, useState } from "react"
-import { encodeQR } from "qr"
 import { formToJSON, jsonToForm } from "@/utils/form";
 import { decryptDocument, encryptDocument } from "@/utils/safeDoc";
 import { useAsyncMemo } from "@/hooks/useAsyncMemo";
