@@ -1,4 +1,4 @@
-export default `
+export const ShipporiAntique = `
 @font-face {
   font-family: 'Shippori Antique B1';
   font-style: normal;

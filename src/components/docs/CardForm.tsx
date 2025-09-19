@@ -2,7 +2,7 @@ import { useRef, useState } from "react"
 import { formToJSON, jsonToForm } from "@/utils/form";
 import { decryptDocument, encryptDocument } from "@/utils/safeDoc";
 import { useAsyncMemo } from "@/hooks/useAsyncMemo";
-import { CardDisplay } from "./CardDisplay";
+import { CardDisplay } from "@/components/docs/CardDisplay";
 import { ColorType, CountryType, DOC_TYPE, DOC_VERSION, RegionType, type CardType } from "@/docs/card";
 
 export const Card = () => {

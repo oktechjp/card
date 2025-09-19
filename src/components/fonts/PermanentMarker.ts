@@ -1,4 +1,4 @@
-export default `
+export const PermanentMarker = `
 /* latin */
 @font-face {
   font-family: 'Permanent Marker';

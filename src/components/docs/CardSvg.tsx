@@ -1,9 +1,13 @@
 import type { ReactNode } from "react";
+import type { DocDisplayProps } from "@/components/docs/DocsDisplay";
 
 export const CARD_WIDTH = 910
 export const CARD_HEIGHT = 540
 export const PADDING = 15
 
+export type CardSvgDocDisplayProps<Type> = DocDisplayProps<Type> & {
+    isCut: boolean
+}
 
 export function CardSvg ({ isCut, children, background }: { isCut: boolean, children?: ReactNode, background: string }) {
     const viewBox = isCut

@@ -1,4 +1,4 @@
-export default `
+export const NotoSansJP = `
 @font-face {
   font-family: 'Noto Sans JP';
   font-style: normal;

@@ -1,6 +1,6 @@
-import { useAsyncMemo } from "@/hooks/useAsyncMemo"
 import { createElement, useEffect, useState, type ReactElement } from "react"
-import { CardDisplay } from "./CardDisplay"
+import { useAsyncMemo } from "@/hooks/useAsyncMemo"
+import { CardDisplay } from "@/components/docs/CardDisplay"
 import { fetchDocument } from "@/utils/safeDoc"
 
 const useHash = (hook: (hash: string) => void, interval: number = 100) => {
