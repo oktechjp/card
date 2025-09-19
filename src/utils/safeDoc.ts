@@ -66,6 +66,10 @@ export async function toPublicKey(privateKey: string) {
     )
 }
 
+export function isPossibleDocKey(input: string) {
+    return /^([0Oo1IiLl23456789AaBbCcDdEeFfGgHhJjKkMmNnPpQqRrSsTtVvWwXxYyZ]{5}-[0Oo1IiLl23456789AaBbCcDdEeFfGgHhJjKkMmNnPpQqRrSsTtVvWwXxYyZ]{5}-[0Oo1IiLl23456789AaBbCcDdEeFfGgHhJjKkMmNnPpQqRrSsTtVvWwXxYyZ]{5}-[0Oo1IiLl23456789AaBbCcDdEeFfGgHhJjKkMmNnPpQqRrSsTtVvWwXxYyZ]{5})$/.test(input)
+}
+
 export async function fetchDocument(privateKey: string) {
     try {
         const publicKey = await toPublicKey(privateKey)
@@ -88,14 +92,21 @@ export async function fetchDocument(privateKey: string) {
     }
 }
 
-export async function encryptDocument(type: string, version: number, data: JSONObj): Promise<{
+export function getLocalStorageDocKey(privateKey: string) {
+    return `privateKey:${privateKey}`
+}
+
+export function createPrivateKey() {
+    return toReadableHash(crypto.getRandomValues(new Uint8Array(12))) 
+}
+
+export async function encryptDocument(privateKey: string, type: string, version: number, data: JSONObj): Promise<{
     fileName: string,
     link: string,
     encrypted: EncryptedDocumentWrapper
     privateKey: string
 }> {
     const time = (new Date).toISOString()
-    const privateKey = toReadableHash(crypto.getRandomValues(new Uint8Array(12)))
     const encryptionKey = await createKey(privateKey)
     const publicKey = await toPublicKey(privateKey)
     const json = {

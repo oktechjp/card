@@ -1,42 +1,63 @@
-import { useRef, useState, type ReactNode } from "react"
+import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { formToJSON, jsonToForm } from "@/utils/form";
-import { decryptDocument, encryptDocument } from "@/utils/safeDoc";
+import { decryptDocument, encryptDocument, getLocalStorageDocKey } from "@/utils/safeDoc";
 import { useAsyncMemo } from "@/hooks/useAsyncMemo";
 import { CardDisplay } from "@/components/docs/CardDisplay";
 import { ColorType, CountryGroups, DOC_TYPE, DOC_VERSION, type CardType, type CountryGroup } from "@/docs/card";
+import { useDoc } from "@/hooks/useDoc";
+import useLocalStorageState from "use-local-storage-state";
 
-export const Card = () => {
+export type CardFormProps = {
+    privateKey: string
+}
+export const CardForm = ({ privateKey }: CardFormProps) => {
     const formRef = useRef<HTMLFormElement>(null)
     const jsonRef = useRef<HTMLTextAreaElement>(null)
     const fileRef = useRef<HTMLInputElement>(null)
     const docRef = useRef<HTMLTextAreaElement>(null)
     const decryptedRef = useRef<HTMLTextAreaElement>(null)
-    const [json, setJson] = useState({})
+    const [localStorage, setLocalStorage] = useLocalStorageState(getLocalStorageDocKey(privateKey))
+    const json = localStorage ?? {}
     const encrypted = useAsyncMemo(
-        async () => await encryptDocument(DOC_TYPE, DOC_VERSION, json),
+        async () => await encryptDocument(privateKey, DOC_TYPE, DOC_VERSION, json),
         [json]
     )
+    useEffect(() => {
+        if (!formRef.current) return
+        jsonToForm(JSON.stringify(json), formRef.current)
+    }, [json, formRef.current])
     const decrypted = useAsyncMemo(
         async () => encrypted.data ? decryptDocument(encrypted.data.privateKey, encrypted.data.encrypted) : null,
         [encrypted.data]
     )
-    const currentJSON = () => {
-        const json = formToJSON(formRef.current!)
-        const jsonString = JSON.stringify(json, null, 2)
-        setJson(json)
-        return jsonString
-    }
+    const stored = useDoc(privateKey)
     const handleFormChange = () => {
-        jsonRef.current!.value = currentJSON()
+        const json = formToJSON(formRef.current!)
+        setLocalStorage(json)
     }
     const handleJsonChange = () => {
         jsonToForm(jsonRef.current!.value, formRef.current!)
-        currentJSON()
+        handleFormChange()
     }
+    const createPRLink = useMemo(() => {
+        const { data } = encrypted
+        if (!data) {
+            return
+        }
+        const url = new URL(`https://github.com/oktechjp/public/new/main/docs`)
+        url.searchParams.append('filename', data.fileName)
+        url.searchParams.append('value', JSON.stringify(data.encrypted, null, 2))
+        return url.toString()
+    }, [encrypted.data])
     if (!encrypted.data) {
         return <>Decrypting</>
     }
     return <>
+        <div>
+            {stored.loading ? '⌛︎' : stored.state === 'error' ? <>
+                Not Stored on server {createPRLink ? <a href={createPRLink}>Create PR</a> : null}
+            </> : <a href={encrypted.data.link}>{encrypted.data.link}</a>}
+        </div>
         <CardDisplay link={encrypted.data.link} key={JSON.stringify(json)} json={json as CardType} />
         <form ref={formRef} onInput={handleFormChange}>
             <div>
@@ -96,39 +117,40 @@ export const Card = () => {
                 <CountrySelect name="bottom2" />
             </div>
         </form>
-        <textarea onInput={handleJsonChange} ref={jsonRef} /><br />
-        <div>
-            {encrypted.loading ? "Loading..." : encrypted.state === 'error' ? encrypted.error.toString() : "OK"}<br />
-            <input type="text" size={40} ref={fileRef} disabled defaultValue={`${encrypted.data?.fileName ?? ''}`} /><br />
-            <textarea cols={50} rows={15} ref={docRef} disabled defaultValue={encrypted.data?.encrypted ? JSON.stringify(encrypted.data?.encrypted, null, 2) : ''} />
-        </div>
-        <div>
-            {decrypted.loading ? "Loading..." : decrypted.state === 'error' ? decrypted.error.toString() : "OK"}<br />
-            <textarea cols={50} rows={15} ref={decryptedRef} disabled defaultValue={decrypted.data ? JSON.stringify(decrypted.data, null, 2) : ''} />
-        </div>
-        <div>
-            <a href={encrypted.data.link}>{encrypted.data.link}</a>
-        </div>
+        <details>
+            <summary>Advanced</summary>
+            <textarea onInput={handleJsonChange} ref={jsonRef} /><br />
+            <div>
+                <input type="text" size={83} ref={fileRef} disabled defaultValue={`${encrypted.data?.fileName ?? ''}`} /><br />
+                <textarea cols={50} rows={15} ref={docRef} disabled defaultValue={encrypted.data?.encrypted ? JSON.stringify(encrypted.data?.encrypted, null, 2) : ''} />
+            </div>
+            <div>
+                {decrypted.loading ? "Loading..." : decrypted.state === 'error' ? decrypted.error.toString() : "OK"}<br />
+                <textarea cols={50} rows={15} ref={decryptedRef} disabled defaultValue={decrypted.data ? JSON.stringify(decrypted.data, null, 2) : ''} />
+            </div>
+        </details>
     </>
 }
 
 export type CountrySelectProps = {
     name: string
 }
-export function toOptionGroups(group: CountryGroup, parent?: string): ReactNode {
+function OptionGroup({ group, parent }:  { group: CountryGroup, parent?: string }) {
     const name = parent ? `${parent} - ${group.name}` : group.name
     const options = Object
-                .entries(group.countries ?? {})
-                .sort(([_, a], [__, b]) => a > b ? 1 : b > a ? -1 : 0)
-                .map(([value, name]) => <option key={value} value={value}>{name}</option>)
+            .entries(group.countries ?? {})
+            .sort(([_, a], [__, b]) => a > b ? 1 : b > a ? -1 : 0)
+            .map(([value, name]) => {
+                return <option key={value} value={value}>{name}</option>
+            })
     return <>
         {options.length > 0 ? <optgroup label={name} key={name}>{options}</optgroup> : null}
-        {(group.groups ?? []).map(group => toOptionGroups(group, name))}
+        {(group.groups ?? []).map(group => <OptionGroup key={group.name} group={group} parent={name} />)}
     </>
 }
 function CountrySelect ({ name }: CountrySelectProps) {
     return <select name={name}>
         <option value="">-</option>
-        {CountryGroups.map(group => toOptionGroups(group))}
+        {CountryGroups.map(group => <OptionGroup key={group.name} group={group} />)}
     </select>
 }

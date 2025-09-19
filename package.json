@@ -14,7 +14,8 @@
     "clsx": "^2.1.1",
     "qr": "^0.5.1",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "use-local-storage-state": "^19.5.0"
   },
   "devDependencies": {
     "@types/react": "^19.1.13"
