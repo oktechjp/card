@@ -19,7 +19,7 @@ export function CardDisplay({ json, link, docKey }: DocDisplayProps<CardType>) {
             }
             const frontSvg = front.current.outerHTML
             const backSvg = back.current.outerHTML
-            const name = `bc_${docKey}`
+            const name = `bc_${docKey}${isCut ? '_cut' : ''}`
             await writeFile(dir, `${name}_front.svg`, encode(frontSvg))
             await writeFile(dir, `${name}_back.svg`, encode(backSvg))
             alert('Done.')
