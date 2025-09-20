@@ -69,6 +69,8 @@ function isInstanceOf<Types extends Function[]>(node: any, ...types: Types): nod
 }
 
 export function move(node: SVGElement, left: number, top: number, width: number, height: number) {
+    left = Math.round(left * 1000) / 1000
+    top = Math.round(top * 1000) / 1000
     if (node instanceof SVGCircleElement) {
         const r = getStyleNum(globalThis.getComputedStyle(node), 'r') ?? 0
         node.setAttribute('cx', ((left + r)).toString())

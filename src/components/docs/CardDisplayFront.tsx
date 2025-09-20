@@ -7,6 +7,7 @@ import { useAsyncMemo } from '@/hooks/useAsyncMemo'
 import { encode, toBase64 } from '@/utils/buffer'
 import { CARD_HEIGHT, CARD_WIDTH, CardSvg } from '@/components/docs/CardSvg'
 import { useSvgSize } from '@/hooks/useSvgSize'
+import { EmbeddedSVGImage } from '../utils/EmbeddedSVGImage'
 
 type BigProps = {
     kana?: string
@@ -120,7 +121,7 @@ export function CardDisplayFront({ json, link, isCut, ref }: CardDisplayVariantP
             }
         `}</style>
         {zoom}
-        <image href="https://public.oktech.jp/images/logo-and-design/OKTech-logo-onlight-rgb.svg" width={200} x={20} y={20} />
+        <EmbeddedSVGImage href="https://public.oktech.jp/images/logo-and-design/OKTech-logo-onlight-rgb.svg" width={200} x={20} y={20} />
         <g ref={refs.main}>
             <Big ref={refs.surname} className="big--surname" text={json.surname} kana={'surname-kana' in json ? (json['surname-kana'] as string) : json.surname_kana ?? undefined} />
             <Big ref={refs.firstname} text={json.firstname} kana={json.firstname_kana} />
@@ -131,7 +132,7 @@ export function CardDisplayFront({ json, link, isCut, ref }: CardDisplayVariantP
         {json.description ? <text ref={refs.description} style={{ fontSize: 20 }}>{json.description}</text> : null}
         <text ref={refs.link} style={{ fontSize: 16, marginTop: 40, fill: '#999' }}>{link}</text>
         {qrCode.data ? <image href={qrCode.data} width="100" height="100" opacity={0.7} x={CARD_WIDTH - 100 - 15} y={CARD_HEIGHT - 100 - 15} /> : null}
-        {bottom1 ? <image ref={refs.bottom1} href={`/svg/${bottom1}.svg`} height={20} /> : null}
-        {bottom2 ? <image ref={refs.bottom2} href={`/svg/${bottom2}.svg`} height={20} /> : null}
+        {bottom1 ? <EmbeddedSVGImage ref={refs.bottom1} href={`/svg/${bottom1}.svg`} height={20} /> : null}
+        {bottom2 ? <EmbeddedSVGImage ref={refs.bottom2} href={`/svg/${bottom2}.svg`} height={20} /> : null}
     </CardSvg>
 }

@@ -4,6 +4,7 @@ import { CARD_HEIGHT, CARD_WIDTH, CardSvg } from "@/components/docs/CardSvg";
 import { ShipporiAntique } from "@/components/fonts/ShipporiAntiqueB1";
 import { PermanentMarker } from "@/components/fonts/PermanentMarker";
 import { useSvgSize } from "@/hooks/useSvgSize";
+import { EmbeddedSVGImage } from "../utils/EmbeddedSVGImage";
 
 export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
     const { callname, callname_kana, zoom } = useSvgSize(
@@ -33,7 +34,7 @@ export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
             }     
         `}</style>
         {zoom}
-        <image href="https://public.oktech.jp/images/logo-and-design/OKTech-logo-white.svg" width={200} x={20} y={20} />
+        <EmbeddedSVGImage href="https://public.oktech.jp/images/logo-and-design/OKTech-logo-white.svg" width={200} x={20} y={20} />
         <text ref={callname} style={{ fontSize: 100, fontFamily: 'Permanent Marker', fill: "white" }}>{json.callname}</text>
         <text ref={callname_kana} style={{ fontSize: 30, fontFamily: 'Shippori Antique B1', fill: "white" }}>{json.callname_kana}</text>
     </CardSvg>
