@@ -5,7 +5,7 @@ import { ShipporiAntique } from "@/components/fonts/ShipporiAntiqueB1";
 import { PermanentMarker } from "@/components/fonts/PermanentMarker";
 import { useSvgSize } from "@/hooks/useSvgSize";
 
-export function CardDisplayBack({ json, isCut }: CardDisplayVariantProps) {
+export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
     const { callname, callname_kana, zoom } = useSvgSize(
         ['callname', 'callname_kana'] as const,
         ({ callname, callname_kana }) => {
@@ -23,7 +23,7 @@ export function CardDisplayBack({ json, isCut }: CardDisplayVariantProps) {
             }
         }
     )
-    return <CardSvg isCut={isCut} background={((json.color ? Color[json.color] : null) || Color.red).rgb}>
+    return <CardSvg ref={ref} isCut={isCut} background={((json.color ? Color[json.color] : null) || Color.red).rgb}>
         <style>{`
             ${PermanentMarker}
             ${ShipporiAntique}

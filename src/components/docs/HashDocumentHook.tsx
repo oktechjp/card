@@ -4,10 +4,22 @@ import { CardDisplay } from "@/components/docs/CardDisplay"
 import { fetchDocument, isPossibleDocKey } from "@/utils/safeDoc"
 import { useHash } from "@/hooks/useHash"
 import { useDoc } from "@/hooks/useDoc"
+import type { DocDisplayProps } from "./DocsDisplay"
+import { DOC_TYPE, DOC_VERSION } from "@/docs/card"
 
-const KnownTypes: { [type: string]: (props: { json: any, link: string }) => ReactElement } = {
-    'card': CardDisplay
-}
+const KnownTypes = [
+    {
+        type: DOC_TYPE,
+        version: DOC_VERSION,
+        component: CardDisplay
+    }
+] satisfies Array<
+    {
+        type: string,
+        version: number
+        component: (props: DocDisplayProps<any>) => ReactElement
+    }
+>
 
 export function HashDocumentHook () {
     const [hash] = useHash()
@@ -17,10 +29,17 @@ export function HashDocumentHook () {
             if (!json.data){
                 return
             }
-            const type = KnownTypes[json.data.type]
+            const type = KnownTypes.find(type => type.type === json.data.type && type.version === json.data.version)
+            if (!type) {
+                throw new Error(`Unsupported type: ${type}`)
+            }
             return createElement(
-                type,
-                { json: json.data.data, link: `https://card.oktech.jp#${hash}` }
+                type.component,
+                {
+                    json: json.data.data,
+                    link: `https://card.oktech.jp#${hash}`,
+                    docKey: hash
+                }
             )
         },
         [json.data]

@@ -43,7 +43,7 @@ const Big = ({ kana, text, className, ref }: BigProps) => {
     </g>
 }
 
-export function CardDisplayFront({ json, link, isCut }: CardDisplayVariantProps) {
+export function CardDisplayFront({ json, link, isCut, ref }: CardDisplayVariantProps) {
     const { zoom, ...refs } = useSvgSize(
         ['bottom1', 'bottom2', 'description', 'link', 'subtitle', 'surname', 'firstname', 'main', 'email', 'url'] as const,
         ({ bottom1, bottom2, description, link, subtitle, surname, firstname, main, email, url }) => {
@@ -98,7 +98,7 @@ export function CardDisplayFront({ json, link, isCut }: CardDisplayVariantProps)
         [link]
     )
     const { bottom1, bottom2 } = json
-    return <CardSvg isCut={isCut} background="white">
+    return <CardSvg ref={ref} isCut={isCut} background="white">
         <style>{`
             ${NotoSansJP}
             /* Style the text */
