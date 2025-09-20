@@ -4,4 +4,11 @@ import { HashDocumentHook } from "@/components/docs/HashDocumentHook";
 
 ---
 
-<HashDocumentHook client:load/>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    </head>
+    <body>
+        <HashDocumentHook client:only="react"/>
+    </body>
+</html>
