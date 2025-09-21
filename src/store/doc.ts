@@ -5,7 +5,6 @@ import {
 } from "@/utils/safeDoc";
 import { computed, listenKeys, mapCreator, task } from "nanostores";
 import { persistentMap } from "@nanostores/persistent";
-import { hashStore } from "./hash";
 import deepEqual from "fast-deep-equal";
 
 export type DocStore<Doctype> = (
@@ -28,11 +27,11 @@ export type DocStore<Doctype> = (
       saveDraft: (data: Doctype) => void;
       discard: () => boolean;
       isDirty: boolean;
+      link: string;
     }
 ) & {
   docKey: string;
   validId: boolean;
-  link: string;
   draft?: Doctype;
   doc?: Doctype | null;
 };
@@ -73,7 +72,6 @@ export const docs = mapCreator<DocStore<any>>((store, id) => {
     docKey: id,
     id,
     validId,
-    link: `https://card.oktech.jp#${id}`,
   };
   if (!validId) {
     store.set({ ...base, state: "no-doc" });
@@ -103,6 +101,7 @@ export const docs = mapCreator<DocStore<any>>((store, id) => {
       draft: persistentDrafts.get()[id],
     });
     task(async () => {
+      const link = `https://card.oktech.jp#${id}`
       try {
         const doc = await fetchDocument(id);
         const current = store.get();
@@ -119,6 +118,7 @@ export const docs = mapCreator<DocStore<any>>((store, id) => {
           discard,
           state: "ready",
           refresh,
+          link,
           doc,
           isDirty,
         });
@@ -130,6 +130,7 @@ export const docs = mapCreator<DocStore<any>>((store, id) => {
           saveDraft,
           discard,
           state: "ready",
+          link,
           refresh,
           doc: null,
           isDirty: !!current.draft,

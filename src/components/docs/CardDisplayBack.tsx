@@ -4,7 +4,6 @@ import {
   CARD_HEIGHT,
   CARD_WIDTH,
   CardSvg,
-  PADDING,
 } from "@/components/docs/CardSvg";
 import { ShipporiAntique } from "@/components/fonts/ShipporiAntiqueB1";
 import { PermanentMarker } from "@/components/fonts/PermanentMarker";
