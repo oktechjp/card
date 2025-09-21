@@ -134,7 +134,7 @@ export function CardDisplayFront({
   const isClean =
     keys.length === 0 || (keys.length === 1 && keys[0] === "color");
   if (isClean) {
-    link = "https://oktech.jp";
+    link = "https://card.oktech.jp/new";
   }
   const qrCode = useQRCode(link);
   const { bottom1, bottom2 } = json;
