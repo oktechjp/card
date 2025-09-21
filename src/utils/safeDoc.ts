@@ -1,3 +1,4 @@
+import { DOC_TYPE, DOC_VERSION } from "@/docs/card";
 import {
   decodeJSON,
   encode,
@@ -133,6 +134,7 @@ export async function encryptDocument(
   fileName: string;
   link: string;
   encrypted: EncryptedDocumentWrapper;
+  prLink: string;
   docKey: string;
 }> {
   const time = new Date().toISOString();
@@ -144,20 +146,26 @@ export async function encryptDocument(
     time,
     data,
   };
-  return {
-    docKey: docKey,
-    fileName: `${publicKey}.json`,
-    link: `${LINK_PREFIX}${docKey}`,
-    encrypted: {
-      content: toBase64(
-        await new Uint8Array(
-          await crypto.subtle.encrypt(
-            { name: ENCRYPT_ALGO, iv: PAGE_SALT },
-            encryptionKey,
-            encodeJSON(json),
-          ),
+  const encrypted = {
+    content: toBase64(
+      await new Uint8Array(
+        await crypto.subtle.encrypt(
+          { name: ENCRYPT_ALGO, iv: PAGE_SALT },
+          encryptionKey,
+          encodeJSON(json),
         ),
       ),
-    },
+    ),
+  }
+  const fileName = `${publicKey}.json`
+  const prURL = new URL(`https://github.com/oktechjp/public/new/main/docs`);
+  prURL.searchParams.append("filename", fileName);
+  prURL.searchParams.append("value", JSON.stringify(encrypted, null, 2));
+  return {
+    docKey,
+    fileName,
+    link: `${LINK_PREFIX}${docKey}`,
+    prLink: prURL.toString(),
+    encrypted
   };
 }

@@ -61,12 +61,12 @@ export function PrintDialog() {
           <HashDocumentInput label="We need to know which card to read. Please enter the ID in the link here." />
         ) : state_1 === "doc-ready" ? (
           <p>
-            <code>{docKey}</code> selected.
+            <code>{docKey}</code> selected. <a href={`/new#${docKey}`}>Edit</a>
           </p>
         ) : (
           <p>
             <code>{docKey}</code> selected. Looks like you havn't stored the
-            document yet!
+            document yet! 
           </p>
         )}
       </section>
@@ -77,7 +77,7 @@ export function PrintDialog() {
           <CardDisplay
             {...{
               docKey,
-              json: doc?.data ?? doc?.draft ?? {},
+              json: doc ?? draft ?? {},
               link: link!,
               ref,
             }}

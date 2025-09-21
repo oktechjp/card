@@ -19,29 +19,18 @@ import { InputWithLabel } from "@/components/docs/InputWithLabel";
 import { SelectWithLabel } from "@/components/docs/SelectWithLabel";
 
 export type CardFormProps = {
-  privateKey: string;
+  docKey: string;
 };
-export const CardForm = ({ privateKey }: CardFormProps) => {
+export const CardForm = ({ docKey: docKey }: CardFormProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLTextAreaElement>(null);
-  const doc = useStore(docs(privateKey));
+  const doc = useStore(docs(docKey));
   const json = doc.draft ?? doc.doc?.data ?? {};
   const encrypted = useAsyncMemo(
-    async () =>
-      await encryptDocument(privateKey, DOC_TYPE, DOC_VERSION, json ?? {}),
+    () => encryptDocument(docKey, DOC_TYPE, DOC_VERSION, json ?? {}),
     [json],
-  );
-  const createPRLink = useMemo(() => {
-    const { data } = encrypted;
-    if (!data) {
-      return;
-    }
-    const url = new URL(`https://github.com/oktechjp/public/new/main/docs`);
-    url.searchParams.append("filename", data.fileName);
-    url.searchParams.append("value", JSON.stringify(data.encrypted, null, 2));
-    return url.toString();
-  }, [encrypted]);
+  ).data;
   useEffect(() => {
     if (!formRef.current) return;
     if (doc.state !== "ready") return;
@@ -66,10 +55,10 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
     }
   };
   const discardChanges = () => {
-    discard(`Discard Changes ${privateKey}`);
+    discard(`Discard Changes ${docKey}`);
   };
   const discardCard = () => {
-    discard(`Delete Draft ${privateKey}`);
+    discard(`Delete Draft ${docKey}`);
   };
   return (
     <>
@@ -78,7 +67,7 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
           doc.isDirty ? (
             <>
               Diverged from server <a href={doc.link}>{doc.link}</a>,{" "}
-              {createPRLink ? <a href={createPRLink}>Create PR</a> : null}
+              {encrypted?.prLink ? <a href={encrypted?.prLink}>Create PR</a> : null}
               <button onClick={discardChanges}>Discard Changes</button>
             </>
           ) : (
@@ -89,7 +78,7 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
         ) : (
           <>
             Not Stored on server{" "}
-            {createPRLink ? <a href={createPRLink}>Create PR</a> : null}
+            {encrypted?.prLink ? <a href={encrypted?.prLink}>Create PR</a> : null}
             <button onClick={discardCard}>Discard Card</button>
           </>
         )}
@@ -97,7 +86,7 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
       <div>
         <a href={`/print#${doc.docKey}`}>Print</a>
       </div>
-      <CardDisplay docKey={privateKey} link={doc.link} json={json} />
+      <CardDisplay docKey={docKey} link={doc.link} json={json} />
       <form ref={formRef} onInput={handleFormChange}>
         <InputWithLabel name="surname" label="Surname" />
         <InputWithLabel name="surname_kana" label="Surname Kana" />
@@ -131,7 +120,7 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
             size={83}
             ref={fileRef}
             disabled
-            defaultValue={`${encrypted.data?.fileName ?? ""}`}
+            defaultValue={`${encrypted?.fileName ?? ""}`}
           />
           <br />
           <textarea
@@ -140,8 +129,8 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
             ref={docRef}
             disabled
             defaultValue={
-              encrypted.data?.encrypted
-                ? JSON.stringify(encrypted.data?.encrypted, null, 2)
+              encrypted?.encrypted
+                ? JSON.stringify(encrypted?.encrypted, null, 2)
                 : ""
             }
           />

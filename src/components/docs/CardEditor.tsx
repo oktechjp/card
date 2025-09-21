@@ -35,7 +35,7 @@ export function CardEditor() {
         ) : null}
       </select>
       <button onClick={newCard}>New Card</button>
-      {hash && isPossibleDocKey(hash) ? <CardForm privateKey={hash} /> : null}
+      {hash && isPossibleDocKey(hash) ? <CardForm docKey={hash} /> : null}
     </>
   );
 }
