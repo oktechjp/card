@@ -1,44 +1,26 @@
-import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { formToJSON, jsonToForm } from "@/utils/form";
-import { decryptDocument, encryptDocument, getLocalStorageDocKey } from "@/utils/safeDoc";
-import { useAsyncMemo } from "@/hooks/useAsyncMemo";
 import { CardDisplay } from "@/components/docs/CardDisplay";
 import { ColorType, CountryGroups, DOC_TYPE, DOC_VERSION, type CardType, type CountryGroup } from "@/docs/card";
-import { useDoc } from "@/hooks/useDoc";
-import useLocalStorageState from "use-local-storage-state";
+import { useStore } from "@nanostores/react";
+import { docs } from "@/store/doc";
+import { useAsyncMemo } from "@/hooks/useAsyncMemo";
+import { encryptDocument } from "@/utils/safeDoc";
+import { setHash } from "@/store/hash";
 
 export type CardFormProps = {
     privateKey: string
 }
 export const CardForm = ({ privateKey }: CardFormProps) => {
     const formRef = useRef<HTMLFormElement>(null)
-    const jsonRef = useRef<HTMLTextAreaElement>(null)
     const fileRef = useRef<HTMLInputElement>(null)
     const docRef = useRef<HTMLTextAreaElement>(null)
-    const decryptedRef = useRef<HTMLTextAreaElement>(null)
-    const [localStorage, setLocalStorage] = useLocalStorageState(getLocalStorageDocKey(privateKey))
-    const json = localStorage ?? {}
+    const doc = useStore(docs(privateKey))
+    const json = doc.draft ?? doc.doc?.data
     const encrypted = useAsyncMemo(
-        async () => await encryptDocument(privateKey, DOC_TYPE, DOC_VERSION, json),
+        async () => await encryptDocument(privateKey, DOC_TYPE, DOC_VERSION, json ?? {}),
         [json]
     )
-    useEffect(() => {
-        if (!formRef.current) return
-        jsonToForm(JSON.stringify(json), formRef.current)
-    }, [json, formRef.current])
-    const decrypted = useAsyncMemo(
-        async () => encrypted.data ? decryptDocument(encrypted.data.privateKey, encrypted.data.encrypted) : null,
-        [encrypted.data]
-    )
-    const stored = useDoc(privateKey)
-    const handleFormChange = () => {
-        const json = formToJSON(formRef.current!)
-        setLocalStorage(json)
-    }
-    const handleJsonChange = () => {
-        jsonToForm(jsonRef.current!.value, formRef.current!)
-        handleFormChange()
-    }
     const createPRLink = useMemo(() => {
         const { data } = encrypted
         if (!data) {
@@ -48,17 +30,54 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
         url.searchParams.append('filename', data.fileName)
         url.searchParams.append('value', JSON.stringify(data.encrypted, null, 2))
         return url.toString()
-    }, [encrypted.data])
-    if (!encrypted.data) {
-        return <>Decrypting</>
+    }, [encrypted])
+    useEffect(() => {
+        if (!formRef.current) return
+        if (doc.state !== 'ready') return
+        jsonToForm(JSON.stringify(json), formRef.current)
+    }, [doc.state, !!doc.draft, formRef.current])
+    if (doc.state !== 'ready') {
+        return <>Loading/..</>
+    }
+    const handleFormChange = () => {
+        if (doc.state !== 'ready') {
+            return
+        }
+        const json = formToJSON(formRef.current!)
+        doc.saveDraft(json)
+    }
+    const discard = (message: string) => {
+        if (!confirm(message)) {
+            return
+        }
+        if (!doc.discard()) {
+            setHash('')
+        }
+    }
+    const discardChanges = () => {
+        discard(`Discard Changes ${privateKey}`)
+    }
+    const discardCard = () => {
+        discard(`Delete Draft ${privateKey}`)
     }
     return <>
         <div>
-            {stored.loading ? '⌛︎' : stored.state === 'error' ? <>
-                Not Stored on server {createPRLink ? <a href={createPRLink}>Create PR</a> : null}
-            </> : <a href={encrypted.data.link}>{encrypted.data.link}</a>}
+            {doc.doc ?
+                doc.isDirty
+                    ? <>
+                        Diverged from server <a href={doc.link}>{doc.link}</a>, {createPRLink ? <a href={createPRLink}>Create PR</a> : null}
+
+                        <button onClick={discardChanges}>Discard Changes</button>
+                    </>
+                    : <a href={doc.link}>{doc.link}</a>
+                : <>
+                    Not Stored on server {createPRLink ? <a href={createPRLink}>Create PR</a> : null}
+
+                    <button onClick={discardCard}>Discard Card</button>
+                </>
+            }
         </div>
-        <CardDisplay link={encrypted.data.link} key={JSON.stringify(json)} json={json as CardType} />
+        <CardDisplay docKey={privateKey} link={doc.link} json={json as CardType} />
         <form ref={formRef} onInput={handleFormChange}>
             <div>
                 <label htmlFor="surname">Surname</label>
@@ -119,14 +138,9 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
         </form>
         <details>
             <summary>Advanced</summary>
-            <textarea onInput={handleJsonChange} ref={jsonRef} /><br />
             <div>
                 <input type="text" size={83} ref={fileRef} disabled defaultValue={`${encrypted.data?.fileName ?? ''}`} /><br />
                 <textarea cols={50} rows={15} ref={docRef} disabled defaultValue={encrypted.data?.encrypted ? JSON.stringify(encrypted.data?.encrypted, null, 2) : ''} />
-            </div>
-            <div>
-                {decrypted.loading ? "Loading..." : decrypted.state === 'error' ? decrypted.error.toString() : "OK"}<br />
-                <textarea cols={50} rows={15} ref={decryptedRef} disabled defaultValue={decrypted.data ? JSON.stringify(decrypted.data, null, 2) : ''} />
             </div>
         </details>
     </>

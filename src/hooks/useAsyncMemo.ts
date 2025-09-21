@@ -1,20 +1,27 @@
 import { useEffect, useRef, useState, type DependencyList } from "react"
 
-type AsyncMemoState<T> = {
+export type AsyncMemoLoadingState<T> = {
     state: 'loading',
     error?: Error,
     loading: true,
     data?: T,
-} | {
+}
+export type AsyncMemoSuccessState<T> = {
     state: 'success',
     loading: false,
+    error: undefined
     data: T
-} | {
+}
+export type AsyncMemoErrorState<T> = {
     state: 'error',
     error: Error,
     loading: false,
     data?: T
 }
+export type AsyncMemoState<T> =
+    AsyncMemoLoadingState<T> |
+    AsyncMemoSuccessState<T> | 
+    AsyncMemoErrorState<T>
 
 export function useAsyncMemo<T>(handler: () => Promise<T>, deps: DependencyList): AsyncMemoState<T> {
     const state = useRef<AsyncMemoState<T>>(
@@ -40,7 +47,8 @@ export function useAsyncMemo<T>(handler: () => Promise<T>, deps: DependencyList)
                     state.current = {
                         state: 'success',
                         loading: false,
-                        data
+                        data,
+                        error: undefined
                     }
                 },
                 error => {

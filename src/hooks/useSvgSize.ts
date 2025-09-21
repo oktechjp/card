@@ -99,17 +99,6 @@ export function move(node: SVGElement, left: number, top: number, width: number,
     node.setAttribute('y', top.toString())
 }
 
-let _id = 0
-const idMap = new WeakMap<SVGElement, number>()
-function getId(elem: SVGElement): number {
-    let id = idMap.get(elem)
-    if (id === undefined) {
-        id = _id += 1
-        idMap.set(elem, id)
-    }
-    return id
-}
-
 type Zoom = {
     x: number
     y: number
@@ -208,8 +197,6 @@ export function useSvgSize<Props extends string[]>(
             height: ZOOM_HEIGHT,
             ref: zoomRef,
             fill: "#00000000",
-            // opacity: 0,
-            // style: { visibility: 'hidden' }
         })
     }
 }

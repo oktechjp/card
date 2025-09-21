@@ -1,5 +1,4 @@
 // Adapted from https://github.com/beatgammit/base64-js/blob/83f04b074694929d205171f48ad79a4e073e8429/index.js
-
 const code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 const lookup = Array.from(code)
 const revLookup = Object.fromEntries(lookup.entries().map(([i, char]) => [char.charCodeAt(0), i]))

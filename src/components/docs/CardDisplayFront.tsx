@@ -1,13 +1,11 @@
 import clsx from 'clsx'
-import encodeQR from 'qr'
 import type { Ref } from 'react'
 import type { CardDisplayVariantProps } from '@/components/docs/CardDisplayType'
 import { NotoSansJP } from '@/components/fonts/NotoSansJP'
-import { useAsyncMemo } from '@/hooks/useAsyncMemo'
-import { encode, toBase64 } from '@/utils/buffer'
 import { CARD_HEIGHT, CARD_WIDTH, CardSvg } from '@/components/docs/CardSvg'
 import { useSvgSize } from '@/hooks/useSvgSize'
 import { EmbeddedSVGImage } from '../utils/EmbeddedSVGImage'
+import { useQRCode } from '@/hooks/useQrCode'
 
 type BigProps = {
     kana?: string
@@ -91,13 +89,7 @@ export function CardDisplayFront({ json, link, isCut, ref }: CardDisplayVariantP
             }
         }
     )
-    const qrCode = useAsyncMemo(
-        async () => {
-            const data = await encodeQR(link, 'svg')
-            return `data:image/svg+xml;base64,${toBase64(encode(data))}`
-        },
-        [link]
-    )
+    const qrCode = useQRCode(link)
     const { bottom1, bottom2 } = json
     return <CardSvg ref={ref} isCut={isCut} background="white">
         <style>{`

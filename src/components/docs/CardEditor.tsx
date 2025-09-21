@@ -1,39 +1,21 @@
-import { useHash } from "@/hooks/useHash"
-import { createPrivateKey, getLocalStorageDocKey, isPossibleDocKey } from "@/utils/safeDoc"
-import { useMemo } from "react"
-import useLocalStorageState from "use-local-storage-state"
+import { isPossibleDocKey } from "@/utils/safeDoc"
 import { CardForm } from "@/components/docs/CardForm"
+import { useStore } from "@nanostores/react"
+import { knownDraftIds, createDoc } from "@/store/doc"
+import { hashStore, setHash } from "@/store/hash"
 
 export function CardEditor () {
-    const [importCards, exportCards] = useLocalStorageState('known-cards')
-    const knownCards = useMemo(() => {
-        if (!Array.isArray(importCards)) return []
-        return importCards.filter(entry => (
-            typeof entry === 'string' && isPossibleDocKey(entry)
-        ))
-    }, [importCards])
-    const [hash, setHash] = useHash()
+    const hash = useStore(hashStore)
+    const knownIds = useStore(knownDraftIds)
     const newCard = () => {
-        const newCard = createPrivateKey()
-        exportCards(() => [
-            ...knownCards,
-            newCard,
-        ])
-        setHash(newCard)
-    }
-    const discardCard = () => {
-        if (confirm(`Delete Card ${hash}`)) {
-            exportCards(knownCards.filter(card => card !== hash))
-            localStorage.removeItem(getLocalStorageDocKey(hash))
-            setHash('')
-        }
+        setHash(createDoc())
     }
     return <>
         <select value={hash} onChange={(elem) => setHash(elem.currentTarget.value)}>
             <option value="">-</option>
-            {knownCards.map(privateKey => <option key={privateKey} value={privateKey}>{privateKey}</option>)}
+            {isPossibleDocKey(hash) && ! knownIds.includes(hash) ? <optgroup label="Persisted"><option key={hash} value={hash}>{hash}</option></optgroup> : null}
+            {knownIds.length > 0 ? <optgroup label="Drafts">{knownIds.map(privateKey => <option key={privateKey} value={privateKey}>{privateKey}</option>)}</optgroup> : null}
         </select>
-        {hash && isPossibleDocKey(hash) ? <button onClick={discardCard}>Discard Card</button>: null}
         <button onClick={newCard}>New Card</button>
         {hash && isPossibleDocKey(hash) ? <CardForm privateKey={hash} />: null}
     </>

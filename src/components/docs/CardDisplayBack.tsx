@@ -1,6 +1,6 @@
 import type { CardDisplayVariantProps } from "@/components/docs/CardDisplayType";
 import { Color } from "@/docs/card";
-import { CARD_HEIGHT, CARD_WIDTH, CardSvg } from "@/components/docs/CardSvg";
+import { CARD_HEIGHT, CARD_WIDTH, CardSvg, PADDING } from "@/components/docs/CardSvg";
 import { ShipporiAntique } from "@/components/fonts/ShipporiAntiqueB1";
 import { PermanentMarker } from "@/components/fonts/PermanentMarker";
 import { useSvgSize } from "@/hooks/useSvgSize";
@@ -28,14 +28,24 @@ export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
         <style>{`
             ${PermanentMarker}
             ${ShipporiAntique}
-            text {
-                color: #fff;
-                font-size: 105;
-            }     
+            .font--shippori {
+                font-family: 'Shippori Antique B1'
+            }
+            .font--permanent {
+                font-family: 'Permanent Marker'
+            }
+            .callname {
+                font-size: 120px;
+                fill: #fff;
+            }
+            .callname_kana {
+                font-size: 50px;
+                fill: #fff;
+            }
         `}</style>
         {zoom}
         <EmbeddedSVGImage href="https://public.oktech.jp/images/logo-and-design/OKTech-logo-white.svg" width={200} x={20} y={20} />
-        <text ref={callname} style={{ fontSize: 100, fontFamily: 'Permanent Marker', fill: "white" }}>{json.callname}</text>
-        <text ref={callname_kana} style={{ fontSize: 30, fontFamily: 'Shippori Antique B1', fill: "white" }}>{json.callname_kana}</text>
+        <text className="font--permanent callname" ref={callname}>{json.callname}</text>
+        <text className="font--shippori callname_kana" ref={callname_kana}>{json.callname_kana}</text>
     </CardSvg>
 }
