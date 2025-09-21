@@ -1,25 +1,8 @@
-import { createElement, useEffect, useMemo, useState, type ReactElement } from "react"
-import { useAsyncMemo } from "@/hooks/useAsyncMemo"
-import { CardDisplay } from "@/components/docs/CardDisplay"
-import { fetchDocument, isPossibleDocKey } from "@/utils/safeDoc"
+import { createElement, useMemo, type ChangeEventHandler, type ReactElement } from "react"
+import { isPossibleDocKey } from "@/utils/safeDoc"
 import { useHash } from "@/hooks/useHash"
 import { useDoc } from "@/hooks/useDoc"
-import type { DocDisplayProps } from "./DocsDisplay"
-import { DOC_TYPE, DOC_VERSION } from "@/docs/card"
-
-const KnownTypes = [
-    {
-        type: DOC_TYPE,
-        version: DOC_VERSION,
-        component: CardDisplay
-    }
-] satisfies Array<
-    {
-        type: string,
-        version: number
-        component: (props: DocDisplayProps<any>) => ReactElement
-    }
->
+import { KnownTypes } from '@/components/KnownTypes'
 
 export function HashDocumentHook () {
     const [hash, setHash] = useHash()
