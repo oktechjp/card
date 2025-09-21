@@ -22,7 +22,7 @@ const KnownTypes = [
 >
 
 export function HashDocumentHook () {
-    const [hash] = useHash()
+    const [hash, setHash] = useHash()
     const json = useDoc(hash)
     const data = useMemo(
         () => {
@@ -44,6 +44,15 @@ export function HashDocumentHook () {
         },
         [json.data]
     )
+    if ( !isPossibleDocKey(hash)) {
+        const onchange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget: { value }}) => {
+            setHash(value)
+        }
+        return <form className="hash-input">
+            <label htmlFor="code">Please enter the secret code on the document.</label>
+            <input name="code" type="text" value={hash} onChange={onchange}></input>
+        </form>
+    }
     if (json.state === 'loading') {
         return <>Loading...</>
     }
