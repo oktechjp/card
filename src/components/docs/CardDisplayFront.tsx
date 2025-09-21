@@ -89,7 +89,8 @@ export function CardDisplayFront({ json, link, isCut, ref }: CardDisplayVariantP
             }
         }
     )
-    const isClean = Object.keys(json).length === 0
+    const keys = Object.keys(json)
+    const isClean = (keys.length === 0 || keys.length === 1 && keys[0] === 'color')
     if (isClean) {
         link = 'https://oktech.jp'
     }
