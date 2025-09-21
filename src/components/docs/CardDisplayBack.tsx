@@ -1,31 +1,45 @@
 import type { CardDisplayVariantProps } from "@/components/docs/CardDisplayType";
 import { Color, DEFAULT_COLOR } from "@/docs/card";
-import { CARD_HEIGHT, CARD_WIDTH, CardSvg, PADDING } from "@/components/docs/CardSvg";
+import {
+  CARD_HEIGHT,
+  CARD_WIDTH,
+  CardSvg,
+  PADDING,
+} from "@/components/docs/CardSvg";
 import { ShipporiAntique } from "@/components/fonts/ShipporiAntiqueB1";
 import { PermanentMarker } from "@/components/fonts/PermanentMarker";
 import { useSvgSize } from "@/hooks/useSvgSize";
 import { EmbeddedSVGImage } from "../utils/EmbeddedSVGImage";
 
 export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
-    const { callname, callname_kana, zoom } = useSvgSize(
-        ['callname', 'callname_kana'] as const,
-        ({ callname, callname_kana }) => {
-            if (callname) {
-                const centerX = (CARD_WIDTH / 2)
-                const centerY = (CARD_HEIGHT / 2)
-                callname.move(
-                    centerX - callname.bounds.width / 2,
-                    centerY + callname.bounds.height * .25
-                )
-                callname_kana?.move(
-                    centerX - callname_kana.bounds.width / 2,
-                    centerY - callname.bounds.height * .25 - callname_kana.bounds.height * .3
-                )
-            }
-        }
-    )
-    return <CardSvg ref={ref} isCut={isCut} background={((Color[json.color ?? DEFAULT_COLOR]) || Color[DEFAULT_COLOR]).rgb}>
-        <style>{`
+  const { callname, callname_kana, zoom } = useSvgSize(
+    ["callname", "callname_kana"] as const,
+    ({ callname, callname_kana }) => {
+      if (callname) {
+        const centerX = CARD_WIDTH / 2;
+        const centerY = CARD_HEIGHT / 2;
+        callname.move(
+          centerX - callname.bounds.width / 2,
+          centerY + callname.bounds.height * 0.25,
+        );
+        callname_kana?.move(
+          centerX - callname_kana.bounds.width / 2,
+          centerY -
+            callname.bounds.height * 0.25 -
+            callname_kana.bounds.height * 0.3,
+        );
+      }
+    },
+  );
+  return (
+    <CardSvg
+      ref={ref}
+      isCut={isCut}
+      background={
+        (Color[json.color ?? DEFAULT_COLOR] || Color[DEFAULT_COLOR]).rgb
+      }
+    >
+      <style>{`
             ${PermanentMarker}
             ${ShipporiAntique}
             .font--shippori {
@@ -43,9 +57,19 @@ export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
                 fill: #fff;
             }
         `}</style>
-        {zoom}
-        <EmbeddedSVGImage href="https://public.oktech.jp/images/logo-and-design/OKTech-logo-white.svg" width={200} x={20} y={20} />
-        <text className="font--permanent callname" ref={callname}>{json.callname}</text>
-        <text className="font--shippori callname_kana" ref={callname_kana}>{json.callname_kana}</text>
+      {zoom}
+      <EmbeddedSVGImage
+        href="https://public.oktech.jp/images/logo-and-design/OKTech-logo-white.svg"
+        width={200}
+        x={20}
+        y={20}
+      />
+      <text className="font--permanent callname" ref={callname}>
+        {json.callname}
+      </text>
+      <text className="font--shippori callname_kana" ref={callname_kana}>
+        {json.callname_kana}
+      </text>
     </CardSvg>
+  );
 }

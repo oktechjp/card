@@ -102,7 +102,6 @@ jobs:
           path: ${{ env.BUILD_PATH }}/node_modules/.astro
           key: ${{ runner.os }}-astro-cache-${{ env.CACHE_KEY }}-${{ hashFiles('**/astro.config.*','**/package-lock.json','**/pnpm-lock.yaml','**/yarn.lock','public/**/*.{png,jpg,jpeg,webp,avif,gif,svg}','src/assets/**/*.{png,jpg,jpeg,webp,avif,gif,svg}','content/**/*.{png,jpg,jpeg,webp,avif,gif,svg}') }}-${{ github.run_id }}
 
-
   deploy:
     needs: build
     runs-on: ubuntu-latest

@@ -6,6 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "lint:test": "prettier -c .",
+    "lint:fix": "prettier -w .",
     "astro": "astro"
   },
   "dependencies": {
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "@types/react": "^19.1.13",
-    "@types/wicg-file-system-access": "^2023.10.6"
+    "@types/wicg-file-system-access": "^2023.10.6",
+    "prettier": "^3.6.2"
   }
 }
