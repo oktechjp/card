@@ -6,8 +6,8 @@ export const HashDocumentInput = () => {
     const onchange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget: { value }}) => {
         setHash(value)
     }
-    return <>
+    return <form className="hash-input">
         <label htmlFor="code">Please enter the secret code on the document.</label>
         <input name="code" type="text" value={hash} onChange={onchange}></input>
-    </>    
+    </form>
 }

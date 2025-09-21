@@ -113,7 +113,3 @@ export const docs = mapCreator<DocStore<any>>(
         )
     }
 )
-
-export const hashDoc = computed(hashStore, (hash) => {
-    return docs(hash).get()
-})

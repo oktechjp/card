@@ -1,20 +1,15 @@
-import { createElement, useMemo } from "react"
-import { HashDocumentInput } from "./HashDocumentInput"
-import { useStore } from '@nanostores/react'
-import { docs } from "@/store/doc"
-import { KnownTypes } from "../KnownTypes"
-import { hashStore } from "@/store/hash"
+import { createElement } from "react"
+import { KnownTypes } from "@/components/KnownTypes"
+import { HashDocumentInput } from "@/components/docs/HashDocumentInput"
+import { useHashDoc } from "@/hooks/useHashDoc"
 
 export function HashDocumentHook () {
-    const hash = useStore(hashStore)
-    const fromHash = useStore(docs(hash))
+    const { hash, fromHash } = useHashDoc()
     if (fromHash.state === 'loading') {
         return <>Loading...</>
     }
     if (fromHash.state === 'no-doc') {
-        return <form className="hash-input">
-            <HashDocumentInput />
-        </form>
+        return <HashDocumentInput />
     }
     const { doc } = fromHash
     if (!doc) {
