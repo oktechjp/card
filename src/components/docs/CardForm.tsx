@@ -67,7 +67,9 @@ export const CardForm = ({ docKey: docKey }: CardFormProps) => {
           doc.isDirty ? (
             <>
               Diverged from server <a href={doc.link}>{doc.link}</a>,{" "}
-              {encrypted?.prLink ? <a href={encrypted?.prLink}>Create PR</a> : null}
+              {encrypted?.prLink ? (
+                <a href={encrypted?.prLink}>Create PR</a>
+              ) : null}
               <button onClick={discardChanges}>Discard Changes</button>
             </>
           ) : (
@@ -78,7 +80,9 @@ export const CardForm = ({ docKey: docKey }: CardFormProps) => {
         ) : (
           <>
             Not Stored on server{" "}
-            {encrypted?.prLink ? <a href={encrypted?.prLink}>Create PR</a> : null}
+            {encrypted?.prLink ? (
+              <a href={encrypted?.prLink}>Create PR</a>
+            ) : null}
             <button onClick={discardCard}>Discard Card</button>
           </>
         )}

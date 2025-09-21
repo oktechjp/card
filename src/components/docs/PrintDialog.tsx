@@ -4,7 +4,9 @@ import { CardDisplay } from "./CardDisplay";
 import { useEffect, useRef, useState } from "react";
 import type { DocDisplayControl } from "./DocsDisplay";
 import { useButtonAction } from "@/hooks/useButtonAction";
-import { isEmptyCard } from "@/docs/card";
+import { DOC_TYPE, DOC_VERSION, isEmptyCard } from "@/docs/card";
+import { useAsyncMemo } from "@/hooks/useAsyncMemo";
+import { encryptDocument } from "@/utils/safeDoc";
 
 export function PrintDialog() {
   const hashDoc = useHashDoc();
@@ -17,6 +19,18 @@ export function PrintDialog() {
   );
   const downloadFront = useButtonAction(
     async () => (await ref.current?.download("front")) ?? null,
+  );
+  const encrypted = useAsyncMemo(
+    async () =>
+      hashDoc.draft && hashDoc.docKey
+        ? await encryptDocument(
+            hashDoc.docKey,
+            DOC_TYPE,
+            DOC_VERSION,
+            hashDoc.draft,
+          )
+        : null,
+    [hashDoc.docKey, hashDoc.doc],
   );
   useEffect(
     function reset() {
@@ -66,7 +80,13 @@ export function PrintDialog() {
         ) : (
           <p>
             <code>{docKey}</code> selected. Looks like you havn't stored the
-            document yet! 
+            document yet!{" "}
+            {encrypted.data?.prLink ? (
+              <>
+                <a href={encrypted.data?.prLink}>Create a PR</a>,{" "}
+              </>
+            ) : null}
+            <a href={`/new#${docKey}`}>Edit</a>
           </p>
         )}
       </section>

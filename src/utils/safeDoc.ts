@@ -156,8 +156,8 @@ export async function encryptDocument(
         ),
       ),
     ),
-  }
-  const fileName = `${publicKey}.json`
+  };
+  const fileName = `${publicKey}.json`;
   const prURL = new URL(`https://github.com/oktechjp/public/new/main/docs`);
   prURL.searchParams.append("filename", fileName);
   prURL.searchParams.append("value", JSON.stringify(encrypted, null, 2));
@@ -166,6 +166,6 @@ export async function encryptDocument(
     fileName,
     link: `${LINK_PREFIX}${docKey}`,
     prLink: prURL.toString(),
-    encrypted
+    encrypted,
   };
 }
