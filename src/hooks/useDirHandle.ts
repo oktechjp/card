@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-export async function writeFile(dir: FileSystemDirectoryHandle, name: string, data: Uint8Array<ArrayBuffer>) {
+export async function writeFile(dir: FileSystemDirectoryHandle, name: string, data: FileSystemWriteChunkType) {
     const file = await dir.getFileHandle(name, {
         create: true
     })

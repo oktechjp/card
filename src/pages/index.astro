@@ -1,14 +1,8 @@
 ---
-
+import BaseLayout from '@/layouts/BaseLayout.astro'
 import { HashDocumentHook } from "@/components/docs/HashDocumentHook";
-
 ---
 
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    </head>
-    <body>
-        <HashDocumentHook client:only="react"/>
-    </body>
-</html>
+<BaseLayout>
+    <HashDocumentHook client:only="react"/>
+</BaseLayout>
