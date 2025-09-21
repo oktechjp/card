@@ -6,6 +6,7 @@ import { CARD_HEIGHT, CARD_WIDTH, CardSvg } from "@/components/docs/CardSvg";
 import { useSvgSize } from "@/hooks/useSvgSize";
 import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
 import { useQRCode } from "@/hooks/useQrCode";
+import { isEmptyCard } from "@/docs/card";
 
 type BigProps = {
   kana?: string;
@@ -130,10 +131,8 @@ export function CardDisplayFront({
       }
     },
   );
-  const keys = Object.keys(json);
-  const isClean =
-    keys.length === 0 || (keys.length === 1 && keys[0] === "color");
-  if (isClean) {
+  const isEmpty = isEmptyCard(json);
+  if (isEmpty) {
     link = "https://card.oktech.jp/new";
   }
   const qrCode = useQRCode(link);
@@ -199,9 +198,9 @@ export function CardDisplayFront({
           </text>
         ) : null}
       </g>
-      {isClean || json.description ? (
+      {isEmpty || json.description ? (
         <text ref={refs.description} style={{ fontSize: 20 }}>
-          {isClean ? "Tackle tech together in Kansai" : json.description}
+          {isEmpty ? "Tackle tech together in Kansai" : json.description}
         </text>
       ) : null}
       <text

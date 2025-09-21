@@ -413,3 +413,11 @@ export type CardType = {
   bottom1?: keyof typeof AllCountryTypes;
   bottom2?: keyof typeof AllCountryTypes;
 };
+
+export function isEmptyCard(doc: CardType | undefined) {
+  if (!doc) {
+    return true;
+  }
+  const keys = Object.keys(doc);
+  return keys.length === 0 || (keys.length === 1 && keys[0] === "color");
+}

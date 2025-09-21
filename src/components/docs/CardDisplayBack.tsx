@@ -1,14 +1,10 @@
 import type { CardDisplayVariantProps } from "@/components/docs/CardDisplayType";
 import { Color, DEFAULT_COLOR } from "@/docs/card";
-import {
-  CARD_HEIGHT,
-  CARD_WIDTH,
-  CardSvg,
-} from "@/components/docs/CardSvg";
+import { CARD_HEIGHT, CARD_WIDTH, CardSvg } from "@/components/docs/CardSvg";
 import { ShipporiAntique } from "@/components/fonts/ShipporiAntiqueB1";
 import { PermanentMarker } from "@/components/fonts/PermanentMarker";
+import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
 import { useSvgSize } from "@/hooks/useSvgSize";
-import { EmbeddedSVGImage } from "../utils/EmbeddedSVGImage";
 
 export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
   const { callname, callname_kana, zoom } = useSvgSize(

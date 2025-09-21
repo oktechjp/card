@@ -7,7 +7,7 @@ import {
   DEFAULT_COLOR,
   DOC_TYPE,
   DOC_VERSION,
-  type CardType,
+  isEmptyCard,
   type CountryGroup,
 } from "@/docs/card";
 import { useStore } from "@nanostores/react";
@@ -15,8 +15,8 @@ import { docs } from "@/store/doc";
 import { useAsyncMemo } from "@/hooks/useAsyncMemo";
 import { encryptDocument } from "@/utils/safeDoc";
 import { setHash } from "@/store/hash";
-import { InputWithLabel } from "./InputWithLabel";
-import { SelectWithLabel } from "./SelectWithLabel";
+import { InputWithLabel } from "@/components/docs/InputWithLabel";
+import { SelectWithLabel } from "@/components/docs/SelectWithLabel";
 
 export type CardFormProps = {
   privateKey: string;
@@ -26,7 +26,7 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
   const fileRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLTextAreaElement>(null);
   const doc = useStore(docs(privateKey));
-  const json = doc.draft ?? doc.doc?.data;
+  const json = doc.draft ?? doc.doc?.data ?? {};
   const encrypted = useAsyncMemo(
     async () =>
       await encryptDocument(privateKey, DOC_TYPE, DOC_VERSION, json ?? {}),
@@ -84,6 +84,8 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
           ) : (
             <a href={doc.link}>{doc.link}</a>
           )
+        ) : isEmptyCard(doc.draft) ? (
+          <>Card Empty</>
         ) : (
           <>
             Not Stored on server{" "}
@@ -92,11 +94,10 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
           </>
         )}
       </div>
-      <CardDisplay
-        docKey={privateKey}
-        link={doc.link}
-        json={json as CardType}
-      />
+      <div>
+        <a href={`/print#${doc.docKey}`}>Print</a>
+      </div>
+      <CardDisplay docKey={privateKey} link={doc.link} json={json} />
       <form ref={formRef} onInput={handleFormChange}>
         <InputWithLabel name="surname" label="Surname" />
         <InputWithLabel name="surname_kana" label="Surname Kana" />

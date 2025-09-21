@@ -166,4 +166,3 @@ export function toCrockfordBase32(input: Uint8Array) {
 
 export const decodeJSON = (input: Uint8Array) =>
   JSON.parse(new TextDecoder().decode(input));
- 
