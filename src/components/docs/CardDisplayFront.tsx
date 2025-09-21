@@ -4,7 +4,7 @@ import type { CardDisplayVariantProps } from '@/components/docs/CardDisplayType'
 import { NotoSansJP } from '@/components/fonts/NotoSansJP'
 import { CARD_HEIGHT, CARD_WIDTH, CardSvg } from '@/components/docs/CardSvg'
 import { useSvgSize } from '@/hooks/useSvgSize'
-import { EmbeddedSVGImage } from '../utils/EmbeddedSVGImage'
+import { EmbeddedSVGImage } from '@/components/utils/EmbeddedSVGImage'
 import { useQRCode } from '@/hooks/useQrCode'
 
 type BigProps = {
@@ -89,6 +89,10 @@ export function CardDisplayFront({ json, link, isCut, ref }: CardDisplayVariantP
             }
         }
     )
+    const isClean = Object.keys(json).length === 0
+    if (isClean) {
+        link = 'https://oktech.jp'
+    }
     const qrCode = useQRCode(link)
     const { bottom1, bottom2 } = json
     return <CardSvg ref={ref} isCut={isCut} background="white">
@@ -121,7 +125,7 @@ export function CardDisplayFront({ json, link, isCut, ref }: CardDisplayVariantP
             {json.email ? <text ref={refs.email} style={{ fontSize: 20 }}>{json.email}</text> : null}
             {json.url ? <text ref={refs.url} style={{ fontSize: 20 }}>{json.url}</text> : null}
         </g>
-        {json.description ? <text ref={refs.description} style={{ fontSize: 20 }}>{json.description}</text> : null}
+        {isClean || json.description ? <text ref={refs.description} style={{ fontSize: 20 }}>{isClean ? 'Tackle tech together in Kansai' : json.description}</text> : null}
         <text ref={refs.link} style={{ fontSize: 16, marginTop: 40, fill: '#999' }}>{link}</text>
         {qrCode.data ? <image href={qrCode.data} width="100" height="100" opacity={0.7} x={CARD_WIDTH - 100 - 15} y={CARD_HEIGHT - 100 - 15} /> : null}
         {bottom1 ? <EmbeddedSVGImage ref={refs.bottom1} href={`/svg/${bottom1}.svg`} height={20} /> : null}
