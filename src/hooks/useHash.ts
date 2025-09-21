@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 
 export function useHash (interval: number = 100):
 [hash: string, setHash: (newHash: string) => void] {
-    const [hash, setHash] = useState('')
+    const [hash, setHash] = useState(globalThis.document?.location.hash)
     const ref = useRef({
         hash: '',
         setHash (newHash: string) {
