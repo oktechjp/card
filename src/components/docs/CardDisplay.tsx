@@ -43,7 +43,6 @@ export function CardDisplay({ json, link, docKey }: DocDisplayProps<CardType>) {
     }
     const openFront = openImage(front)
     const openBack = openImage(back)
-    console.log(json)
     return <>
         <div>
             <button title={disabled} onClick={openDir} disabled={disabled !== undefined}>Download</button>

@@ -43,6 +43,7 @@ export const Color = {
 } as const
 
 export const ColorType = Object.fromEntries(Object.entries(Color).map(([key, { label }]) => [key, label])) as { [key in keyof typeof Color]: typeof Color[key]['label'] }
+export const DEFAULT_COLOR = 'red'
 export const JapanCountryTypes = {
     'jp': 'Japan',
     'jp-osaka-pref': 'Osaka Pref',

@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef } from "react"
 import { formToJSON, jsonToForm } from "@/utils/form";
 import { CardDisplay } from "@/components/docs/CardDisplay";
-import { ColorType, CountryGroups, DOC_TYPE, DOC_VERSION, type CardType, type CountryGroup } from "@/docs/card";
+import { ColorType, CountryGroups, DEFAULT_COLOR, DOC_TYPE, DOC_VERSION, type CardType, type CountryGroup } from "@/docs/card";
 import { useStore } from "@nanostores/react";
 import { docs } from "@/store/doc";
 import { useAsyncMemo } from "@/hooks/useAsyncMemo";
 import { encryptDocument } from "@/utils/safeDoc";
 import { setHash } from "@/store/hash";
+import { InputWithLabel } from "./InputWithLabel";
+import { SelectWithLabel } from "./SelectWithLabel";
 
 export type CardFormProps = {
     privateKey: string
@@ -79,62 +81,23 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
         </div>
         <CardDisplay docKey={privateKey} link={doc.link} json={json as CardType} />
         <form ref={formRef} onInput={handleFormChange}>
-            <div>
-                <label htmlFor="surname">Surname</label>
-                <input name="surname" type="text" />
-            </div>
-            <div>
-                <label htmlFor="surname_kana">Surname Kana</label>
-                <input name="surname_kana" type="text" />
-            </div>
-            <div>
-                <label htmlFor="firstname">Firstname</label>
-                <input name="firstname" type="text" />
-            </div>
-            <div>
-                <label htmlFor="firstname_kana">Firstname Kana</label>
-                <input name="firstname_kana" type="text" />
-            </div>
-            <div>
-                <label htmlFor="callname">Callname</label>
-                <input name="callname" type="text" />
-            </div>
-            <div>
-                <label htmlFor="callname_kana">Callname Kana</label>
-                <input name="callname_kana" type="text" />
-            </div>
-            <div>
-                <label htmlFor="subtitle">Subtitle</label>
-                <input name="subtitle" type="text" />
-            </div>
-            <div>
-                <label htmlFor="email">Email</label>
-                <input name="email" type="email" />
-            </div>
-            <div>
-                <label htmlFor="url">URL</label>
-                <input name="url" type="url" />
-            </div>
-            <div>
-                <label htmlFor="color">Color</label>
-                <select name="color">
-                    {Object.entries(ColorType).map(([key, value]) => 
-                        <option key={key} value={key}>{value}</option>
-                    )}
-                </select>
-            </div>
-            <div>
-                <label htmlFor="description">Description</label>
-                <input name="description" type="text" />
-            </div>
-            <div>
-                <label htmlFor="bottom1">Icon A</label>
-                <CountrySelect name="bottom1" />
-            </div>
-            <div>
-                <label htmlFor="bottom2">Icon B</label>
-                <CountrySelect name="bottom2" />
-            </div>
+            <InputWithLabel name="surname" label="Surname" />
+            <InputWithLabel name="surname_kana" label="Surname Kana" />
+            <InputWithLabel name="firstname" label="Firstname" />
+            <InputWithLabel name="firstname_kana" label="Firstname Kana" />
+            <InputWithLabel name="callname" label="Callname" />
+            <InputWithLabel name="callname_kana" label="Callname Kana" />
+            <InputWithLabel name="subtitle" label="Subtitle" />
+            <InputWithLabel name="email" label="Email" />
+            <InputWithLabel name="url" label="URL" />
+            <SelectWithLabel name="color" label="Color" defaultValue={DEFAULT_COLOR}>
+                {Object.entries(ColorType).map(([key, value]) => 
+                    <option key={key} value={key}>{value}</option>
+                )}
+            </SelectWithLabel>
+            <InputWithLabel name="description" label="Description" />
+            <CountrySelect name="bottom1" label="Icon A" />
+            <CountrySelect name="bottom2" label="Icon B" />
         </form>
         <details>
             <summary>Advanced</summary>
@@ -148,6 +111,7 @@ export const CardForm = ({ privateKey }: CardFormProps) => {
 
 export type CountrySelectProps = {
     name: string
+    label: string
 }
 function OptionGroup({ group, parent }:  { group: CountryGroup, parent?: string }) {
     const name = parent ? `${parent} - ${group.name}` : group.name
@@ -162,9 +126,9 @@ function OptionGroup({ group, parent }:  { group: CountryGroup, parent?: string 
         {(group.groups ?? []).map(group => <OptionGroup key={group.name} group={group} parent={name} />)}
     </>
 }
-function CountrySelect ({ name }: CountrySelectProps) {
-    return <select name={name}>
+function CountrySelect ({ name, label }: CountrySelectProps) {
+    return <SelectWithLabel name={name} defaultValue="" label={label}>
         <option value="">-</option>
         {CountryGroups.map(group => <OptionGroup key={group.name} group={group} />)}
-    </select>
+    </SelectWithLabel>
 }

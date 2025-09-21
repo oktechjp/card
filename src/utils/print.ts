@@ -60,7 +60,6 @@ export async function svgToImage(elem: SVGSVGElement, opts?: SVGToImageProps) {
     const scaleFactor = opts?.scaleFactor ?? 1
     canvas.width = width * scaleFactor
     canvas.height = height * scaleFactor
-    console.log(canvas.width, canvas.height)
     const ctx = canvas.getContext('2d', {
         alpha: true,
         colorSpace: "display-p3",

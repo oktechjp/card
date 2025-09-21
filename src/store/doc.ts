@@ -50,7 +50,6 @@ export const visitedDocIds = computed(persistentIds, (all) => Object.keys(all))
 export const docs = mapCreator<DocStore<any>>(
     (store, id) => {
         const validId = isPossibleDocKey(id)
-        persistentIds.setKey(id, true)
         const base = { id, validId, link: `https://card.oktech.jp#${id}` }
         if (!validId) {
             store.set({ ...base, state: 'no-doc' })
@@ -61,7 +60,9 @@ export const docs = mapCreator<DocStore<any>>(
             if (current.state !== 'ready') {
                 throw new Error('not ready yet')
             }
-            persistentIds.setKey(id, undefined)
+            if (! current.doc) {
+                persistentIds.setKey(id, undefined)
+            }
             persistentDrafts.setKey(id, undefined)
             return !!current.doc
         }
@@ -79,6 +80,7 @@ export const docs = mapCreator<DocStore<any>>(
                     if (!isDirty && current.draft) {
                         persistentDrafts.setKey(id, undefined)
                     }
+                    persistentIds.setKey(id, true)
                     store.set({ ...current, saveDraft, discard, state: 'ready', refresh, doc, isDirty })
                 } catch (err) {
                     console.warn(err)

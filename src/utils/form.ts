@@ -49,9 +49,13 @@ export function formToJSON(input: HTMLFormElement): JSONObj {
             const name = elem.name
             for (const option of elem.options) {
                 if (option.selected) {
-                    json[name] = option.value
+                    if (!option.defaultSelected) {
+                        json[name] = option.value
+                    }
+                    break
                 }
             }
+            continue
         }
         if (elem instanceof HTMLInputElement) {
             const name = elem.name.toString()

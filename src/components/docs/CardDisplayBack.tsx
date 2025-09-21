@@ -1,5 +1,5 @@
 import type { CardDisplayVariantProps } from "@/components/docs/CardDisplayType";
-import { Color } from "@/docs/card";
+import { Color, DEFAULT_COLOR } from "@/docs/card";
 import { CARD_HEIGHT, CARD_WIDTH, CardSvg, PADDING } from "@/components/docs/CardSvg";
 import { ShipporiAntique } from "@/components/fonts/ShipporiAntiqueB1";
 import { PermanentMarker } from "@/components/fonts/PermanentMarker";
@@ -24,7 +24,7 @@ export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
             }
         }
     )
-    return <CardSvg ref={ref} isCut={isCut} background={((json.color ? Color[json.color] : null) || Color.red).rgb}>
+    return <CardSvg ref={ref} isCut={isCut} background={((Color[json.color ?? DEFAULT_COLOR]) || Color[DEFAULT_COLOR]).rgb}>
         <style>{`
             ${PermanentMarker}
             ${ShipporiAntique}

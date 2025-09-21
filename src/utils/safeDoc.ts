@@ -115,7 +115,6 @@ export async function encryptDocument(privateKey: string, type: string, version:
                     time,
                     data
                 }
-    console.log({ json })
     return {
         privateKey,
         fileName: `${publicKey}.json`,
