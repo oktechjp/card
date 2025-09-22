@@ -1,3 +1,4 @@
+import { Canvg } from "canvg";
 import { AbortError } from "./AbortError";
 import { encode, toBase64 } from "./buffer";
 
@@ -67,9 +68,11 @@ export async function svgToImage(elem: SVGSVGElement, opts?: SVGToImageProps) {
   if (!ctx) {
     throw new Error("Cant get context");
   }
-  const uri = svgToDataURI(elem);
-  const img = await loadImage(uri);
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  const canvg = await Canvg.from(ctx, elem.outerHTML, {
+    ignoreDimensions: true
+  })
+  await canvg.ready()
+  await canvg.render()
   return await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
       (blob) => {
