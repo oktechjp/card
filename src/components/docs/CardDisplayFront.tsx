@@ -38,11 +38,11 @@ const Big = ({ kana, text, className, ref }: BigProps) => {
     <g ref={ref} className={clsx("big", className)}>
       {zoom}
       {text && kana ? (
-        <text ref={refs.kana} className="big--kana">
+        <text ref={refs.kana} className={clsx("big--kana", className)}>
           {kana}
         </text>
       ) : null}
-      <text ref={refs.regular} className="big--regular" fontSize="40px">
+      <text ref={refs.regular} className={clsx("big--regular", className)} fontSize="40px">
         {text}
       </text>
     </g>
@@ -149,12 +149,12 @@ export function CardDisplayFront({
             }
             .big--regular {
                 font-size: 50px;
-                font-weight: regular;
+                font-weight: normal;
             }
             .big--kana {
                 font-size: 20px;
                 margin-bottom: 30px;
-                font-weight: regular;
+                font-weight: normal;
             }
             .big--surname {
                 font-weight: bold;
