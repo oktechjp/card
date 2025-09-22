@@ -8,6 +8,7 @@ import {
   toCrockfordBase32,
 } from "./buffer";
 import type { JSONObj } from "./form";
+import type { EventHandler, MouseEventHandler } from "react";
 
 const ENCRYPT_ALGO = "AES-GCM";
 const ENCRYPT_LEN = 256;
@@ -134,7 +135,9 @@ export async function encryptDocument(
   fileName: string;
   link: string;
   encrypted: EncryptedDocumentWrapper;
-  prLink: string;
+  encryptedJson: string;
+  prCreateLink: string;
+  prUpdateAction: MouseEventHandler;
   docKey: string;
 }> {
   const time = new Date().toISOString();
@@ -158,14 +161,48 @@ export async function encryptDocument(
     ),
   };
   const fileName = `${publicKey}.json`;
-  const prURL = new URL(`https://github.com/oktechjp/public/new/main/docs`);
-  prURL.searchParams.append("filename", fileName);
-  prURL.searchParams.append("value", JSON.stringify(encrypted, null, 2));
+  const encryptedJson = JSON.stringify(encrypted, null, 2)
+  const prCreateURL = new URL(`https://github.com/oktechjp/public/new/main/docs`);
+  prCreateURL.searchParams.append("filename", fileName);
+  prCreateURL.searchParams.append("value", encryptedJson);
+  const prUpdateURL = new URL(`https://github.com/oktechjp/public/edit/main/docs/${publicKey}.json`)
+  prUpdateURL.searchParams.append("value", encryptedJson);
   return {
     docKey,
     fileName,
     link: `${LINK_PREFIX}${docKey}`,
-    prLink: prURL.toString(),
+    prCreateLink: prCreateURL.toString(),
+    prUpdateAction: () => {
+      const clipboard = globalThis.navigator?.clipboard
+      if (!clipboard) {
+        alert('todo')
+        return
+      }
+      ;(async () => {
+        await clipboard.writeText(encryptedJson)
+        if (!confirm(`Github doesnt support pre-filling the changed content. :-(`)) {
+          return
+        }
+        if (!confirm(`The new content is now in your clipboard!`)) {
+          return
+        }
+        if (!confirm(`After sending okay we will redirect you to github!`)) {
+          return
+        }
+        if (!confirm(`Paste the content on the next site into github!`)) {
+          return
+        }
+        window.open(
+          prUpdateURL.toString(),
+          '_blank'
+        )
+      })()
+        .catch(err => {
+          console.error(err)
+          alert('Something went wrong :-(')
+        })
+    },
     encrypted,
+    encryptedJson,
   };
 }

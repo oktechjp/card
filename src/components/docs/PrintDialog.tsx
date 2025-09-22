@@ -81,9 +81,14 @@ export function PrintDialog() {
           <p>
             <code>{docKey}</code> selected. Looks like you havn't stored the
             document yet!{" "}
-            {encrypted.data?.prLink ? (
+            {doc && encrypted.data?.prUpdateAction ? (
               <>
-                <a href={encrypted.data?.prLink}>Create a PR</a>,{" "}
+                <button onClick={encrypted.prUpdateLink}>Update PR</button>,{" "}
+              </>
+            ) : 
+            draft && encrypted.data?.prCreateLink ? (
+              <>
+                <a href={encrypted.data.prCreateLink}>Create a PR</a>,{" "}
               </>
             ) : null}
             <a href={`/new#${docKey}`}>Edit</a>
