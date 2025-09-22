@@ -7,6 +7,7 @@ import { useSvgSize } from "@/hooks/useSvgSize";
 import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
 import { useQRCode } from "@/hooks/useQrCode";
 import { isEmptyCard } from "@/docs/card";
+import { SVG_RATIOS } from "@/docs/svg-ratios";
 
 type BigProps = {
   kana?: string;
@@ -163,6 +164,7 @@ export function CardDisplayFront({
       <EmbeddedSVGImage
         href="https://public.oktech.jp/images/logo-and-design/OKTech-logo-onlight-rgb.svg"
         width={200}
+        height={52}
         x={20}
         y={20}
       />
@@ -224,6 +226,7 @@ export function CardDisplayFront({
           ref={refs.bottom1}
           href={`/svg/${bottom1}.svg`}
           height={20}
+          width={SVG_RATIOS[bottom1] * 20}
         />
       ) : null}
       {bottom2 ? (
@@ -231,6 +234,7 @@ export function CardDisplayFront({
           ref={refs.bottom2}
           href={`/svg/${bottom2}.svg`}
           height={20}
+          width={SVG_RATIOS[bottom2] * 20}
         />
       ) : null}
     </CardSvg>

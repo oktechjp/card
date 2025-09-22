@@ -56,6 +56,7 @@ export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
       <EmbeddedSVGImage
         href="https://public.oktech.jp/images/logo-and-design/OKTech-logo-white.svg"
         width={200}
+        height={52}
         x={20}
         y={20}
       />
