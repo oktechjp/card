@@ -97,7 +97,7 @@ export function PrintDialog() {
           <CardDisplay
             {...{
               docKey,
-              json: doc ?? draft ?? {},
+              json: doc?.data ?? draft ?? {},
               link: link!,
               ref,
             }}
