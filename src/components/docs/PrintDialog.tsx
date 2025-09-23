@@ -83,10 +83,10 @@ export function PrintDialog() {
             document yet!{" "}
             {doc && encrypted.data?.prUpdateAction ? (
               <>
-                <button onClick={encrypted.prUpdateLink}>Update PR</button>,{" "}
+                <button onClick={encrypted.data.prUpdateAction}>Update PR</button>
+                ,{" "}
               </>
-            ) : 
-            draft && encrypted.data?.prCreateLink ? (
+            ) : draft && encrypted.data?.prCreateLink ? (
               <>
                 <a href={encrypted.data.prCreateLink}>Create a PR</a>,{" "}
               </>
