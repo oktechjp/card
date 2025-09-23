@@ -5,12 +5,20 @@ import { useHashDoc } from "@/hooks/useHashDoc";
 
 export function HashDocumentHook() {
   const fromHash = useHashDoc();
-  if (fromHash.state === "loading") {
-    return <>Loading...</>;
-  }
   const { doc } = fromHash;
   if (fromHash.state === "no-doc" || !doc) {
-    return <HashDocumentInput label="Document not found. Maybe you mistook?" />;
+    return (
+      <>
+        <HashDocumentInput
+          label={
+            fromHash.state !== "loading" && fromHash.validId
+              ? "Document not found. Maybe you mistook?"
+              : "Please enter the ID from the card."
+          }
+        />
+        {fromHash.state === "loading" ? <>Loading...</> : null}
+      </>
+    );
   }
   const type = KnownTypes.find(
     (type) => type.type === doc.type && type.version === doc.version,

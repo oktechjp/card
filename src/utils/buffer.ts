@@ -201,14 +201,20 @@ export function toCrockfordBase32(input: Uint8Array) {
   return output.map((byte) => c32[byte]).join("");
 }
 
-export function sanitizeCrockfordBase32(input: string, ignoreUnknown: true): string;
-export function sanitizeCrockfordBase32(input: string, ignoreUnknown: false): null|string;
+export function sanitizeCrockfordBase32(
+  input: string,
+  ignoreUnknown: true,
+): string;
+export function sanitizeCrockfordBase32(
+  input: string,
+  ignoreUnknown: false,
+): null | string;
 export function sanitizeCrockfordBase32(input: string, ignoreUnknown: boolean) {
   let sane = "";
   let count = 0;
   for (const char of input) {
-    const validChar = c32Lookup[char]
-    if (char === '-') {
+    const validChar = c32Lookup[char];
+    if (char === "-") {
       continue;
     }
     if (validChar !== undefined) {
@@ -217,7 +223,7 @@ export function sanitizeCrockfordBase32(input: string, ignoreUnknown: boolean) {
       }
       count += 1;
       sane += c32[validChar];
-    } else if (! ignoreUnknown) {
+    } else if (!ignoreUnknown) {
       return null;
     }
   }
