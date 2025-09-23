@@ -133,7 +133,7 @@ export function toBase64(uint8: Uint8Array) {
 export const encode = (input: string) => new TextEncoder().encode(input);
 export const encodeJSON = (input: any) => encode(JSON.stringify(input));
 
-export const c32Dict = [
+const c32Dict = [
   "0Oo",
   "1IiLl",
   "2",
@@ -168,7 +168,7 @@ export const c32Dict = [
   "Zz",
 ];
 const c32 = c32Dict.map((chars) => chars[0]);
-export const c32Lookup = c32Dict.reduce(
+const c32Lookup = c32Dict.reduce(
   (lookup, chars, value) => {
     for (const char of chars) {
       lookup[char] = value;
@@ -201,16 +201,27 @@ export function toCrockfordBase32(input: Uint8Array) {
   return output.map((byte) => c32[byte]).join("");
 }
 
-export function sanitizeCrockfordBase32(input: string) {
-  const b32 = input.replaceAll("-", "");
-  if (b32.length !== 20) {
-    return null;
+export function sanitizeCrockfordBase32(input: string, ignoreUnknown: true): string;
+export function sanitizeCrockfordBase32(input: string, ignoreUnknown: false): null|string;
+export function sanitizeCrockfordBase32(input: string, ignoreUnknown: boolean) {
+  let sane = "";
+  let count = 0;
+  for (const char of input) {
+    const validChar = c32Lookup[char]
+    if (char === '-') {
+      continue;
+    }
+    if (validChar !== undefined) {
+      if (count % 5 === 0 && count !== 0) {
+        sane += "-";
+      }
+      count += 1;
+      sane += c32[validChar];
+    } else if (! ignoreUnknown) {
+      return null;
+    }
   }
-  const bytes = fromCrockfordBase32(input);
-  if (!bytes) {
-    return null;
-  }
-  return new Uint8Array(bytes.buffer);
+  return sane;
 }
 
 export function fromCrockfordBase32(input: string) {

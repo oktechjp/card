@@ -91,14 +91,14 @@ export async function toPublicKey(privateKey: string) {
 }
 
 export function getPossibleDocKey(input: string) {
-  const bytes = sanitizeCrockfordBase32(input);
-  if (!bytes) {
+  const key = sanitizeCrockfordBase32(input, false);
+  if (!key) {
     return null;
   }
-  if (bytes.length < 12) {
+  if (key.length !== 23) {
     return null;
   }
-  return toReadableHash(new Uint8Array(bytes.buffer, 0, 12));
+  return key;
 }
 
 export async function fetchDocument(privateKey: string) {

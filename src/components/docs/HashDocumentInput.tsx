@@ -1,11 +1,10 @@
 import {
   useId,
   type ChangeEvent,
-  type ChangeEventHandler,
   type FormEvent,
 } from "react";
 import { useHash } from "@/hooks/useHash";
-import { c32Lookup } from "@/utils/buffer";
+import { sanitizeCrockfordBase32 } from "@/utils/buffer";
 
 export const HashDocumentInput = ({ label }: { label: string }) => {
   const [hash, setHash] = useHash();
@@ -20,16 +19,7 @@ export const HashDocumentInput = ({ label }: { label: string }) => {
       setHash(value);
       return;
     }
-    let sane = "";
-    for (const char of value) {
-      if (c32Lookup[char] !== undefined) {
-        sane += char;
-        if (sane.length % 6 === 5) {
-          sane += "-";
-        }
-      }
-    }
-    setHash(sane);
+    setHash(sanitizeCrockfordBase32(value, true));
   };
   const id = useId();
   return (
