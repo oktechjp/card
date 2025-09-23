@@ -27,13 +27,7 @@ function getLens(b64: string) {
   return [validLen, placeHoldersLen];
 }
 
-// base64 is 4/3 + up to two characters of the original data
-function byteLength(b64: string) {
-  const [validLen, placeHoldersLen] = getLens(b64);
-  return ((validLen + placeHoldersLen) * 3) / 4 - placeHoldersLen;
-}
-
-function _byteLength(b64: string, validLen: number, placeHoldersLen: number) {
+function _byteLength(validLen: number, placeHoldersLen: number) {
   return ((validLen + placeHoldersLen) * 3) / 4 - placeHoldersLen;
 }
 
@@ -41,7 +35,7 @@ export function fromBase64(b64: string) {
   let tmp: number;
   const [validLen, placeHoldersLen] = getLens(b64);
 
-  const arr = new Uint8Array(_byteLength(b64, validLen, placeHoldersLen));
+  const arr = new Uint8Array(_byteLength(validLen, placeHoldersLen));
 
   let curByte = 0;
 

@@ -161,11 +161,15 @@ export async function encryptDocument(
     ),
   };
   const fileName = `${publicKey}.json`;
-  const encryptedJson = JSON.stringify(encrypted, null, 2)
-  const prCreateURL = new URL(`https://github.com/oktechjp/public/new/main/docs`);
+  const encryptedJson = JSON.stringify(encrypted, null, 2);
+  const prCreateURL = new URL(
+    `https://github.com/oktechjp/public/new/main/docs`,
+  );
   prCreateURL.searchParams.append("filename", fileName);
   prCreateURL.searchParams.append("value", encryptedJson);
-  const prUpdateURL = new URL(`https://github.com/oktechjp/public/edit/main/docs/${publicKey}.json`)
+  const prUpdateURL = new URL(
+    `https://github.com/oktechjp/public/edit/main/docs/${publicKey}.json`,
+  );
   prUpdateURL.searchParams.append("value", encryptedJson);
   return {
     docKey,
@@ -173,34 +177,32 @@ export async function encryptDocument(
     link: `${LINK_PREFIX}${docKey}`,
     prCreateLink: prCreateURL.toString(),
     prUpdateAction: () => {
-      const clipboard = globalThis.navigator?.clipboard
+      const clipboard = globalThis.navigator?.clipboard;
       if (!clipboard) {
-        alert('todo')
-        return
+        alert("todo");
+        return;
       }
-      ;(async () => {
-        await clipboard.writeText(encryptedJson)
-        if (!confirm(`Github doesnt support pre-filling the changed content. :-(`)) {
-          return
+      (async () => {
+        await clipboard.writeText(encryptedJson);
+        if (
+          !confirm(`Github doesnt support pre-filling the changed content. :-(`)
+        ) {
+          return;
         }
         if (!confirm(`The new content is now in your clipboard!`)) {
-          return
+          return;
         }
         if (!confirm(`After sending okay we will redirect you to github!`)) {
-          return
+          return;
         }
         if (!confirm(`Paste the content on the next site into github!`)) {
-          return
+          return;
         }
-        window.open(
-          prUpdateURL.toString(),
-          '_blank'
-        )
-      })()
-        .catch(err => {
-          console.error(err)
-          alert('Something went wrong :-(')
-        })
+        window.open(prUpdateURL.toString(), "_blank");
+      })().catch((err) => {
+        console.error(err);
+        alert("Something went wrong :-(");
+      });
     },
     encrypted,
     encryptedJson,

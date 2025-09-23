@@ -69,10 +69,10 @@ export async function svgToImage(elem: SVGSVGElement, opts?: SVGToImageProps) {
     throw new Error("Cant get context");
   }
   const canvg = await Canvg.from(ctx, elem.outerHTML, {
-    ignoreDimensions: true
-  })
-  await canvg.ready()
-  await canvg.render()
+    ignoreDimensions: true,
+  });
+  await canvg.ready();
+  await canvg.render();
   return await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
       (blob) => {

@@ -42,7 +42,11 @@ const Big = ({ kana, text, className, ref }: BigProps) => {
           {kana}
         </text>
       ) : null}
-      <text ref={refs.regular} className={clsx("big--regular", className)} fontSize="40px">
+      <text
+        ref={refs.regular}
+        className={clsx("big--regular", className)}
+        fontSize="40px"
+      >
         {text}
       </text>
     </g>
