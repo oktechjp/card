@@ -33,6 +33,7 @@ export const HashDocumentInput = ({ label }: { label: string }) => {
         value={hash}
         onChange={onchange}
         width={50}
+        autoFocus
       ></input>
     </form>
   );
