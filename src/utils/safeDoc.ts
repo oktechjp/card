@@ -3,7 +3,7 @@ import {
   encode,
   encodeJSON,
   fromBase64,
-  fromCrockfordBase32,
+  sanitizeCrockfordBase32,
   toBase64,
   toCrockfordBase32,
 } from "./buffer";
@@ -91,16 +91,14 @@ export async function toPublicKey(privateKey: string) {
 }
 
 export function getPossibleDocKey(input: string) {
-  if (!/^([0O1IL23456789ABCDEFGHJKMNPQRSTVWXYZ-]*)$/i.test(input)) {
+  const bytes = sanitizeCrockfordBase32(input);
+  if (!bytes) {
     return null;
   }
-  const b32 = input.replaceAll("-", "");
-  if (b32.length !== 20) {
+  if (bytes.length < 12) {
     return null;
   }
-  return toReadableHash(new Uint8Array(
-    fromCrockfordBase32(input).buffer, 0, 12)
-  );
+  return toReadableHash(new Uint8Array(bytes.buffer, 0, 12));
 }
 
 export async function fetchDocument(privateKey: string) {

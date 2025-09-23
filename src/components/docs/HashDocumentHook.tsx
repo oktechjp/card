@@ -8,14 +8,9 @@ export function HashDocumentHook() {
   if (fromHash.state === "loading") {
     return <>Loading...</>;
   }
-  if (fromHash.state === "no-doc") {
-    return (
-      <HashDocumentInput label="Please enter the secret code on the document." />
-    );
-  }
   const { doc } = fromHash;
-  if (!doc) {
-    return <div>Not found.</div>;
+  if (fromHash.state === "no-doc" || !doc) {
+    return <HashDocumentInput label="Document not found. Maybe you mistook?" />;
   }
   const type = KnownTypes.find(
     (type) => type.type === doc.type && type.version === doc.version,
