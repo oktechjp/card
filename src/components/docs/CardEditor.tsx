@@ -1,4 +1,4 @@
-import { isPossibleDocKey } from "@/utils/safeDoc";
+import { getPossibleDocKey } from "@/utils/safeDoc";
 import { CardForm } from "@/components/docs/CardForm";
 import { useStore } from "@nanostores/react";
 import { knownDraftIds, createDoc } from "@/store/doc";
@@ -10,6 +10,7 @@ export function CardEditor() {
   const newCard = () => {
     setHash(createDoc());
   };
+  const isPossibleDocKey = getPossibleDocKey(hash) != null;
   return (
     <>
       <select
@@ -17,7 +18,7 @@ export function CardEditor() {
         onChange={(elem) => setHash(elem.currentTarget.value)}
       >
         <option value="">-</option>
-        {isPossibleDocKey(hash) && !knownIds.includes(hash) ? (
+        {isPossibleDocKey && !knownIds.includes(hash) ? (
           <optgroup label="Persisted">
             <option key={hash} value={hash}>
               {hash}
@@ -35,7 +36,7 @@ export function CardEditor() {
         ) : null}
       </select>
       <button onClick={newCard}>New Card</button>
-      {hash && isPossibleDocKey(hash) ? <CardForm docKey={hash} /> : null}
+      {hash && isPossibleDocKey ? <CardForm docKey={hash} /> : null}
     </>
   );
 }

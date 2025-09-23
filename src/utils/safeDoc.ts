@@ -1,9 +1,9 @@
-import { DOC_TYPE, DOC_VERSION } from "@/docs/card";
 import {
   decodeJSON,
   encode,
   encodeJSON,
   fromBase64,
+  fromCrockfordBase32,
   toBase64,
   toCrockfordBase32,
 } from "./buffer";
@@ -90,9 +90,16 @@ export async function toPublicKey(privateKey: string) {
   );
 }
 
-export function isPossibleDocKey(input: string) {
-  return /^([0Oo1IiLl23456789AaBbCcDdEeFfGgHhJjKkMmNnPpQqRrSsTtVvWwXxYyZ]{5}-[0Oo1IiLl23456789AaBbCcDdEeFfGgHhJjKkMmNnPpQqRrSsTtVvWwXxYyZ]{5}-[0Oo1IiLl23456789AaBbCcDdEeFfGgHhJjKkMmNnPpQqRrSsTtVvWwXxYyZ]{5}-[0Oo1IiLl23456789AaBbCcDdEeFfGgHhJjKkMmNnPpQqRrSsTtVvWwXxYyZ]{5})$/.test(
-    input,
+export function getPossibleDocKey(input: string) {
+  if (!/^([0O1IL23456789ABCDEFGHJKMNPQRSTVWXYZ-]*)$/i.test(input)) {
+    return null;
+  }
+  const b32 = input.replaceAll("-", "");
+  if (b32.length !== 20) {
+    return null;
+  }
+  return toReadableHash(new Uint8Array(
+    fromCrockfordBase32(input).buffer, 0, 12)
   );
 }
 

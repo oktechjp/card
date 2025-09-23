@@ -1,7 +1,7 @@
 import {
   createPrivateKey,
   fetchDocument,
-  isPossibleDocKey,
+  getPossibleDocKey,
 } from "@/utils/safeDoc";
 import { computed, listenKeys, mapCreator, task } from "nanostores";
 import { persistentMap } from "@nanostores/persistent";
@@ -66,14 +66,15 @@ export const knownDraftIds = computed([persistentDrafts], (all) =>
 );
 export const visitedDocIds = computed(persistentIds, (all) => Object.keys(all));
 
-export const docs = mapCreator<DocStore<any>>((store, id) => {
-  const validId = isPossibleDocKey(id);
+export const docs = mapCreator<DocStore<any>>((store, input) => {
+  const id = getPossibleDocKey(input);
+  const validId = id !== null;
   const base = {
-    docKey: id,
-    id,
+    docKey: id ?? input,
+    id: input,
     validId,
   };
-  if (!validId) {
+  if (!id) {
     store.set({ ...base, state: "no-doc" });
     return;
   }

@@ -133,7 +133,50 @@ export function toBase64(uint8: Uint8Array) {
 export const encode = (input: string) => new TextEncoder().encode(input);
 export const encodeJSON = (input: any) => encode(JSON.stringify(input));
 
-const c32 = Array.from("0123456789ABCDEFGHJKMNPQRSTVWXYZ");
+const c32Dict = [
+  "0Oo",
+  "1IiLl",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "Aa",
+  "Bb",
+  "Cc",
+  "Dd",
+  "Ee",
+  "Ff",
+  "Gg",
+  "Hh",
+  "Jj",
+  "Kk",
+  "Mm",
+  "Nn",
+  "Pp",
+  "Qq",
+  "Rr",
+  "Ss",
+  "Tt",
+  "Vv",
+  "Ww",
+  "Xx",
+  "Yy",
+  "Zz",
+];
+const c32 = c32Dict.map((chars) => chars[0]);
+const c32Lookup = c32Dict.reduce(
+  (lookup, chars, value) => {
+    for (const char of chars) {
+      lookup[char] = value;
+    }
+    return lookup;
+  },
+  {} as Record<string, number>,
+);
 
 export function toCrockfordBase32(input: Uint8Array) {
   const output: number[] = [];
@@ -156,6 +199,26 @@ export function toCrockfordBase32(input: Uint8Array) {
   }
 
   return output.map((byte) => c32[byte]).join("");
+}
+
+export function fromCrockfordBase32(input: string) {
+  const result = new Uint8Array(Math.ceil((input.length * 5) / 8));
+  let bits = 0;
+  let num = 0;
+  let off = 0;
+  for (const char of input) {
+    if (char === "-") {
+      continue;
+    }
+    const lookup = c32Lookup[char];
+    num = (num << 5) | lookup;
+    bits += 5;
+    if (bits >= 8) {
+      result[off++] = (num >>> (bits - 8)) & 255;
+      bits -= 8;
+    }
+  }
+  return result;
 }
 
 export const decodeJSON = (input: Uint8Array) =>
