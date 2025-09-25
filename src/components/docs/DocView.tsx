@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import { KnownTypes } from "@/components/KnownTypes";
-import { HashDocumentInput } from "@/components/form/DocKeyInput";
+import { DocKeyInput } from "@/components/form/DocKeyInput";
 import { useHashDoc } from "@/hooks/useHashDoc";
 
 export function DocView() {
@@ -9,7 +9,7 @@ export function DocView() {
   if (fromHash.state === "no-doc" || !doc) {
     return (
       <>
-        <HashDocumentInput
+        <DocKeyInput
           label={
             fromHash.state !== "loading" && fromHash.validId
               ? "Document not found. Maybe you mistook?"
@@ -28,7 +28,7 @@ export function DocView() {
   }
   return createElement(type.component, {
     json: doc.data,
-    link: doc.link,
+    link: fromHash.docKey,
     docKey: fromHash.docKey,
   });
 }

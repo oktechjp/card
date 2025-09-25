@@ -8,37 +8,40 @@ import { codecs } from "@/utils/codecs";
 
 const ENCRYPT_ALGO = "AES-GCM";
 const ENCRYPT_LEN = 256;
-const PAGE_SALT = codecs.base64.decode('Ljeijq98ZyaFa5NV');
-const PAGE_KEY = codecs.base64.decode('4sQNniS/0141scm8');
+const PAGE_SALT = codecs.base64.decode("Ljeijq98ZyaFa5NV");
+const PAGE_KEY = codecs.base64.decode("4sQNniS/0141scm8");
 const DERIVE = {
   name: "PBKDF2",
   salt: PAGE_SALT,
   iterations: 100000,
   hash: "SHA-256",
-} as const satisfies Pbkdf2Params
+} as const satisfies Pbkdf2Params;
 const ENCRYPT = {
   params: {
     name: ENCRYPT_ALGO,
-    iv: PAGE_SALT
+    iv: PAGE_SALT,
   } satisfies AesGcmParams,
   basekey: {
     name: ENCRYPT_ALGO,
-    length: ENCRYPT_LEN
-  } satisfies AesDerivedKeyParams
-} as const
+    length: ENCRYPT_LEN,
+  } satisfies AesDerivedKeyParams,
+} as const;
 
 const LINK_PREFIX = "https://card.oktech.jp#";
 const DOC_PREFIX = "https://public.oktech.jp/docs/";
 
 async function deriveEncryptionKey(secret: Uint8Array<ArrayBuffer>) {
-  const deriveKey = await crypto.subtle.importKey("raw", secret, DERIVE.name, false, ["deriveKey"]);
-  return crypto.subtle.deriveKey(
-    DERIVE,
-    deriveKey,
-    ENCRYPT.basekey,
+  const deriveKey = await crypto.subtle.importKey(
+    "raw",
+    secret,
+    DERIVE.name,
     false,
-    ["encrypt", "decrypt"],
+    ["deriveKey"],
   );
+  return crypto.subtle.deriveKey(DERIVE, deriveKey, ENCRYPT.basekey, false, [
+    "encrypt",
+    "decrypt",
+  ]);
 }
 
 interface EncryptedDocumentWrapper {
@@ -50,7 +53,7 @@ export async function decryptDocument(
   { content }: EncryptedDocumentWrapper,
 ) {
   const encryptionKey = await deriveEncryptionKey(
-    codecs.utf8.encode(privateKey)
+    codecs.utf8.encode(privateKey),
   );
   const base = await crypto.subtle.decrypt(
     ENCRYPT.params,
@@ -62,10 +65,7 @@ export async function decryptDocument(
 
 async function toPublicKey(privateKey: string) {
   return crockfordBase32.encode(
-    await encrypt(
-      PAGE_KEY,
-      codecs.utf8.encode(privateKey)
-    )
+    await encrypt(PAGE_KEY, codecs.utf8.encode(privateKey)),
   );
 }
 
@@ -116,7 +116,10 @@ export function getLocalStorageDocKey(privateKey: string) {
   return `privateKey:${privateKey}`;
 }
 
-async function encrypt(privateKey: Uint8Array<ArrayBuffer>, content: Uint8Array<ArrayBuffer>) {
+async function encrypt(
+  privateKey: Uint8Array<ArrayBuffer>,
+  content: Uint8Array<ArrayBuffer>,
+) {
   const encryptionKey = await deriveEncryptionKey(privateKey);
   return new Uint8Array(
     await crypto.subtle.encrypt(ENCRYPT.params, encryptionKey, content),
@@ -147,10 +150,9 @@ export async function encryptDocument(
     data,
   };
   const encrypted = {
-    content: codecs.base64.encode(await encrypt(
-      codecs.utf8.encode(docKey),
-      codecs.json.encode(document)
-    )),
+    content: codecs.base64.encode(
+      await encrypt(codecs.utf8.encode(docKey), codecs.json.encode(document)),
+    ),
   };
   const fileName = `${publicKey}.json`;
   const encryptedJson = JSON.stringify(encrypted, null, 2);

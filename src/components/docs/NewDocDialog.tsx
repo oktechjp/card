@@ -4,14 +4,14 @@ import { createPrivateKeyBase32 } from "@/utils/private-key-base32";
 import { createPrivateWordsKey } from "@/utils/private-key-words";
 import { applyRef } from "@/utils/applyRef";
 
-type NewCardDialogProps = {
+export interface NewCardDialogProps {
   ref?: Ref<HTMLDialogElement>;
   onSuccess: (privateKey: string) => void;
-};
-export const NewCardDialog = ({
+}
+export function NewDocsDialog({
   ref: parentRef,
   onSuccess,
-}: NewCardDialogProps) => {
+}: NewCardDialogProps) {
   const [type, setType] = useState<"base32" | "words">("base32");
   const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
   const privateKeyBase32 = useMemo(createPrivateKeyBase32, [lastRefresh]);
@@ -81,4 +81,4 @@ export const NewCardDialog = ({
       </form>
     </dialog>
   );
-};
+}

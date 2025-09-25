@@ -1,7 +1,10 @@
 import { useId, type ChangeEvent, type FormEvent } from "react";
 import { useHash } from "@/hooks/useHash";
 
-export const HashDocumentInput = ({ label }: { label: string }) => {
+export interface DocKeyInputProps {
+  label: string;
+}
+export function DocKeyInput({ label }: DocKeyInputProps) {
   const [hash, setHash] = useHash();
   const onchange = ({
     currentTarget: { value },
@@ -32,4 +35,4 @@ export const HashDocumentInput = ({ label }: { label: string }) => {
       ></input>
     </form>
   );
-};
+}

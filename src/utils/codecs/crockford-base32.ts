@@ -108,7 +108,7 @@ function decode(input: string) {
     }
     const lookup = c32Lookup[char];
     if (lookup === undefined) {
-      throw new Error('Unexpected character. Not decodable')
+      throw new Error("Unexpected character. Not decodable");
     }
     num = (num << 5) | lookup;
     bits += 5;
@@ -123,4 +123,4 @@ function decode(input: string) {
 export const crockfordBase32 = {
   decode,
   encode,
-} satisfies Codec<Uint8Array<ArrayBuffer>, string>
+} satisfies Codec<Uint8Array<ArrayBuffer>, string>;

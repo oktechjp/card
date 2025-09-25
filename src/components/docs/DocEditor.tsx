@@ -4,7 +4,7 @@ import { useStore } from "@nanostores/react";
 import { knownDraftIds, createDoc } from "@/store/doc";
 import { hashStore, setHash } from "@/store/hash";
 import { useRef } from "react";
-import { NewCardDialog } from "./NewCardDialog";
+import { NewDocsDialog } from "@/components/docs/NewDocDialog";
 
 export function DocEditor() {
   const newCardDialog = useRef<HTMLDialogElement>(null);
@@ -45,7 +45,7 @@ export function DocEditor() {
       >
         New Card
       </button>
-      <NewCardDialog ref={newCardDialog} onSuccess={newCard} />
+      <NewDocsDialog ref={newCardDialog} onSuccess={newCard} />
       {hash && isPossibleDocKey ? <DocForm docKey={hash} /> : null}
     </>
   );
