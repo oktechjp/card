@@ -1,5 +1,5 @@
 import type { CardDisplayVariantProps } from "@/components/docs/card/CardDisplayType";
-import { Color, DEFAULT_COLOR } from "@/docs/card";
+import { DEFAULT_COLOR } from "@/docs/card";
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
@@ -9,6 +9,7 @@ import { ShipporiAntique } from "@/components/fonts/ShipporiAntiqueB1";
 import { PermanentMarker } from "@/components/fonts/PermanentMarker";
 import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
 import { useSvgSize } from "@/hooks/useSvgSize";
+import { ColorInfo } from "@/components/docs/card/ColorInfo";
 
 export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
   const { callname, callname_kana, zoom } = useSvgSize(
@@ -30,13 +31,12 @@ export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
       }
     },
   );
+  const colorInfo = ColorInfo[json.color] ?? ColorInfo[DEFAULT_COLOR]
   return (
     <BusinessCardSvg
       ref={ref}
       isCut={isCut}
-      background={
-        (Color[json.color ?? DEFAULT_COLOR] || Color[DEFAULT_COLOR]).rgb
-      }
+      background={colorInfo.bg}
     >
       <style>{`
             ${PermanentMarker}
@@ -49,16 +49,16 @@ export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
             }
             .callname {
                 font-size: 120px;
-                fill: #fff;
+                fill: ${colorInfo.fg};
             }
             .callname_kana {
                 font-size: 50px;
-                fill: #fff;
+                fill: ${colorInfo.fg};
             }
         `}</style>
       {zoom}
       <EmbeddedSVGImage
-        href="https://public.oktech.jp/images/logo-and-design/OKTech-logo-white.svg"
+        href={colorInfo.logo}
         width={200}
         height={52}
         x={20}

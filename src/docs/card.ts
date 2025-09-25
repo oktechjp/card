@@ -3,49 +3,18 @@ import type { OptionGroup } from "@/components/form/OptionGroup";
 export const DOC_TYPE = "card";
 export const DOC_VERSION = 1;
 
-export const Color = {
-  red: {
-    label: "Red",
-    rgb: "#FD4D69",
-  },
-  green: {
-    label: "Green",
-    rgb: "#49D773",
-  },
-  blue: {
-    label: "Blue",
-    rgb: "#459BC9",
-  },
-  ocre: {
-    label: "Ocre",
-    rgb: "#DA9A00",
-  },
-  torquoise: {
-    label: "Torqouise",
-    rgb: "#00BFBB",
-  },
-  violet: {
-    label: "Violet",
-    rgb: "#AC77E1",
-  },
-  cyan: {
-    label: "Cyan",
-    rgb: "#04E9DF",
-  },
-  magenta: {
-    label: "Magenta",
-    rgb: "#FC1E96",
-  },
-  yellow: {
-    label: "Yellow",
-    rgb: "#FDD618",
-  },
-} as const;
-
-export const ColorType = Object.fromEntries(
-  Object.entries(Color).map(([key, { label }]) => [key, label]),
-) as { [key in keyof typeof Color]: (typeof Color)[key]["label"] };
-export const DEFAULT_COLOR = "red";
+export enum ColorEnum {
+  red = "red",
+  green = "green",
+  blue = "blue",
+  ocre = "ocre",
+  torquoise = "torquoise",
+  violet = "violet",
+  cyan = "cyan",
+  magenta = "magenta",
+  yellow = "yellow",
+}
+export const DEFAULT_COLOR = ColorEnum.red;
 export const JapanCountryTypes = {
   jp: "Japan",
   "jp-osaka-pref": "Osaka Pref",
@@ -405,7 +374,7 @@ export type CardType = {
   description?: string;
   url?: string;
   email?: string;
-  color: keyof typeof ColorType;
+  color: ColorEnum;
   bottom1?: keyof typeof AllCountryTypes;
   bottom2?: keyof typeof AllCountryTypes;
 };

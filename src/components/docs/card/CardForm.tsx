@@ -1,8 +1,9 @@
-import { ColorType, CountryGroups, DEFAULT_COLOR } from "@/docs/card";
+import { ColorEnum, CountryGroups, DEFAULT_COLOR } from "@/docs/card";
 import { InputWithLabel } from "@/components/form/InputWithLabel";
 import { SelectWithLabel } from "@/components/form/SelectWithLabel";
 import { SelectGroupWithLabel } from "@/components/form/SelectGroupWithLabel";
 import type { OptionGroup } from "@/components/form/OptionGroup";
+import { ColorInfo } from "@/components/docs/card/ColorInfo";
 
 export function CardForm() {
   return (
@@ -17,9 +18,9 @@ export function CardForm() {
       <InputWithLabel name="email" label="Email" />
       <InputWithLabel name="url" label="URL" />
       <SelectWithLabel name="color" label="Color" defaultValue={DEFAULT_COLOR}>
-        {Object.entries(ColorType).map(([key, value]) => (
+        {Object.keys(ColorEnum).map((key) => (
           <option key={key} value={key}>
-            {value}
+            {ColorInfo[key as keyof typeof ColorInfo].label}
           </option>
         ))}
       </SelectWithLabel>
