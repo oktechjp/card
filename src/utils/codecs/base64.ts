@@ -1,3 +1,5 @@
+import type { Codec } from "@/utils/codecs/codec";
+
 // Adapted from https://github.com/beatgammit/base64-js/blob/83f04b074694929d205171f48ad79a4e073e8429/index.js
 const code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 const lookup = Array.from(code);
@@ -31,7 +33,7 @@ function _byteLength(validLen: number, placeHoldersLen: number) {
   return ((validLen + placeHoldersLen) * 3) / 4 - placeHoldersLen;
 }
 
-export function fromBase64(b64: string) {
+function decode(b64: string) {
   let tmp: number;
   const [validLen, placeHoldersLen] = getLens(b64);
 
@@ -95,7 +97,7 @@ function encodeChunk(uint8: Uint8Array, start: number, end: number) {
   return output.join("");
 }
 
-export function toBase64(uint8: Uint8Array) {
+function encode(uint8: Uint8Array) {
   let tmp;
   const len = uint8.length;
   const extraBytes = len % 3; // if we have 1 byte left, pad 2 bytes
@@ -130,128 +132,7 @@ export function toBase64(uint8: Uint8Array) {
   return parts.join("");
 }
 
-export const encode = (input: string) => new TextEncoder().encode(input);
-export const encodeJSON = (input: any) => encode(JSON.stringify(input));
-
-const c32Dict = [
-  "0Oo",
-  "1IiLl",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "Aa",
-  "Bb",
-  "Cc",
-  "Dd",
-  "Ee",
-  "Ff",
-  "Gg",
-  "Hh",
-  "Jj",
-  "Kk",
-  "Mm",
-  "Nn",
-  "Pp",
-  "Qq",
-  "Rr",
-  "Ss",
-  "Tt",
-  "Vv",
-  "Ww",
-  "Xx",
-  "Yy",
-  "Zz",
-];
-const c32 = c32Dict.map((chars) => chars[0]);
-const c32Lookup = c32Dict.reduce(
-  (lookup, chars, value) => {
-    for (const char of chars) {
-      lookup[char] = value;
-    }
-    return lookup;
-  },
-  {} as Record<string, number>,
-);
-
-export function toCrockfordBase32(input: Uint8Array) {
-  const output: number[] = [];
-  let bitsRead = 0;
-  let buffer = 0;
-
-  for (const byte of input) {
-    // Add current byte to start of buffer
-    buffer = (buffer << 8) | byte;
-    bitsRead += 8;
-
-    while (bitsRead >= 5) {
-      output.push((buffer >>> (bitsRead - 5)) & 0x1f);
-      bitsRead -= 5;
-    }
-  }
-
-  if (bitsRead > 0) {
-    output.push((buffer << (5 - bitsRead)) & 0x1f);
-  }
-
-  return output.map((byte) => c32[byte]).join("");
-}
-
-export function sanitizeCrockfordBase32(
-  input: string,
-  ignoreUnknown: true,
-): string;
-export function sanitizeCrockfordBase32(
-  input: string,
-  ignoreUnknown: false,
-): null | string;
-export function sanitizeCrockfordBase32(input: string, ignoreUnknown: boolean) {
-  let sane = "";
-  let count = 0;
-  for (const char of input) {
-    const validChar = c32Lookup[char];
-    if (char === "-") {
-      continue;
-    }
-    if (validChar !== undefined) {
-      if (count % 5 === 0 && count !== 0) {
-        sane += "-";
-      }
-      count += 1;
-      sane += c32[validChar];
-    } else if (!ignoreUnknown) {
-      return null;
-    }
-  }
-  return sane;
-}
-
-export function fromCrockfordBase32(input: string) {
-  const result = new Uint8Array(Math.ceil((input.length * 5) / 8));
-  let bits = 0;
-  let num = 0;
-  let off = 0;
-  for (const char of input) {
-    if (char === "-") {
-      continue;
-    }
-    const lookup = c32Lookup[char];
-    if (lookup === undefined) {
-      return null;
-    }
-    num = (num << 5) | lookup;
-    bits += 5;
-    if (bits >= 8) {
-      result[off++] = (num >>> (bits - 8)) & 255;
-      bits -= 8;
-    }
-  }
-  return result;
-}
-
-export const decodeJSON = (input: Uint8Array) =>
-  JSON.parse(new TextDecoder().decode(input));
+export const base64 = {
+  decode,
+  encode,
+} as Codec<Uint8Array<ArrayBuffer>, string>;

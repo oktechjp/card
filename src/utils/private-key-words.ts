@@ -1,6 +1,6 @@
-import words from "./words.json" assert { type: "json" };
-import permutations from "./permutations.json" assert { type: "json" };
-import { getRandomEntry, getSecureRandomInt } from "./crypto";
+import words from "@/utils/words.json" assert { type: "json" };
+import permutations from "@/utils/words-permutations.json" assert { type: "json" };
+import { getRandomEntry, getSecureRandomInt } from "@/utils/crypto";
 
 class RandomWeighted<T extends { weight: number }> {
   total: number;

@@ -1,7 +1,7 @@
-import { toCrockfordBase32 } from "./buffer";
+import { crockfordBase32 } from "@/utils/codecs/crockford-base32";
 
 function toReadableHash(input: Uint8Array) {
-  const c = toCrockfordBase32(input);
+  const c = crockfordBase32.encode(input);
   return (c.match(/.{5}/g) ?? []).join("-");
 }
 

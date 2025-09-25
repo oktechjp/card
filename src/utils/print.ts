@@ -1,10 +1,10 @@
 import { Canvg } from "canvg";
-import { AbortError } from "./AbortError";
-import { encode, toBase64 } from "./buffer";
+import { codecs } from "@/utils/codecs";
+import { AbortError } from "@/utils/AbortError";
 
 export function svgToDataURI(elem: SVGSVGElement | string): string {
   const svg = typeof elem === "string" ? elem : elem.outerHTML;
-  return `data:image/svg+xml;base64,${toBase64(encode(svg))}`;
+  return `data:image/svg+xml;base64,${codecs.base64.encode(codecs.utf8.encode(svg))}`;
 }
 
 export function loadImage(uri: string, opts?: { signal: AbortSignal }) {

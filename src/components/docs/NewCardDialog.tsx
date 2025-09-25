@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type Ref } from "react";
 import { InputWithLabel } from "@/components/form/InputWithLabel";
-import { createPrivateKeyBase32 } from "@/utils/createPrivateKeyBase32";
-import { createPrivateWordsKey } from "@/utils/createPrivateKeyWords";
+import { createPrivateKeyBase32 } from "@/utils/private-key-base32";
+import { createPrivateWordsKey } from "@/utils/private-key-words";
 import { applyRef } from "@/utils/applyRef";
 
 type NewCardDialogProps = {

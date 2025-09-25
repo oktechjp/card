@@ -1,11 +1,11 @@
+import { useEffect, useRef, useState } from "react";
 import { useHashDoc } from "@/hooks/useHashDoc";
+import { useButtonAction } from "@/hooks/useButtonAction";
+import { useAsyncMemo } from "@/hooks/useAsyncMemo";
 import { HashDocumentInput } from "@/components/form//DocKeyInput";
 import { CardDisplay } from "@/components/docs/card/CardDisplay";
-import { useEffect, useRef, useState } from "react";
 import type { DocDisplayControl } from "@/components/docs/DocsDisplay";
-import { useButtonAction } from "@/hooks/useButtonAction";
 import { DOC_TYPE, DOC_VERSION, isEmptyCard } from "@/docs/card";
-import { useAsyncMemo } from "@/hooks/useAsyncMemo";
 import { encryptDocument } from "@/utils/safeDoc";
 
 export function PrintDialog() {
