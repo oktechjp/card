@@ -8,7 +8,8 @@ import {
   toCrockfordBase32,
 } from "./buffer";
 import type { JSONObj } from "./form";
-import type { EventHandler, MouseEventHandler } from "react";
+import type { MouseEventHandler } from "react";
+import words from "./words.json" assert { type: "json" };
 
 const ENCRYPT_ALGO = "AES-GCM";
 const ENCRYPT_LEN = 256;
@@ -127,7 +128,130 @@ export function getLocalStorageDocKey(privateKey: string) {
   return `privateKey:${privateKey}`;
 }
 
-export function createPrivateKey() {
+export function createPrivateKey(type: "base32" | "words" = "base32") {
+  if (type === "words") {
+    return createPrivateWordsKey();
+  }
+  return createPrivateBase32Key();
+}
+
+const bufferForMaxInt = new Map<number, Uint8Array>();
+
+function getSecureRandomInt(options: number) {
+  let buffer = bufferForMaxInt.get(options);
+  if (!buffer) {
+    let uint8s = 1;
+    let num = 256;
+    while (num < options) {
+      uint8s += 1;
+      num *= 256;
+    }
+    buffer = new Uint8Array(uint8s);
+    bufferForMaxInt.set(options, buffer);
+  }
+  crypto.getRandomValues(buffer);
+  let multiplyBy = 1;
+  let res = 0;
+  for (let uint8 of buffer) {
+    res += uint8 * multiplyBy;
+    multiplyBy *= 256;
+  }
+  return res % options;
+}
+
+function getRandomEntry<T>(array: T[]): T {
+  return array[getSecureRandomInt(array.length)];
+}
+
+class RandomWeighted <T extends { weight: number }> {
+  total: number
+  sections: Array<{ group: T, max: number }>
+
+  constructor(groups: T[]) {
+    this.total = groups.reduce(
+      (total, { weight }) => total + weight,
+      0
+    )
+    let max = 0
+    this.sections = groups.map(
+      (group) => {
+        max += group.weight;
+        return {
+          group,
+          max
+        };
+      }
+    )
+  }
+  getRandom(): T {
+    const i = getSecureRandomInt(this.total)
+    for (const { group, max } of this.sections) {
+      if (i < max) {
+        return group
+      }
+    }
+    return this.sections[0].group
+  }
+}
+
+const wordsByCharCount = {
+  2: words.filter((word) => word.length === 2),
+  4: words.filter((word) => word.length === 4),
+  5: words.filter((word) => word.length === 5),
+  3: words.filter((word) => word.length === 3),
+  6: words.filter((word) => word.length === 6),
+} as const;
+
+const len2 = wordsByCharCount[2].length
+const len3 = wordsByCharCount[3].length
+const len4 = wordsByCharCount[4].length
+const len5 = wordsByCharCount[5].length
+const len6 = wordsByCharCount[6].length
+const len4by4 = len4*len4
+const len3by5 = len3*len5
+const len2by6 = len2*len6
+const weightedGroups = new RandomWeighted([
+  {
+    a: wordsByCharCount[4],
+    b: wordsByCharCount[4],
+    weight: len4by4,
+  },
+  {
+    a: wordsByCharCount[2],
+    b: wordsByCharCount[6],
+    weight: len2by6,
+  },
+  {
+    a: wordsByCharCount[3],
+    b: wordsByCharCount[5],
+    weight: len3by5,
+  }
+]);
+
+export function createPrivateWordsKey() {
+  let res: string[] = [];
+  while (res.length < 8) {
+    const group = weightedGroups.getRandom();
+    res.push(getRandomEntry(group.a))
+    res.push(getRandomEntry(group.b))
+  }
+  return shuffle(res).join("-");
+}
+
+function shuffle<T extends any[]>(input: T): T {
+  const output: T = [] as any[] as T
+  const maxLen: number = input.length
+  let len = input.length
+  while (len > 0) {
+    output.push(
+      ...input.splice(getSecureRandomInt(maxLen) % len, 1)
+    )
+    len--;
+  }
+  return output;
+}
+
+export function createPrivateBase32Key() {
   return toReadableHash(crypto.getRandomValues(new Uint8Array(12)));
 }
 
