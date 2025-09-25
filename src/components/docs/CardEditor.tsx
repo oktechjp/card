@@ -3,12 +3,15 @@ import { CardForm } from "@/components/docs/CardForm";
 import { useStore } from "@nanostores/react";
 import { knownDraftIds, createDoc } from "@/store/doc";
 import { hashStore, setHash } from "@/store/hash";
+import { useRef } from "react";
+import { NewCardDialog } from "./NewCardDialog";
 
 export function CardEditor() {
+  const newCardDialog = useRef<HTMLDialogElement>(null);
   const hash = useStore(hashStore);
   const knownIds = useStore(knownDraftIds);
-  const newCard = () => {
-    setHash(createDoc());
+  const newCard = (privateKey: string) => {
+    setHash(createDoc(privateKey));
   };
   const isPossibleDocKey = getPossibleDocKey(hash) != null;
   return (
@@ -35,7 +38,14 @@ export function CardEditor() {
           </optgroup>
         ) : null}
       </select>
-      <button onClick={newCard}>New Card</button>
+      <button
+        onClick={() => {
+          newCardDialog.current!.showModal();
+        }}
+      >
+        New Card
+      </button>
+      <NewCardDialog ref={newCardDialog} onSuccess={newCard} />
       {hash && isPossibleDocKey ? <CardForm docKey={hash} /> : null}
     </>
   );

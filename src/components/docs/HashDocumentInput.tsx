@@ -1,6 +1,5 @@
 import { useId, type ChangeEvent, type FormEvent } from "react";
 import { useHash } from "@/hooks/useHash";
-import { sanitizeCrockfordBase32 } from "@/utils/buffer";
 
 export const HashDocumentInput = ({ label }: { label: string }) => {
   const [hash, setHash] = useHash();
@@ -10,11 +9,7 @@ export const HashDocumentInput = ({ label }: { label: string }) => {
     if (typeof value !== "string") {
       return;
     }
-    if (hash.substring(0, value.length) === value) {
-      setHash(value);
-      return;
-    }
-    setHash(sanitizeCrockfordBase32(value, true));
+    setHash(value);
   };
   const id = useId();
   return (

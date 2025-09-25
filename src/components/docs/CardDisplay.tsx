@@ -7,14 +7,7 @@ import { CardDisplayFront } from "@/components/docs/CardDisplayFront";
 import { CardDisplayBack } from "@/components/docs/CardDisplayBack";
 import { useEffect, useRef, type Ref, type RefObject } from "react";
 import { downloadSvgImage } from "@/utils/print";
-
-function applyRef<T>(ref: Ref<T>, value: T | null) {
-  if (typeof ref === "function") {
-    ref(value);
-  } else if (ref) {
-    ref.current = value;
-  }
-}
+import { applyRef } from "@/utils/applyRef";
 
 export type CardDisplayProps = DocDisplayProps<CardType>;
 export function CardDisplay({
@@ -27,6 +20,19 @@ export function CardDisplay({
 }) {
   const front = useRef<SVGSVGElement>(null);
   const back = useRef<SVGSVGElement>(null);
+  const openImage =
+    (ref: RefObject<SVGSVGElement | null>, page: string) => (): string => {
+      if (!ref.current) {
+        throw new Error("not ready");
+      }
+      const name = `bc_${docKey}_${page}.png`;
+      downloadSvgImage(ref.current, name, {
+        scaleFactor: 4,
+      });
+      return name;
+    };
+  const openFront = openImage(front, "front");
+  const openBack = openImage(back, "back");
   useEffect(() => {
     const r = cardRef;
     if (!r) return;
@@ -43,19 +49,6 @@ export function CardDisplay({
     });
     return () => applyRef(r, null);
   }, [cardRef]);
-  const openImage =
-    (ref: RefObject<SVGSVGElement | null>, page: string) => (): string => {
-      if (!ref.current) {
-        throw new Error("not ready");
-      }
-      const name = `bc_${docKey}_${page}.png`;
-      downloadSvgImage(ref.current, name, {
-        scaleFactor: 4,
-      });
-      return name;
-    };
-  const openFront = openImage(front, "front");
-  const openBack = openImage(back, "back");
   return (
     <>
       <div>

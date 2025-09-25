@@ -1,8 +1,4 @@
-import {
-  createPrivateKey,
-  fetchDocument,
-  getPossibleDocKey,
-} from "@/utils/safeDoc";
+import { fetchDocument, getPossibleDocKey } from "@/utils/safeDoc";
 import { computed, listenKeys, mapCreator, task } from "nanostores";
 import { persistentMap } from "@nanostores/persistent";
 import deepEqual from "fast-deep-equal";
@@ -54,11 +50,10 @@ const persistentDrafts = persistentMap<Record<string, any>>(
   },
 );
 
-export function createDoc() {
-  const id = createPrivateKey();
-  persistentIds.setKey(id, true);
-  persistentDrafts.setKey(id, {});
-  return id;
+export function createDoc(privateKey: string) {
+  persistentIds.setKey(privateKey, true);
+  persistentDrafts.setKey(privateKey, {});
+  return privateKey;
 }
 
 export const knownDraftIds = computed([persistentDrafts], (all) =>

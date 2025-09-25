@@ -76,7 +76,9 @@ export const CardForm = ({ docKey: docKey }: CardFormProps) => {
             <a href={doc.link}>{doc.link}</a>
           )
         ) : isEmptyCard(doc.draft) ? (
-          <>Card Empty</>
+          <>Card Empty
+              <button onClick={discardChanges}>Discard</button>
+              </>
         ) : (
           <>
             Not Stored on server{" "}

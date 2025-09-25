@@ -9,8 +9,6 @@ import {
 } from "./buffer";
 import type { JSONObj } from "./form";
 import type { MouseEventHandler } from "react";
-import words from "./words.json" assert { type: "json" };
-import permutations from "./permutations.json" assert { type: "json" };
 
 const ENCRYPT_ALGO = "AES-GCM";
 const ENCRYPT_LEN = 256;
@@ -57,11 +55,6 @@ const getPageEncryptKey = (() => {
   };
 })();
 
-function toReadableHash(input: Uint8Array) {
-  const c = toCrockfordBase32(input);
-  return (c.match(/.{5}/g) ?? []).join("-");
-}
-
 interface EncryptedDocumentWrapper {
   content: string;
 }
@@ -93,12 +86,22 @@ export async function toPublicKey(privateKey: string) {
 }
 
 export function getPossibleDocKey(input: string) {
+  return getPossibleBase32Key(input) ?? getPossibleWordsKey(input)
+}
+
+function getPossibleWordsKey(input: string) {
+  if (/^[a-z-]{38}/.test(input)) {
+    return input
+  }
+}
+
+function getPossibleBase32Key(input: string) {
   const key = sanitizeCrockfordBase32(input, false);
   if (!key) {
-    return null;
+    return undefined;
   }
   if (key.length !== 23) {
-    return null;
+    return undefined;
   }
   return key;
 }
@@ -127,87 +130,6 @@ export async function fetchDocument(privateKey: string) {
 
 export function getLocalStorageDocKey(privateKey: string) {
   return `privateKey:${privateKey}`;
-}
-
-export function createPrivateKey(type: "base32" | "words" = "base32") {
-  if (type === "words") {
-    return createPrivateWordsKey();
-  }
-  return createPrivateBase32Key();
-}
-
-const bufferForMaxInt = new Map<number, Uint8Array>();
-
-function getSecureRandomInt(options: number) {
-  let buffer = bufferForMaxInt.get(options);
-  if (!buffer) {
-    let uint8s = 1;
-    let num = 256;
-    while (num < options) {
-      uint8s += 1;
-      num *= 256;
-    }
-    buffer = new Uint8Array(uint8s);
-    bufferForMaxInt.set(options, buffer);
-  }
-  crypto.getRandomValues(buffer);
-  let multiplyBy = 1;
-  let res = 0;
-  for (let uint8 of buffer) {
-    res += uint8 * multiplyBy;
-    multiplyBy *= 256;
-  }
-  return res % options;
-}
-
-function getRandomEntry<T>(array: T[]): T {
-  return array[getSecureRandomInt(array.length)];
-}
-
-class RandomWeighted<T extends { weight: number }> {
-  total: number;
-  sections: Array<{ group: T; max: number }>;
-
-  constructor(groups: T[]) {
-    this.total = groups.reduce((total, { weight }) => total + weight, 0);
-    let max = 0;
-    this.sections = groups.map((group) => {
-      max += group.weight;
-      return {
-        group,
-        max,
-      };
-    });
-  }
-  getRandom(): T {
-    const i = getSecureRandomInt(this.total);
-    for (const { group, max } of this.sections) {
-      if (i < max) {
-        return group;
-      }
-    }
-    return this.sections[0].group;
-  }
-}
-
-const weighted = new RandomWeighted(
-  permutations.map((indices) => {
-    const listOfWords = indices.map((index) => words[index]);
-    return {
-      listOfWords,
-      weight: listOfWords.reduce((total, set) => total * set.length, 1),
-    };
-  }),
-);
-export function createPrivateWordsKey() {
-  return weighted
-    .getRandom()
-    .listOfWords.map((words) => getRandomEntry(words))
-    .join("-");
-}
-
-export function createPrivateBase32Key() {
-  return toReadableHash(crypto.getRandomValues(new Uint8Array(12)));
 }
 
 export async function encryptDocument(
