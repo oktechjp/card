@@ -1,5 +1,5 @@
 import { getPossibleDocKey } from "@/utils/safeDoc";
-import { CardForm } from "@/components/docs/CardForm";
+import { DocForm } from "@/components/docs/DocForm";
 import { useStore } from "@nanostores/react";
 import { knownDraftIds, createDoc } from "@/store/doc";
 import { hashStore, setHash } from "@/store/hash";
@@ -46,7 +46,7 @@ export function CardEditor() {
         New Card
       </button>
       <NewCardDialog ref={newCardDialog} onSuccess={newCard} />
-      {hash && isPossibleDocKey ? <CardForm docKey={hash} /> : null}
+      {hash && isPossibleDocKey ? <DocForm docKey={hash} /> : null}
     </>
   );
 }

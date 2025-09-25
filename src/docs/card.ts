@@ -1,3 +1,5 @@
+import type { OptionGroup } from "@/components/docs/OptionGroup";
+
 export const DOC_TYPE = "card";
 export const DOC_VERSION = 1;
 
@@ -342,44 +344,38 @@ export const ExtraCountryTypes = {
   bv: "Bouvet Island",
   tf: "French Southern Territories",
 } as const;
-
-export type CountryGroup = {
-  name: string;
-  countries?: { [key: string]: string };
-  groups?: CountryGroup[];
-};
 export const CountryGroups = [
-  { name: "Japan", countries: JapanCountryTypes },
+  { name: "Japan", entries: JapanCountryTypes },
   {
     name: "Asia",
     groups: [
-      { name: "East", countries: EastAsianCountryTypes },
-      { name: "South", countries: SouthAsianCountryTypes },
-      { name: "West", countries: WestAsianCountryTypes },
+      { name: "East", entries: EastAsianCountryTypes },
+      { name: "South", entries: SouthAsianCountryTypes },
+      { name: "West", entries: WestAsianCountryTypes },
     ],
-  },
-  { name: "Europe", countries: EuropeCountryType },
+  } ,
+  { name: "Europe", entries: EuropeCountryType },
   {
     name: "America",
     groups: [
-      { name: "North", countries: NorthAmericanCountryTypes },
-      { name: "Central", countries: CentralAmericanCountryTypes },
-      { name: "South", countries: SouthAmericanCountryTypes },
-      { name: "Caribbean", countries: CaribbeanCountryTypes },
+      { name: "North", entries: NorthAmericanCountryTypes },
+      { name: "Central", entries: CentralAmericanCountryTypes },
+      { name: "South", entries: SouthAmericanCountryTypes },
+      { name: "Caribbean", entries: CaribbeanCountryTypes },
     ],
-  } satisfies CountryGroup,
+  },
   {
     name: "Africa",
     groups: [
-      { name: "North", countries: NorthAfricanCountryTypes },
-      { name: "East", countries: EastAfricanCountryTypes },
-      { name: "Central", countries: CentralAfricanCountryTypes },
-      { name: "West", countries: WestAfricanCountryTypes },
-      { name: "South", countries: SouthAfricanCountryTypes },
+      { name: "North", entries: NorthAfricanCountryTypes },
+      { name: "East", entries: EastAfricanCountryTypes },
+      { name: "Central", entries: CentralAfricanCountryTypes },
+      { name: "West", entries: WestAfricanCountryTypes },
+      { name: "South", entries: SouthAfricanCountryTypes },
     ],
   },
-  { name: "Other", countries: ExtraCountryTypes },
-] as const satisfies CountryGroup[];
+  { name: "Other", entries: ExtraCountryTypes },
+] as const satisfies OptionGroup[];
 export const AllCountryTypes = {
   ...JapanCountryTypes,
   ...EastAsianCountryTypes,
