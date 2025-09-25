@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type Ref } from "react";
 import { InputWithLabel } from "@/components/form/InputWithLabel";
 import { createPrivateKeyBase32 } from "@/utils/private-key-base32";
-import { createPrivateWordsKey } from "@/utils/private-key-words";
+import { createPrivateKeyWords } from "@/utils/private-key-words";
 import { applyRef } from "@/utils/applyRef";
 
 export interface NewCardDialogProps {
@@ -15,7 +15,7 @@ export function NewDocsDialog({
   const [type, setType] = useState<"base32" | "words">("base32");
   const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
   const privateKeyBase32 = useMemo(createPrivateKeyBase32, [lastRefresh]);
-  const privateKeyWords = useMemo(createPrivateWordsKey, [lastRefresh]);
+  const privateKeyWords = useMemo(createPrivateKeyWords, [lastRefresh]);
   const privateKey = type === "base32" ? privateKeyBase32 : privateKeyWords;
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {

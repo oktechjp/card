@@ -6,8 +6,6 @@ import type { JSONObj } from "@/utils/form";
 import type { MouseEventHandler } from "react";
 import { codecs } from "@/utils/codecs";
 
-const ENCRYPT_ALGO = "AES-GCM";
-const ENCRYPT_LEN = 256;
 const PAGE_SALT = codecs.base64.decode("Ljeijq98ZyaFa5NV");
 const PAGE_KEY = codecs.base64.decode("4sQNniS/0141scm8");
 const DERIVE = {
@@ -18,12 +16,12 @@ const DERIVE = {
 } as const satisfies Pbkdf2Params;
 const ENCRYPT = {
   params: {
-    name: ENCRYPT_ALGO,
+    name: "AES-GCM",
     iv: PAGE_SALT,
   } satisfies AesGcmParams,
   basekey: {
-    name: ENCRYPT_ALGO,
-    length: ENCRYPT_LEN,
+    name: "AES-GCM",
+    length: 256,
   } satisfies AesDerivedKeyParams,
 } as const;
 
