@@ -65,6 +65,7 @@ export function CardDisplayFront({
       "bottom2",
       "description",
       "link",
+      "linkLine2",
       "subtitle",
       "surname",
       "firstname",
@@ -77,6 +78,7 @@ export function CardDisplayFront({
       bottom2,
       description,
       link,
+      linkLine2,
       subtitle,
       surname,
       firstname,
@@ -99,7 +101,11 @@ export function CardDisplayFront({
           CARD_HEIGHT - 25 - description.bounds.height * 0.1,
         );
       }
-      link?.move(CARD_WIDTH - link.bounds.width - 25, link.bounds.height + 25);
+      if (link) {
+        const line1 = link.bounds.height + 23
+        link.move(CARD_WIDTH - link.bounds.width - 23, line1);
+        linkLine2?.move(CARD_WIDTH - linkLine2?.bounds.width - 23, line1+20);
+      }
       let y = 0;
       let fOff = 0;
       if (surname) {
@@ -211,9 +217,16 @@ export function CardDisplayFront({
       ) : null}
       <text
         ref={refs.link}
-        style={{ fontSize: 16, marginTop: 40, fill: "#999" }}
+        style={{ fontSize: 16, marginTop: 40, fill: "#aaa" }}
       >
         {link}
+      </text>
+      <text
+        ref={refs.linkLine2}
+        style={{ fontSize: 16, marginTop: 40, fill: "#aaa" }}
+        visibility={!isEmpty ? 'visible' : 'hidden'}
+      >
+        ↳ https://card.oktech.jp
       </text>
       {qrCode.data ? (
         <image

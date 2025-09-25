@@ -97,7 +97,7 @@ export const docs = mapCreator<DocStore<any>>((store, input) => {
       draft: persistentDrafts.get()[id],
     });
     task(async () => {
-      const link = `https://card.oktech.jp#${id}`;
+      const link = id;
       try {
         const doc = await fetchDocument(id);
         const current = store.get();
