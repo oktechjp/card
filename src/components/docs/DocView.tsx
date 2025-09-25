@@ -1,9 +1,9 @@
 import { createElement } from "react";
 import { KnownTypes } from "@/components/KnownTypes";
-import { HashDocumentInput } from "@/components/docs/HashDocumentInput";
+import { HashDocumentInput } from "@/components/form/DocKeyInput";
 import { useHashDoc } from "@/hooks/useHashDoc";
 
-export function HashDocumentHook() {
+export function DocView() {
   const fromHash = useHashDoc();
   const { doc } = fromHash;
   if (fromHash.state === "no-doc" || !doc) {

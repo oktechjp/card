@@ -1,6 +1,10 @@
-import type { CardDisplayVariantProps } from "@/components/docs/CardDisplayType";
+import type { CardDisplayVariantProps } from "@/components/docs/card/CardDisplayType";
 import { Color, DEFAULT_COLOR } from "@/docs/card";
-import { CARD_HEIGHT, CARD_WIDTH, CardSvg } from "@/components/docs/CardSvg";
+import {
+  CARD_HEIGHT,
+  CARD_WIDTH,
+  BusinessCardSvg,
+} from "@/components/docs/BusinessCardSvg";
 import { ShipporiAntique } from "@/components/fonts/ShipporiAntiqueB1";
 import { PermanentMarker } from "@/components/fonts/PermanentMarker";
 import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
@@ -27,7 +31,7 @@ export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
     },
   );
   return (
-    <CardSvg
+    <BusinessCardSvg
       ref={ref}
       isCut={isCut}
       background={
@@ -66,6 +70,6 @@ export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
       <text className="font--shippori callname_kana" ref={callname_kana}>
         {json.callname_kana}
       </text>
-    </CardSvg>
+    </BusinessCardSvg>
   );
 }

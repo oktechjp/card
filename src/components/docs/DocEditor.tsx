@@ -6,7 +6,7 @@ import { hashStore, setHash } from "@/store/hash";
 import { useRef } from "react";
 import { NewCardDialog } from "./NewCardDialog";
 
-export function CardEditor() {
+export function DocEditor() {
   const newCardDialog = useRef<HTMLDialogElement>(null);
   const hash = useStore(hashStore);
   const knownIds = useStore(knownDraftIds);

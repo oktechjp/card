@@ -1,11 +1,11 @@
+import { useEffect, useRef, type Ref, type RefObject } from "react";
 import type { CardType } from "@/docs/card";
 import type {
   DocDisplayControl,
   DocDisplayProps,
 } from "@/components/docs/DocsDisplay";
-import { CardDisplayFront } from "@/components/docs/CardDisplayFront";
-import { CardDisplayBack } from "@/components/docs/CardDisplayBack";
-import { useEffect, useRef, type Ref, type RefObject } from "react";
+import { CardDisplayFront } from "@/components/docs/card/CardDisplayFront";
+import { CardDisplayBack } from "@/components/docs/card/CardDisplayBack";
 import { downloadSvgImage } from "@/utils/print";
 import { applyRef } from "@/utils/applyRef";
 

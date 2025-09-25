@@ -21,7 +21,7 @@ const PAGE_KEY = new Uint8Array([
 const LINK_PREFIX = "https://card.oktech.jp#";
 const DOC_PREFIX = "https://public.oktech.jp/docs/";
 
-async function createKey(secret: string | Uint8Array<ArrayBuffer>) {
+async function deriveEncryptionKey(secret: string | Uint8Array<ArrayBuffer>) {
   if (typeof secret == "string") {
     secret = encode(secret);
   }
@@ -50,7 +50,7 @@ const getPageEncryptKey = (() => {
   let key: Promise<CryptoKey>;
   return async () => {
     if (key) return await key;
-    key = createKey(PAGE_KEY);
+    key = deriveEncryptionKey(PAGE_KEY);
     return await key;
   };
 })();
@@ -63,7 +63,7 @@ export async function decryptDocument(
   privateKey: string,
   json: EncryptedDocumentWrapper,
 ) {
-  const encryptionKey = await createKey(privateKey);
+  const encryptionKey = await deriveEncryptionKey(privateKey);
   const base = await crypto.subtle.decrypt(
     { name: ENCRYPT_ALGO, iv: PAGE_SALT },
     encryptionKey,
@@ -86,12 +86,12 @@ export async function toPublicKey(privateKey: string) {
 }
 
 export function getPossibleDocKey(input: string) {
-  return getPossibleBase32Key(input) ?? getPossibleWordsKey(input)
+  return getPossibleBase32Key(input) ?? getPossibleWordsKey(input);
 }
 
 function getPossibleWordsKey(input: string) {
   if (/^[a-z-]{38}/.test(input)) {
-    return input
+    return input;
   }
 }
 
@@ -147,7 +147,7 @@ export async function encryptDocument(
   docKey: string;
 }> {
   const time = new Date().toISOString();
-  const encryptionKey = await createKey(docKey);
+  const encryptionKey = await deriveEncryptionKey(docKey);
   const publicKey = await toPublicKey(docKey);
   const json = {
     type,

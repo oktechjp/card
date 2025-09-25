@@ -5,18 +5,23 @@ export const CARD_WIDTH = 910;
 export const CARD_HEIGHT = 550;
 export const PADDING = 25;
 
-export type CardSvgDocDisplayProps<Type> = DocDisplayProps<Type> & {
+export type BusinessCardSvgDisplayProps<Type> = DocDisplayProps<Type> & {
   isCut: boolean;
   ref?: Ref<SVGSVGElement>;
 };
 
-export type CardSvgProps = {
+export type BusinessCardSvgProps = {
   isCut: boolean;
   children?: ReactNode;
   background: string;
   ref?: Ref<SVGSVGElement>;
 };
-export function CardSvg({ isCut, children, background, ref }: CardSvgProps) {
+export function BusinessCardSvg({
+  isCut,
+  children,
+  background,
+  ref,
+}: BusinessCardSvgProps) {
   const width = CARD_WIDTH + PADDING * 2;
   const height = CARD_HEIGHT + PADDING * 2;
   const viewBox = `${-PADDING} ${-PADDING} ${width} ${height}`;

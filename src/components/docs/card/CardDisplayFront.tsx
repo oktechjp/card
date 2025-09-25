@@ -1,8 +1,12 @@
 import clsx from "clsx";
 import type { Ref } from "react";
-import type { CardDisplayVariantProps } from "@/components/docs/CardDisplayType";
+import type { CardDisplayVariantProps } from "@/components/docs/card/CardDisplayType";
 import { NotoSansJP } from "@/components/fonts/NotoSansJP";
-import { CARD_HEIGHT, CARD_WIDTH, CardSvg } from "@/components/docs/CardSvg";
+import {
+  CARD_HEIGHT,
+  CARD_WIDTH,
+  BusinessCardSvg,
+} from "@/components/docs/BusinessCardSvg";
 import { useSvgSize } from "@/hooks/useSvgSize";
 import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
 import { useQRCode } from "@/hooks/useQrCode";
@@ -102,9 +106,9 @@ export function CardDisplayFront({
         );
       }
       if (link) {
-        const line1 = link.bounds.height + 23
+        const line1 = link.bounds.height + 23;
         link.move(CARD_WIDTH - link.bounds.width - 23, line1);
-        linkLine2?.move(CARD_WIDTH - linkLine2?.bounds.width - 23, line1+20);
+        linkLine2?.move(CARD_WIDTH - linkLine2?.bounds.width - 23, line1 + 20);
       }
       let y = 0;
       let fOff = 0;
@@ -149,7 +153,7 @@ export function CardDisplayFront({
   const qrCode = useQRCode(link);
   const { bottom1, bottom2 } = json;
   return (
-    <CardSvg ref={ref} isCut={isCut} background="white">
+    <BusinessCardSvg ref={ref} isCut={isCut} background="white">
       <style>{`
             ${NotoSansJP}
             /* Style the text */
@@ -224,7 +228,7 @@ export function CardDisplayFront({
       <text
         ref={refs.linkLine2}
         style={{ fontSize: 16, marginTop: 40, fill: "#aaa" }}
-        visibility={!isEmpty ? 'visible' : 'hidden'}
+        visibility={!isEmpty ? "visible" : "hidden"}
       >
         ↳ https://card.oktech.jp
       </text>
@@ -254,6 +258,6 @@ export function CardDisplayFront({
           width={SVG_RATIOS[bottom2] * 20}
         />
       ) : null}
-    </CardSvg>
+    </BusinessCardSvg>
   );
 }

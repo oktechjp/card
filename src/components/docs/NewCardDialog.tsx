@@ -1,12 +1,5 @@
-import {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type Ref,
-} from "react";
-import { InputWithLabel } from "./InputWithLabel";
+import { useEffect, useMemo, useRef, useState, type Ref } from "react";
+import { InputWithLabel } from "@/components/form/InputWithLabel";
 import { createPrivateKeyBase32 } from "@/utils/createPrivateKeyBase32";
 import { createPrivateWordsKey } from "@/utils/createPrivateKeyWords";
 import { applyRef } from "@/utils/applyRef";
@@ -57,10 +50,13 @@ export const NewCardDialog = ({
           size={40}
           value={privateKey}
         />
-        <button type="button" onClick={(e) => {
-            setLastRefresh(Date.now())
-            e.preventDefault()
-        }}>
+        <button
+          type="button"
+          onClick={(e) => {
+            setLastRefresh(Date.now());
+            e.preventDefault();
+          }}
+        >
           NewKey
         </button>
         <button
@@ -74,10 +70,14 @@ export const NewCardDialog = ({
         >
           OK
         </button>
-        <button onClick={(e) => {
-            ref.current?.close()
-            e.preventDefault()
-        }}>Close</button>
+        <button
+          onClick={(e) => {
+            ref.current?.close();
+            e.preventDefault();
+          }}
+        >
+          Close
+        </button>
       </form>
     </dialog>
   );

@@ -1,4 +1,4 @@
-import type { OptionGroup } from "@/components/docs/OptionGroup";
+import type { OptionGroup } from "@/components/form/OptionGroup";
 
 export const DOC_TYPE = "card";
 export const DOC_VERSION = 1;
@@ -353,7 +353,7 @@ export const CountryGroups = [
       { name: "South", entries: SouthAsianCountryTypes },
       { name: "West", entries: WestAsianCountryTypes },
     ],
-  } ,
+  },
   { name: "Europe", entries: EuropeCountryType },
   {
     name: "America",

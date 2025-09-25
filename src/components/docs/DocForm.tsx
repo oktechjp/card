@@ -1,17 +1,13 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { formToJSON, jsonToForm } from "@/utils/form";
-import { CardDisplay } from "@/components/docs/CardDisplay";
-import {
-  DOC_TYPE,
-  DOC_VERSION,
-  isEmptyCard,
-} from "@/docs/card";
+import { CardDisplay } from "@/components/docs/card/CardDisplay";
+import { DOC_TYPE, DOC_VERSION, isEmptyCard } from "@/docs/card";
 import { useStore } from "@nanostores/react";
 import { docs } from "@/store/doc";
 import { useAsyncMemo } from "@/hooks/useAsyncMemo";
 import { encryptDocument } from "@/utils/safeDoc";
 import { setHash } from "@/store/hash";
-import { CardForm } from "./CardForm";
+import { CardForm } from "./card/CardForm";
 
 export type DocFormProps = {
   docKey: string;
@@ -71,9 +67,10 @@ export const DocForm = ({ docKey }: DocFormProps) => {
             <a href={doc.link}>{doc.link}</a>
           )
         ) : isEmptyCard(doc.draft) ? (
-          <>Card Empty
-              <button onClick={discardChanges}>Discard</button>
-              </>
+          <>
+            Card Empty
+            <button onClick={discardChanges}>Discard</button>
+          </>
         ) : (
           <>
             Not Stored on server{" "}

@@ -4,10 +4,7 @@ export interface SelectGroupOptionProps {
   group: OptionGroup;
   parent?: string;
 }
-export function SelectGroupOption({
-  group,
-  parent,
-}: SelectGroupOptionProps) {
+export function SelectGroupOption({ group, parent }: SelectGroupOptionProps) {
   const name = parent ? `${parent} - ${group.name}` : group.name;
   const options = Object.entries(group.entries ?? {})
     .sort(([_, a], [__, b]) => (a > b ? 1 : b > a ? -1 : 0))
