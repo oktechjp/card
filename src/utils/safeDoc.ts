@@ -10,7 +10,7 @@ import {
 import type { JSONObj } from "./form";
 import type { MouseEventHandler } from "react";
 import words from "./words.json" assert { type: "json" };
-import permutations from './permutations.json' assert { type: 'json' };
+import permutations from "./permutations.json" assert { type: "json" };
 
 const ENCRYPT_ALGO = "AES-GCM";
 const ENCRYPT_LEN = 256;
@@ -197,11 +197,13 @@ const weighted = new RandomWeighted(
       listOfWords,
       weight: listOfWords.reduce((total, set) => total * set.length, 1),
     };
-  })
-)
-
+  }),
+);
 export function createPrivateWordsKey() {
-  return weighted.getRandom().listOfWords.map((words) => getRandomEntry(words)).join("-");
+  return weighted
+    .getRandom()
+    .listOfWords.map((words) => getRandomEntry(words))
+    .join("-");
 }
 
 export function createPrivateBase32Key() {
