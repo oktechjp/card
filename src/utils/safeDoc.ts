@@ -206,6 +206,154 @@ export function createPrivateWordsKey() {
     .join("-");
 }
 
+console.log(weighted.total);
+
+// const byChars = {
+//   2: words.filter((word) => word.length === 2),
+//   4: words.filter((word) => word.length === 4),
+//   5: words.filter((word) => word.length === 5),
+//   3: words.filter((word) => word.length === 3),
+//   6: words.filter((word) => word.length === 6),
+// } as const;
+
+// const groups = permutate(
+//   [
+//     [4, 4],
+//     [2, 6],
+//     [6, 2],
+//     [3, 5],
+//     [5, 3],
+//   ],
+//   4,
+// ).map((group) => flatten(group));
+// console.log(JSON.stringify(groups, null, 2));
+// function flatten<T>(input: T[][]): T[] {
+//   return input.reduce((prev, entry) => {
+//     prev.push(...entry);
+//     return prev;
+//   }, []);
+// }
+
+// console.log(JSON.stringify(permutate([0, 1, 2], 4).map(indices => indices.map(index => groups[index])), null, 2));
+// const weighted = new RandomWeighted(
+//   [
+//     [0, 0, 0, 0],
+//     [0, 0, 0, 1],
+//     [0, 0, 0, 2],
+//     [0, 0, 1, 0],
+//     [0, 0, 1, 1],
+//     [0, 0, 1, 2],
+//     [0, 0, 2, 0],
+//     [0, 0, 2, 1],
+//     [0, 0, 2, 2],
+//     [0, 1, 0, 0],
+//     [0, 1, 0, 1],
+//     [0, 1, 0, 2],
+//     [0, 1, 1, 0],
+//     [0, 1, 1, 1],
+//     [0, 1, 1, 2],
+//     [0, 1, 2, 0],
+//     [0, 1, 2, 1],
+//     [0, 1, 2, 2],
+//     [0, 2, 0, 0],
+//     [0, 2, 0, 1],
+//     [0, 2, 0, 2],
+//     [0, 2, 1, 0],
+//     [0, 2, 1, 1],
+//     [0, 2, 1, 2],
+//     [0, 2, 2, 0],
+//     [0, 2, 2, 1],
+//     [0, 2, 2, 2],
+//     [1, 0, 0, 0],
+//     [1, 0, 0, 1],
+//     [1, 0, 0, 2],
+//     [1, 0, 1, 0],
+//     [1, 0, 1, 1],
+//     [1, 0, 1, 2],
+//     [1, 0, 2, 0],
+//     [1, 0, 2, 1],
+//     [1, 0, 2, 2],
+//     [1, 1, 0, 0],
+//     [1, 1, 0, 1],
+//     [1, 1, 0, 2],
+//     [1, 1, 1, 0],
+//     [1, 1, 1, 1],
+//     [1, 1, 1, 2],
+//     [1, 1, 2, 0],
+//     [1, 1, 2, 1],
+//     [1, 1, 2, 2],
+//     [1, 2, 0, 0],
+//     [1, 2, 0, 1],
+//     [1, 2, 0, 2],
+//     [1, 2, 1, 0],
+//     [1, 2, 1, 1],
+//     [1, 2, 1, 2],
+//     [1, 2, 2, 0],
+//     [1, 2, 2, 1],
+//     [1, 2, 2, 2],
+//     [2, 0, 0, 0],
+//     [2, 0, 0, 1],
+//     [2, 0, 0, 2],
+//     [2, 0, 1, 0],
+//     [2, 0, 1, 1],
+//     [2, 0, 1, 2],
+//     [2, 0, 2, 0],
+//     [2, 0, 2, 1],
+//     [2, 0, 2, 2],
+//     [2, 1, 0, 0],
+//     [2, 1, 0, 1],
+//     [2, 1, 0, 2],
+//     [2, 1, 1, 0],
+//     [2, 1, 1, 1],
+//     [2, 1, 1, 2],
+//     [2, 1, 2, 0],
+//     [2, 1, 2, 1],
+//     [2, 1, 2, 2],
+//     [2, 2, 0, 0],
+//     [2, 2, 0, 1],
+//     [2, 2, 0, 2],
+//     [2, 2, 1, 0],
+//     [2, 2, 1, 1],
+//     [2, 2, 1, 2],
+//     [2, 2, 2, 0],
+//     [2, 2, 2, 1],
+//     [2, 2, 2, 2],
+//   ].map((indices) => {
+//     const listOfWords = flatten(indices.map((index) => groups[index]));
+//     return {
+//       listOfWords,
+//       weight: listOfWords.reduce((total, set) => total * set.length, 1),
+//     };
+//   }),
+// );
+// console.log(weighted);
+
+// export function createPrivateWordsKey() {
+//   return shuffle(
+//     weighted.getRandom().listOfWords.map((words) => getRandomEntry(words)),
+//   ).join("-");
+// }
+
+// function shuffle<T extends any[]>(input: T): T {
+//   const output: T = [] as any[] as T;
+//   const maxLen: number = input.length;
+//   let len = input.length;
+//   while (len > 0) {
+//     output.push(...input.splice(getSecureRandomInt(maxLen) % len, 1));
+//     len--;
+//   }
+//   return output;
+// }
+
+console.log(`
+${createPrivateWordsKey()}
+${createPrivateWordsKey()}
+${createPrivateWordsKey()}
+${createPrivateWordsKey()}
+${createPrivateWordsKey()}
+${createPrivateWordsKey()}
+`);
+
 export function createPrivateBase32Key() {
   return toReadableHash(crypto.getRandomValues(new Uint8Array(12)));
 }
