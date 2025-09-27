@@ -8,7 +8,7 @@ export type Page = {
 
 export type DocTypeDefinition<Schema extends ZodObject = ZodObject> = {
   type: string;
-  name: string;
+  humanName: string;
   version: number;
   schema: Schema;
   isEmpty(doc: output<Schema>): boolean;

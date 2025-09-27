@@ -27,7 +27,7 @@ export const PAGE_FRONT = { id: "front", label: "Front" } as const;
 export const PAGE_BACK = { id: "back", label: "Back" } as const;
 
 export const CardV1 = {
-  name: "Business Card",
+  humanName: "Business Card",
   type: "card",
   version: 1,
   getPages: () => [PAGE_FRONT, PAGE_BACK] as const,

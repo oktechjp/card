@@ -14,8 +14,8 @@ export function DocsEditor({ setup }: DocsEditorProps) {
   const newCardDialog = useRef<HTMLDialogElement>(null);
   const hash = useStore(hashStore);
   const knownIds = useStore(knownDraftIds);
-  const newCard = (privateKey: string) => {
-    setHash(createDoc(privateKey));
+  const newCard = (type: DocTypeDefinition, privateKey: string) => {
+    setHash(createDoc(type, privateKey));
   };
   const isPossibleDocKey = getPossibleDocKey(hash) != null;
   return (
@@ -49,7 +49,11 @@ export function DocsEditor({ setup }: DocsEditorProps) {
       >
         New Card
       </button>
-      <NewDocDialog ref={newCardDialog} onSuccess={newCard} />
+      <NewDocDialog
+        ref={newCardDialog}
+        types={setup.types}
+        onSuccess={newCard}
+      />
       {hash && isPossibleDocKey ? (
         <DocEditor key={hash} docKey={hash} setup={setup} />
       ) : null}

@@ -95,10 +95,15 @@ const persistentDrafts = persistentMap<Record<string, any>>(
   JsonCodec,
 );
 
-export function createDoc(privateKey: string) {
-  persistentIds.setKey(privateKey, true);
-  persistentDrafts.setKey(privateKey, {});
-  return privateKey;
+export function createDoc(type: DocTypeDefinition, docKey: string) {
+  persistentIds.setKey(docKey, true);
+  persistentDrafts.setKey(docKey, {
+    docKey,
+    type: type.type,
+    version: type.version,
+    data: type.schema.parse({}),
+  });
+  return docKey;
 }
 
 export const knownDraftIds = computed([persistentDrafts], (all) =>
