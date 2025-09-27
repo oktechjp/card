@@ -10,7 +10,8 @@ import { useSvgSize } from "@/hooks/useSvgSize";
 import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
 import { useQRCode } from "@/hooks/useQrCode";
 import { ICON_RATIOS } from "@/docs/card/icon-ratios";
-import type { CardV1Type } from "@/docs/card";
+import { ICON_WHITE_BG } from "@/docs/card/icon-white-bg";
+import type { AllIconTypes, CardV1Type } from "@/docs/card";
 import type { DocPageView } from "@/components/safeDoc-react/DocView";
 
 type BigProps = {
@@ -243,21 +244,36 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
         />
       ) : null}
       {bottom1 ? (
-        <EmbeddedSVGImage
+        <BottomIcon
           ref={refs.bottom1}
-          href={`/svg/${bottom1}.svg`}
-          height={20}
-          width={ICON_RATIOS[bottom1 as keyof typeof ICON_RATIOS] * 20}
+          value={bottom1 as keyof typeof AllIconTypes}
         />
       ) : null}
       {bottom2 ? (
-        <EmbeddedSVGImage
+        <BottomIcon
           ref={refs.bottom2}
-          href={`/svg/${bottom2}.svg`}
-          height={20}
-          width={ICON_RATIOS[bottom2 as keyof typeof ICON_RATIOS] * 20}
+          value={bottom2 as keyof typeof AllIconTypes}
         />
       ) : null}
     </BusinessCardSvg>
+  );
+};
+
+const BottomIcon = ({
+  ref,
+  value,
+}: {
+  ref: Ref<SVGImageElement>;
+  value: keyof typeof AllIconTypes;
+}) => {
+  const border = ICON_WHITE_BG[value] ?? false;
+  return (
+    <EmbeddedSVGImage
+      ref={ref}
+      href={`/svg/${value}.svg`}
+      height={20}
+      width={ICON_RATIOS[value as keyof typeof ICON_RATIOS] * 20}
+      style={border ? { outline: "1px solid #888" } : undefined}
+    />
   );
 };
