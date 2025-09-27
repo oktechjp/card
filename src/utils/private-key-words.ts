@@ -37,7 +37,8 @@ const weighted = new RandomWeighted(
     };
   }),
 );
-export const createPrivateKeyWords = () => weighted
+export const createPrivateKeyWords = () =>
+  weighted
     .getRandom()
     .listOfWords.map((words) => getRandomEntry(words))
     .join("-");

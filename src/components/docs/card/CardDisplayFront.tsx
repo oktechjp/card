@@ -1,6 +1,5 @@
 import clsx from "clsx";
 import type { Ref } from "react";
-import type { CardDisplayVariantProps } from "@/components/docs/card/CardDisplayType";
 import { NotoSansJP } from "@/components/fonts/NotoSansJP";
 import {
   CARD_HEIGHT,
@@ -10,8 +9,9 @@ import {
 import { useSvgSize } from "@/hooks/useSvgSize";
 import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
 import { useQRCode } from "@/hooks/useQrCode";
-import { isEmptyCard } from "@/docs/card";
-import { SVG_RATIOS } from "@/docs/svg-ratios";
+import { ICON_RATIOS } from "@/docs/card/icon-ratios";
+import type { CardV1Type } from "@/docs/card";
+import type { DocPageView } from "@/components/safeDoc-react/DocView";
 
 type BigProps = {
   kana?: string;
@@ -57,12 +57,14 @@ const Big = ({ kana, text, className, ref }: BigProps) => {
   );
 };
 
-export function CardDisplayFront({
-  json,
-  link,
-  isCut,
+export const CardDisplayFront: DocPageView<CardV1Type> = ({
+  type,
+  docKey,
+  data: json,
+  isDraft,
+  showMargins,
   ref,
-}: CardDisplayVariantProps) {
+}) => {
   const { zoom, ...refs } = useSvgSize(
     [
       "bottom1",
@@ -146,14 +148,12 @@ export function CardDisplayFront({
       }
     },
   );
-  const isEmpty = isEmptyCard(json);
-  if (isEmpty) {
-    link = "https://card.oktech.jp/new";
-  }
+  const isEmpty = type.isEmpty(json);
+  const link = isDraft ? "https://card.oktech.jp/new" : type.getLink(docKey);
   const qrCode = useQRCode(link);
   const { bottom1, bottom2 } = json;
   return (
-    <BusinessCardSvg ref={ref} isCut={isCut} background="white">
+    <BusinessCardSvg ref={ref} isCut={!showMargins} background="white">
       <style>{`
             ${NotoSansJP}
             /* Style the text */
@@ -228,7 +228,7 @@ export function CardDisplayFront({
       <text
         ref={refs.linkLine2}
         style={{ fontSize: 16, marginTop: 40, fill: "#aaa" }}
-        visibility={!isEmpty ? "visible" : "hidden"}
+        visibility={!isDraft ? "visible" : "hidden"}
       >
         ↳ https://card.oktech.jp
       </text>
@@ -247,7 +247,7 @@ export function CardDisplayFront({
           ref={refs.bottom1}
           href={`/svg/${bottom1}.svg`}
           height={20}
-          width={SVG_RATIOS[bottom1] * 20}
+          width={ICON_RATIOS[bottom1 as keyof typeof ICON_RATIOS] * 20}
         />
       ) : null}
       {bottom2 ? (
@@ -255,9 +255,9 @@ export function CardDisplayFront({
           ref={refs.bottom2}
           href={`/svg/${bottom2}.svg`}
           height={20}
-          width={SVG_RATIOS[bottom2] * 20}
+          width={ICON_RATIOS[bottom2 as keyof typeof ICON_RATIOS] * 20}
         />
       ) : null}
     </BusinessCardSvg>
   );
-}
+};

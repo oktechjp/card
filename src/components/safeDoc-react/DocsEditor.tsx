@@ -1,12 +1,16 @@
-import { getPossibleDocKey } from "@/utils/safeDoc";
-import { DocForm } from "@/components/docs/DocForm";
+import { getPossibleDocKey, type DocTypeDefinition } from "@/utils/safeDoc";
+import { DocEditor } from "@/components/safeDoc-react/DocEditor";
 import { useStore } from "@nanostores/react";
-import { knownDraftIds, createDoc } from "@/store/doc";
+import { knownDraftIds, createDoc } from "@/store/safeDoc-store";
 import { hashStore, setHash } from "@/store/hash";
 import { useRef } from "react";
-import { NewDocsDialog } from "@/components/docs/NewDocDialog";
+import { NewDocDialog } from "@/components/safeDoc-react/NewDocDialog";
+import type { SafeDocReact } from ".";
 
-export function DocEditor() {
+export interface DocsEditorProps {
+  setup: SafeDocReact;
+}
+export function DocsEditor({ setup }: DocsEditorProps) {
   const newCardDialog = useRef<HTMLDialogElement>(null);
   const hash = useStore(hashStore);
   const knownIds = useStore(knownDraftIds);
@@ -45,8 +49,10 @@ export function DocEditor() {
       >
         New Card
       </button>
-      <NewDocsDialog ref={newCardDialog} onSuccess={newCard} />
-      {hash && isPossibleDocKey ? <DocForm docKey={hash} /> : null}
+      <NewDocDialog ref={newCardDialog} onSuccess={newCard} />
+      {hash && isPossibleDocKey ? (
+        <DocEditor key={hash} docKey={hash} setup={setup} />
+      ) : null}
     </>
   );
 }

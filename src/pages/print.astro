@@ -1,9 +1,10 @@
 ---
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { PrintDialog } from '@/components/docs/PrintDialog';
+import { Printer } from '@/components/system';
+
 ---
 
 <BaseLayout>
-    <PrintDialog client:only="react" />
+    <Printer client:only="react" />
 </BaseLayout>

@@ -2,10 +2,11 @@
 import { readFile, readdir, writeFile } from "node:fs/promises";
 
 const dir = new URL("public/svg/", import.meta.url);
-const target = new URL("src/docs/svg-sizes.ts", import.meta.url);
+const target = new URL("src/docs/card/icon-ratios.ts", import.meta.url);
 const files = await readdir(dir);
-let res = `
-export const SVG_RATIOS = {
+let res = `import type { AllIconTypes } from "./icons";
+
+export const ICON_RATIOS = {
 `;
 for (const file of files) {
   if (!file.endsWith(".svg")) {
@@ -17,7 +18,7 @@ for (const file of files) {
   res += `  '${file.substring(0, file.length - 4)}': ${parseInt(matchW[1]) / parseInt(matchH[1])},\n`;
 }
 res += `
-} as const
+} as const satisfies Record<keyof typeof AllIconTypes, number>;
 `;
 await writeFile(target, res);
 console.log(`Wrote ${target.pathname}`);

@@ -1,4 +1,4 @@
-import type { OptionGroup } from "./OptionGroup";
+import type { OptionGroup } from "@/components/form/OptionGroup";
 
 export interface SelectGroupOptionProps {
   group: OptionGroup;

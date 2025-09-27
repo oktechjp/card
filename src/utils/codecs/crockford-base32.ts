@@ -1,4 +1,4 @@
-import type { Codec } from "./codec";
+import type { Codec } from "@/utils/codecs/codec";
 
 const c32Dict = [
   "0Oo",

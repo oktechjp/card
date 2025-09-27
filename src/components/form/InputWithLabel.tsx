@@ -1,39 +1,23 @@
-import { useId } from "react";
+import { useId, type InputHTMLAttributes } from "react";
 
-export type InputWithLabelProps = {
+export type InputWithLabelProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "label" | "children"
+> & {
   label: string;
-  name: string;
-  type?: string;
-  defaultValue?: string;
-  checked?: boolean;
-  value?: string;
-  disabled?: boolean;
-  size?: number;
 };
 export function InputWithLabel({
   label,
-  name,
-  type,
-  defaultValue,
-  checked,
-  value,
-  disabled,
-  size,
+  style,
+  className,
+  id,
+  ...rest
 }: InputWithLabelProps) {
-  const id = useId();
+  const elemId = useId();
   return (
-    <div>
-      <label htmlFor={id}>{label}</label>
-      <input
-        size={size}
-        id={id}
-        name={name}
-        type={type}
-        defaultChecked={checked}
-        disabled={disabled}
-        value={value}
-        defaultValue={defaultValue}
-      />
-    </div>
+    <span id={id} style={style} className={className}>
+      <label htmlFor={elemId}>{label}</label>
+      <input id={elemId} {...rest} />
+    </span>
   );
 }

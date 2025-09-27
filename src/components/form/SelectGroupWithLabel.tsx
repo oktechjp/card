@@ -1,6 +1,6 @@
-import type { OptionGroup } from "./OptionGroup";
-import { SelectGroupOption } from "./SelecGroupOption";
-import { SelectWithLabel } from "./SelectWithLabel";
+import type { OptionGroup } from "@/components/form/OptionGroup";
+import { SelectGroupOption } from "@/components/form/SelecGroupOption";
+import { SelectWithLabel } from "@/components/form/SelectWithLabel";
 
 export interface CountrySelectProps {
   name: string;

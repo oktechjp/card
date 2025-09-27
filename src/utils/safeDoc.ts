@@ -1,10 +1,25 @@
+import z, { type output } from "zod/v4";
 import {
   sanitizeCrockfordBase32,
   crockfordBase32,
 } from "@/utils/codecs/crockford-base32";
-import type { JSONObj } from "@/utils/form";
-import type { MouseEventHandler } from "react";
+import type {
+  DocCodec,
+  JSONDocument,
+  WorkDocument,
+  DocTypeDefinition,
+} from "@/utils/codecs";
 import { codecs } from "@/utils/codecs";
+import { uniqueRequests } from "@/utils/requests";
+
+export {
+  createDocCodec,
+  type Page,
+  type DocCodec,
+  type WorkDocument,
+  type Codec,
+  type DocTypeDefinition,
+} from "@/utils/codecs";
 
 const PAGE_SALT = codecs.base64.decode("Ljeijq98ZyaFa5NV");
 const PAGE_KEY = codecs.base64.decode("4sQNniS/0141scm8");
@@ -25,9 +40,6 @@ const ENCRYPT = {
   } satisfies AesDerivedKeyParams,
 } as const;
 
-const LINK_PREFIX = "https://card.oktech.jp#";
-const DOC_PREFIX = "https://public.oktech.jp/docs/";
-
 async function deriveEncryptionKey(secret: Uint8Array<ArrayBuffer>) {
   const deriveKey = await crypto.subtle.importKey(
     "raw",
@@ -42,13 +54,25 @@ async function deriveEncryptionKey(secret: Uint8Array<ArrayBuffer>) {
   ]);
 }
 
-interface EncryptedDocumentWrapper {
-  content: string;
+async function encrypt(
+  privateKey: Uint8Array<ArrayBuffer>,
+  content: Uint8Array<ArrayBuffer>,
+) {
+  const encryptionKey = await deriveEncryptionKey(privateKey);
+  return new Uint8Array(
+    await crypto.subtle.encrypt(ENCRYPT.params, encryptionKey, content),
+  );
 }
+
+export const EncryptedDocSchema = z.object({
+  content: z.base64(),
+});
+
+export type EncryptedDoc = output<typeof EncryptedDocSchema>;
 
 export async function decryptDocument(
   privateKey: string,
-  { content }: EncryptedDocumentWrapper,
+  { content }: output<typeof EncryptedDocSchema>,
 ) {
   const encryptionKey = await deriveEncryptionKey(
     codecs.utf8.encode(privateKey),
@@ -61,7 +85,7 @@ export async function decryptDocument(
   return codecs.json.decode(new Uint8Array(base));
 }
 
-async function toPublicKey(privateKey: string) {
+export async function toPublicKey(privateKey: string) {
   return crockfordBase32.encode(
     await encrypt(PAGE_KEY, codecs.utf8.encode(privateKey)),
   );
@@ -88,115 +112,70 @@ function getPossibleBase32Key(input: string) {
   return key;
 }
 
-export async function fetchDocument(privateKey: string) {
-  try {
-    const publicKey = await toPublicKey(privateKey);
-    const res = await fetch(`${DOC_PREFIX}${publicKey}.json`);
-    if (res.status !== 200) {
-      throw new Error(`Invalid response: ${res.status}`);
+export interface ParsedDocument<
+  T extends DocTypeDefinition = DocTypeDefinition,
+> {
+  type: T;
+  docKey: string;
+  data: output<T["schema"]>;
+  time: Date;
+}
+
+export async function fetchDocument(
+  docKey: string,
+  codec: DocCodec,
+): Promise<WorkDocument> {
+  if (codec.types.length === 0) {
+    throw new Error(`No Codecs defined to load`);
+  }
+  const storageKey = await toPublicKey(docKey);
+  //
+  // Requests may be the same for different types,
+  // in case the location is the same, we need to load
+  // them only once and afterwards look in the data for the type
+  //
+  const requests = await uniqueRequests(
+    codec.types.map((type) => type.createStorageRequest(storageKey)),
+  );
+  let cause: Error | undefined = undefined;
+  for (const request of requests) {
+    let text: string;
+    try {
+      const res = await fetch(request);
+      if (res.status !== 200) {
+        throw new Error(`Invalid response: ${res.status}`);
+      }
+      text = await res.text();
+    } catch (cause) {
+      cause = cause instanceof Error ? cause : new Error(String(cause));
+      continue;
     }
     let json;
     try {
-      json = await res.json();
+      json = EncryptedDocSchema.parse(JSON.parse(text));
     } catch (cause) {
-      throw new Error(`Invalid document`, { cause });
+      throw new Error(`Invalid document: ${text}`, { cause });
     }
-    if (!("content" in json)) {
-      throw new Error(`Invalid JSON data`);
-    }
-    return await decryptDocument(privateKey, json);
-  } catch (cause) {
-    throw new Error("Not found", { cause });
+    return codec.decode({
+      docKey,
+      doc: await decryptDocument(docKey, json),
+    });
   }
+  throw new Error(`Document not found`, { cause });
 }
 
-export function getLocalStorageDocKey(privateKey: string) {
-  return `privateKey:${privateKey}`;
-}
-
-async function encrypt(
-  privateKey: Uint8Array<ArrayBuffer>,
-  content: Uint8Array<ArrayBuffer>,
-) {
-  const encryptionKey = await deriveEncryptionKey(privateKey);
-  return new Uint8Array(
-    await crypto.subtle.encrypt(ENCRYPT.params, encryptionKey, content),
-  );
-}
-
-export interface EncryptedDocument {
-  fileName: string;
-  link: string;
-  encrypted: EncryptedDocumentWrapper;
-  encryptedJson: string;
-  prCreateLink: string;
-  prUpdateAction: MouseEventHandler;
-  docKey: string;
-}
-export async function encryptDocument(
-  docKey: string,
-  type: string,
-  version: number,
-  data: JSONObj,
-): Promise<EncryptedDocument> {
-  const time = new Date().toISOString();
-  const publicKey = await toPublicKey(docKey);
-  const document = {
-    type,
-    version,
-    time,
-    data,
-  };
-  const encrypted = {
-    content: codecs.base64.encode(
-      await encrypt(codecs.utf8.encode(docKey), codecs.json.encode(document)),
-    ),
-  };
-  const fileName = `${publicKey}.json`;
-  const encryptedJson = JSON.stringify(encrypted, null, 2);
-  const prCreateURL = new URL(
-    `https://github.com/oktechjp/public/new/main/docs`,
-  );
-  prCreateURL.searchParams.append("filename", fileName);
-  prCreateURL.searchParams.append("value", encryptedJson);
-  const prUpdateURL = new URL(
-    `https://github.com/oktechjp/public/edit/main/docs/${publicKey}.json`,
-  );
-  prUpdateURL.searchParams.append("value", encryptedJson);
+export async function encryptDocument(input: JSONDocument): Promise<{
+  publicKey: string;
+  encrypted: EncryptedDoc;
+}> {
+  const [publicKey, contentBuffer] = await Promise.all([
+    toPublicKey(input.docKey),
+    encrypt(codecs.utf8.encode(input.docKey), codecs.json.encode(input.doc)),
+  ] as const);
   return {
-    docKey,
-    fileName,
-    link: `${LINK_PREFIX}${docKey}`,
-    prCreateLink: prCreateURL.toString(),
-    prUpdateAction: () => {
-      const clipboard = globalThis.navigator?.clipboard;
-      if (!clipboard) {
-        alert("todo");
-        return;
-      }
-      (async () => {
-        await clipboard.writeText(encryptedJson);
-        if (
-          !confirm(`Github doesnt support pre-filling the changed content. :-(`)
-        ) {
-          return;
-        }
-        if (!confirm(`The new content is now in your clipboard!`)) {
-          return;
-        }
-        if (!confirm(`After sending okay we will redirect you to github!`)) {
-          return;
-        }
-        if (!confirm(`Paste the content on the next site into github!`)) {
-          return;
-        }
-        window.open(prUpdateURL.toString(), "_blank");
-      })().catch((err) => {
-        console.error(err);
-        alert("Something went wrong :-(");
-      });
+    publicKey,
+    encrypted: {
+      content: codecs.base64.encode(contentBuffer),
     },
-    encrypted,
-    encryptedJson,
   };
 }

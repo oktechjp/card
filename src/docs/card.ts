@@ -1,388 +1,44 @@
-import type { OptionGroup } from "@/components/form/OptionGroup";
+import z from "zod/v4";
+import type { DocTypeDefinition } from "@/utils/codecs/doc-codec";
+import { ColorEnum } from "@/docs/card/colors";
+import { AllIconTypes } from "@/docs/card/icons";
+export { ColorEnum } from "@/docs/card/colors";
+export { AllIconTypes, CountryGroups } from "@/docs/card/icons";
 
-export const DOC_TYPE = "card";
-export const DOC_VERSION = 1;
-
-export enum ColorEnum {
-  red = "red",
-  green = "green",
-  blue = "blue",
-  ocre = "ocre",
-  torquoise = "torquoise",
-  violet = "violet",
-  cyan = "cyan",
-  magenta = "magenta",
-  yellow = "yellow",
-}
 export const DEFAULT_COLOR = ColorEnum.red;
-export const JapanCountryTypes = {
-  jp: "Japan",
-  "jp-osaka-pref": "Osaka Pref",
-  "jp-osaka-city": "Osaka City",
-  "jp-kyoto-pref": "Kyoto Pref",
-  "jp-kyoto-city": "Kyoto City",
-  "jp-nara-pref": "Nara Pref",
-  "jp-nara-city": "Nara City",
-  "jp-hyogo-pref": "Hyogo Pref",
-  "jp-kobe-city": "Kobe City",
-  "jp-wakayama-pref": "Wakayama Pref",
-  "jp-wakayama-city": "Wakayama City",
-  "jp-shiga-pref": "Shiga Pref",
-  "jp-otsu-city": "Otsu City",
-} as const;
-export const SouthAsianCountryTypes = {
-  bd: "Bangladesh",
-  bt: "Bhutan",
-  cn: "China",
-  hk: "Hong Kong",
-  in: "India",
-  io: "British Indian Ocean Territory",
-  lk: "Sri Lanka",
-  mn: "Mongolia",
-  mo: "Macao",
-  mq: "Martinique",
-  np: "Nepal",
-  tj: "Tajikistan",
-  tm: "Turkmenistan",
-} as const;
-export const EastAsianCountryTypes = {
-  bn: "Brunei Darussalam",
-  kh: "Cambodia",
-  kp: "Democratic People's Republic of Korea",
-  kr: "Republic of Korea",
-  la: "Lao People's Democratic Republic",
-  mm: "Myanmar",
-  mv: "Maldives",
-  my: "Malaysia",
-  ph: "Philippines",
-  sg: "Singapore",
-  th: "Thailand",
-  tw: "Taiwan, Province of China",
-  vn: "Viet Nam",
-} as const;
-export const WestAsianCountryTypes = {
-  am: "Armenia",
-  az: "Azerbaijan",
-  ge: "Georgia",
-  jo: "Jordan",
-  kg: "Kyrgyzstan",
-  kw: "Kuwait",
-  kz: "Kazakhstan",
-  lb: "Lebanon",
-  om: "Oman",
-  pk: "Pakistan",
-  qa: "Qatar",
-  sa: "Saudi Arabia",
-  sy: "Syrian Arab Republic",
-  uz: "Uzbekistan",
-  ye: "Yemen",
-} as const;
-export const EuropeCountryType = {
-  ad: "Andorra",
-  al: "Albania",
-  at: "Austria",
-  ax: "Åland Islands",
-  ba: "Bosnia and Herzegovina",
-  be: "Belgium",
-  bg: "Bulgaria",
-  by: "Belarus",
-  ch: "Switzerland",
-  cy: "Cyprus",
-  cz: "Czech Republic",
-  de: "Germany",
-  dk: "Denmark",
-  ee: "Estonia",
-  es: "Spain",
-  fi: "Finland",
-  fo: "Faroe Islands",
-  fr: "France",
-  gb: "United Kingdom of Great Britain and Northern Ireland",
-  "gb-eng": "England",
-  "gb-nir": "Northern Ireland",
-  "gb-sct": "Scotland",
-  "gb-wls": "Wales",
-  gg: "Guernsey",
-  gi: "Gibraltar",
-  gr: "Greece",
-  hr: "Croatia",
-  hu: "Hungary",
-  ie: "Ireland",
-  im: "Isle of Man",
-  is: "Iceland",
-  it: "Italy",
-  je: "Jersey",
-  li: "Liechtenstein",
-  lt: "Lithuania",
-  lu: "Luxembourg",
-  lv: "Latvia",
-  mc: "Monaco",
-  md: "Republic of Moldova",
-  me: "Montenegro",
-  mk: "North Macedonia",
-  mt: "Malta",
-  nl: "Netherlands",
-  no: "Norway",
-  pl: "Poland",
-  pt: "Portugal",
-  ro: "Romania",
-  rs: "Serbia",
-  ru: "Russian Federation",
-  se: "Sweden",
-  si: "Slovenia",
-  sj: "Svalbard and Jan Mayen",
-  sk: "Slovakia",
-  sm: "San Marino",
-  tr: "Turkey",
-  ua: "Ukraine",
-  va: "Holy See",
-} as const;
-export const MiddleEastCountryTypes = {
-  ae: "United Arab Emirates",
-  af: "Afghanistan",
-  bh: "Bahrain",
-  il: "Israel",
-  iq: "Iraq",
-  ir: "Islamic Republic of Iran",
-  ps: "State of Palestine",
-} as const;
-export const PacificCountryTypes = {
-  as: "American Samoa",
-  au: "Australia",
-  cc: "Cocos Islands",
-  ck: "Cook Islands",
-  cx: "Christmas Island",
-  fj: "Fiji",
-  fm: "Federated States of Micronesia",
-  gu: "Guam",
-  hm: "Heard Island and McDonald Islands",
-  id: "Indonesia",
-  ki: "Kiribati",
-  mh: "Marshall Islands",
-  mp: "Northern Mariana Islands",
-  nc: "New Caledonia",
-  nf: "Norfolk Island",
-  nr: "Nauru",
-  nu: "Niue",
-  nz: "New Zealand",
-  pf: "French Polynesia",
-  pg: "Papua New Guinea",
-  pn: "Pitcairn",
-  pw: "Palau",
-  sb: "Solomon Islands",
-  sh: "Saint Helena, Ascension and Tristan da Cunha",
-  tk: "Tokelau",
-  tl: "Timor-Leste",
-  to: "Tonga",
-  tv: "Tuvalu",
-  vu: "Vanuatu",
-  wf: "Wallis and Futuna",
-  ws: "Samoa",
-} as const;
-export const NorthAfricanCountryTypes = {
-  dz: "Algeria",
-  eg: "Egypt",
-  eh: "Western Sahara",
-  ly: "Libya",
-  ma: "Morocco",
-  mr: "Mauritania",
-  sd: "Sudan",
-  td: "Chad",
-  tn: "Tunisia",
-} as const;
-export const EastAfricanCountryTypes = {
-  bi: "Burundi",
-  dj: "Djibouti",
-  er: "Eritrea",
-  et: "Ethiopia",
-  ke: "Kenya",
-  mw: "Malawi",
-  mz: "Mozambique",
-  rw: "Rwanda",
-  sc: "Seychelles",
-  so: "Somalia",
-  tz: "United Republic of Tanzania",
-  ug: "Uganda",
-} as const;
-export const CentralAfricanCountryTypes = {
-  cd: "Democratic Republic of the Congo",
-  cg: "Republic of the Congo",
-  cf: "Central African Republic",
-  ga: "Gabon",
-  st: "Sao Tome and Principe",
-} as const;
-export const WestAfricanCountryTypes = {
-  bf: "Burkina Faso",
-  bj: "Benin",
-  ci: "Côte d'Ivoire",
-  cm: "Cameroon",
-  cv: "Cabo Verde",
-  gh: "Ghana",
-  gm: "Gambia",
-  gn: "Guinea",
-  gq: "Equatorial Guinea",
-  gw: "Guinea-Bissau",
-  lr: "Liberia",
-  ml: "Mali",
-  ne: "Niger",
-  ng: "Nigeria",
-  sl: "Sierra Leone",
-  sn: "Senegal",
-  tg: "Togo",
-} as const;
-export const SouthAfricanCountryTypes = {
-  ao: "Angola",
-  bw: "Botswana",
-  km: "Comoros",
-  ls: "Lesotho",
-  mg: "Madagascar",
-  mu: "Mauritius",
-  na: "Namibia",
-  re: "Réunion",
-  sz: "Eswatini",
-  yt: "Mayotte",
-  za: "South Africa",
-  zm: "Zambia",
-  zw: "Zimbabwe",
-} as const;
-export const NorthAmericanCountryTypes = {
-  ca: "Canada",
-  gl: "Greenland",
-  pm: "Saint Pierre and Miquelon",
-  um: "United States Minor Outlying Islands",
-  us: "United States of America",
-} as const;
-export const CentralAmericanCountryTypes = {
-  bz: "Belize",
-  cr: "Costa Rica",
-  gt: "Guatemala",
-  hn: "Honduras",
-  mx: "Mexico",
-  ni: "Nicaragua",
-  pa: "Panama",
-  sv: "El Salvador",
-} as const;
-export const SouthAmericanCountryTypes = {
-  ar: "Argentina",
-  bo: "Bolivia",
-  br: "Brazil",
-  cl: "Chile",
-  co: "Colombia",
-  ec: "Ecuador",
-  fk: "Falkland Islands",
-  gf: "French Guiana",
-  gs: "South Georgia and the South Sandwich Islands",
-  gy: "Guyana",
-  pe: "Peru",
-  py: "Paraguay",
-  uy: "Uruguay",
-  sr: "Suriname",
-  ve: "Venezuela (Bolivarian Republic of)",
-} as const;
-export const CaribbeanCountryTypes = {
-  ag: "Antigua and Barbuda",
-  ai: "Anguilla",
-  aw: "Aruba",
-  bb: "Barbados",
-  bl: "Saint Barthélemy",
-  bm: "Bermuda",
-  bq: "Bonaire, Sint Eustatius and Saba",
-  bs: "Bahamas",
-  cu: "Cuba",
-  cw: "Curaçao",
-  dm: "Dominica",
-  do: "Dominican Republic",
-  gd: "Grenada",
-  gp: "Guadeloupe",
-  ht: "Haiti",
-  jm: "Jamaica",
-  kn: "Saint Kitts and Nevis",
-  ky: "Cayman Islands",
-  lc: "Saint Lucia",
-  mf: "Saint Martin",
-  ms: "Montserrat",
-  pr: "Puerto Rico",
-  sx: "Sint Maarten",
-  tc: "Turks and Caicos Islands",
-  tt: "Trinidad and Tobago",
-  vc: "Saint Vincent and the Grenadines",
-  vg: "Virgin Islands",
-  vi: "Virgin Islands of the United States",
-} as const;
-export const ExtraCountryTypes = {
-  aq: "Antarctica",
-  bv: "Bouvet Island",
-  tf: "French Southern Territories",
-} as const;
-export const CountryGroups = [
-  { name: "Japan", entries: JapanCountryTypes },
-  {
-    name: "Asia",
-    groups: [
-      { name: "East", entries: EastAsianCountryTypes },
-      { name: "South", entries: SouthAsianCountryTypes },
-      { name: "West", entries: WestAsianCountryTypes },
-    ],
-  },
-  { name: "Europe", entries: EuropeCountryType },
-  {
-    name: "America",
-    groups: [
-      { name: "North", entries: NorthAmericanCountryTypes },
-      { name: "Central", entries: CentralAmericanCountryTypes },
-      { name: "South", entries: SouthAmericanCountryTypes },
-      { name: "Caribbean", entries: CaribbeanCountryTypes },
-    ],
-  },
-  {
-    name: "Africa",
-    groups: [
-      { name: "North", entries: NorthAfricanCountryTypes },
-      { name: "East", entries: EastAfricanCountryTypes },
-      { name: "Central", entries: CentralAfricanCountryTypes },
-      { name: "West", entries: WestAfricanCountryTypes },
-      { name: "South", entries: SouthAfricanCountryTypes },
-    ],
-  },
-  { name: "Other", entries: ExtraCountryTypes },
-] as const satisfies OptionGroup[];
-export const AllCountryTypes = {
-  ...JapanCountryTypes,
-  ...EastAsianCountryTypes,
-  ...SouthAsianCountryTypes,
-  ...WestAsianCountryTypes,
-  ...EuropeCountryType,
-  ...NorthAmericanCountryTypes,
-  ...CentralAmericanCountryTypes,
-  ...SouthAmericanCountryTypes,
-  ...CaribbeanCountryTypes,
-  ...NorthAfricanCountryTypes,
-  ...EastAfricanCountryTypes,
-  ...CentralAfricanCountryTypes,
-  ...WestAfricanCountryTypes,
-  ...SouthAfricanCountryTypes,
-  ...ExtraCountryTypes,
-} as const;
 
-export type CardType = {
-  surname?: string;
-  surname_kana?: string;
-  firstname?: string;
-  firstname_kana?: string;
-  callname?: string;
-  callname_kana?: string;
-  subtitle?: string;
-  description?: string;
-  url?: string;
-  email?: string;
-  color: ColorEnum;
-  bottom1?: keyof typeof AllCountryTypes;
-  bottom2?: keyof typeof AllCountryTypes;
-};
+const schema = z.object({
+  surname: z.string().optional(),
+  surname_kana: z.string().optional(),
+  firstname: z.string().optional(),
+  firstname_kana: z.string().optional(),
+  callname: z.string().optional(),
+  callname_kana: z.string().optional(),
+  subtitle: z.string().optional(),
+  description: z.string().optional(),
+  url: z.string().optional(),
+  email: z.string().optional(),
+  color: z.enum(ColorEnum).default(ColorEnum.red),
+  bottom1: z.enum(Object.keys(AllIconTypes)).optional(),
+  bottom2: z.enum(Object.keys(AllIconTypes)).optional(),
+});
 
-export function isEmptyCard(doc: CardType | undefined) {
-  if (!doc) {
-    return true;
-  }
-  const keys = Object.keys(doc);
-  return keys.length === 0 || (keys.length === 1 && keys[0] === "color");
-}
+export const PAGE_FRONT = { id: "front", label: "Front" } as const;
+export const PAGE_BACK = { id: "back", label: "Back" } as const;
+
+export const CardV1 = {
+  name: "Business Card",
+  type: "card",
+  version: 1,
+  getPages: () => [PAGE_FRONT, PAGE_BACK] as const,
+  createStorageRequest: (storageKey) =>
+    new Request(`https://public.oktech.jp/docs/${storageKey}.json`),
+  getLink: (docKey) => `https://card.oktech.jp#${docKey}`,
+  schema,
+  isEmpty(doc) {
+    const keys = Object.keys(doc);
+    return keys.length === 0 || (keys.length === 1 && keys[0] === "color");
+  },
+} satisfies DocTypeDefinition;
+
+export type CardV1Type = typeof CardV1;

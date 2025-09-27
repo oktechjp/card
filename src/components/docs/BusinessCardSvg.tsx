@@ -1,35 +1,46 @@
 import type { CSSProperties, ReactNode, Ref } from "react";
-import type { DocDisplayProps } from "@/components/docs/DocsDisplay";
+import type { DocTypeDefinition } from "@/utils/safeDoc";
+import type { DocViewProps } from "@/components/safeDoc-react";
 
 export const CARD_WIDTH = 910;
 export const CARD_HEIGHT = 550;
 export const PADDING = 25;
 
-export type BusinessCardSvgDisplayProps<Type> = DocDisplayProps<Type> & {
-  isCut: boolean;
+export type BusinessCardSvgDisplayProps<Type extends DocTypeDefinition> = Omit<
+  DocViewProps<Type>,
+  "page"
+> & {
+  isCut?: boolean;
   ref?: Ref<SVGSVGElement>;
 };
 
 export type BusinessCardSvgProps = {
-  isCut: boolean;
+  isCut?: boolean;
   children?: ReactNode;
   background: string;
   ref?: Ref<SVGSVGElement>;
+  style?: Omit<CSSProperties, "width" | "height" | "overflow" | "display"> & {
+    width: number;
+  };
 };
 export function BusinessCardSvg({
   isCut,
   children,
   background,
+  style: styleRaw,
   ref,
 }: BusinessCardSvgProps) {
+  const { width: styleWidth, ...style } = styleRaw ?? {};
   const width = CARD_WIDTH + PADDING * 2;
   const height = CARD_HEIGHT + PADDING * 2;
   const viewBox = `${-PADDING} ${-PADDING} ${width} ${height}`;
+  isCut = isCut ?? true;
   const boxStyle: CSSProperties = {
     width: isCut ? CARD_WIDTH : width,
     height: isCut ? CARD_HEIGHT : height,
     overflow: "hidden",
     display: "inline-block",
+    ...style,
   };
   return (
     <div style={boxStyle}>

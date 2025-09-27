@@ -1,5 +1,4 @@
-import type { CardDisplayVariantProps } from "@/components/docs/card/CardDisplayType";
-import { DEFAULT_COLOR } from "@/docs/card";
+import { DEFAULT_COLOR, type CardV1Type } from "@/docs/card";
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
@@ -10,8 +9,13 @@ import { PermanentMarker } from "@/components/fonts/PermanentMarker";
 import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
 import { useSvgSize } from "@/hooks/useSvgSize";
 import { ColorInfo } from "@/components/docs/card/ColorInfo";
+import type { DocPageView } from "@/components/safeDoc-react/DocView";
 
-export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
+export const CardDisplayBack: DocPageView<CardV1Type> = ({
+  data: json,
+  showMargins,
+  ref,
+}) => {
   const { callname, callname_kana, zoom } = useSvgSize(
     ["callname", "callname_kana"] as const,
     ({ callname, callname_kana }) => {
@@ -31,13 +35,9 @@ export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
       }
     },
   );
-  const colorInfo = ColorInfo[json.color] ?? ColorInfo[DEFAULT_COLOR]
+  const colorInfo = ColorInfo[json.color] ?? ColorInfo[DEFAULT_COLOR];
   return (
-    <BusinessCardSvg
-      ref={ref}
-      isCut={isCut}
-      background={colorInfo.bg}
-    >
+    <BusinessCardSvg ref={ref} isCut={showMargins} background={colorInfo.bg}>
       <style>{`
             ${PermanentMarker}
             ${ShipporiAntique}
@@ -72,4 +72,4 @@ export function CardDisplayBack({ json, isCut, ref }: CardDisplayVariantProps) {
       </text>
     </BusinessCardSvg>
   );
-}
+};

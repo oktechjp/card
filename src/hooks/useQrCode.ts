@@ -1,5 +1,5 @@
 import encodeQR from "qr";
-import { useAsyncMemo, type AsyncMemoState } from "./useAsyncMemo";
+import { useAsyncMemo, type AsyncMemoState } from "@/hooks/useAsyncMemo";
 import { svgToDataURI } from "@/utils/print";
 
 export function useQRCode(

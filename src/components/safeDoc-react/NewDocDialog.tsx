@@ -4,14 +4,11 @@ import { createPrivateKeyBase32 } from "@/utils/private-key-base32";
 import { createPrivateKeyWords } from "@/utils/private-key-words";
 import { applyRef } from "@/utils/applyRef";
 
-export interface NewCardDialogProps {
+export interface NewDocDialogProps {
   ref?: Ref<HTMLDialogElement>;
   onSuccess: (privateKey: string) => void;
 }
-export function NewDocsDialog({
-  ref: parentRef,
-  onSuccess,
-}: NewCardDialogProps) {
+export function NewDocDialog({ ref: parentRef, onSuccess }: NewDocDialogProps) {
   const [type, setType] = useState<"base32" | "words">("base32");
   const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
   const privateKeyBase32 = useMemo(createPrivateKeyBase32, [lastRefresh]);
@@ -24,7 +21,7 @@ export function NewDocsDialog({
 
   return (
     <dialog ref={ref} onAuxClick={() => ref.current?.close()}>
-      <h3>Create New Card ({type})</h3>
+      <h3>Create New Card</h3>
       <form
         action=""
         onChange={(e) => {
@@ -46,7 +43,7 @@ export function NewDocsDialog({
           type="text"
           name="text"
           disabled
-          label="Preview"
+          label="Document Key"
           size={40}
           value={privateKey}
         />
@@ -57,7 +54,7 @@ export function NewDocsDialog({
             e.preventDefault();
           }}
         >
-          NewKey
+          ↻
         </button>
         <button
           type="submit"

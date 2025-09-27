@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import { DocView } from "@/components/docs/DocView";
+import { Viewer } from '@/components/system';
 ---
 
 <BaseLayout>
-    <DocView client:only="react"/>
+    <Viewer client:only="react"/>
 </BaseLayout>

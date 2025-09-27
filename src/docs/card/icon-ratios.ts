@@ -1,4 +1,6 @@
-export const SVG_RATIOS = {
+import type { AllIconTypes } from "@/docs/card/icons";
+
+export const ICON_RATIOS = {
   ad: 1.4285714285714286,
   ae: 2,
   af: 1.5,
@@ -263,4 +265,4 @@ export const SVG_RATIOS = {
   za: 1.5,
   zm: 1.5,
   zw: 2,
-} as const;
+} as const satisfies Record<keyof typeof AllIconTypes, number>;
