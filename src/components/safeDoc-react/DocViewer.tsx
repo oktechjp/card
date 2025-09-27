@@ -43,7 +43,7 @@ export function DocViewer({
   }
   return ready.type
     .getPages(doc.data)
-    .filter((p) => (page ? p.id === page : false))
+    .filter((p) => (page ? p.id === page : true))
     .map((page) =>
       createElement(View, {
         isDraft: false,
