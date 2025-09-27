@@ -27,13 +27,4 @@ export const setup = setupSafeDocReact(
   },
 );
 
-export const {
-  Editor,
-  Editors,
-  Viewer,
-  Printer,
-  useDoc,
-  useHashDoc,
-  CreateDocButton,
-  UpdateDocButton,
-} = setup;
+export const { Editors, Viewer, Printer } = setup;

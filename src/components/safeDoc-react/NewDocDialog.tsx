@@ -31,15 +31,20 @@ export function NewDocDialog({ ref: parentRef, onSuccess }: NewDocDialogProps) {
           );
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <InputWithLabel
-          type="radio"
-          name="type"
-          value="base32"
-          label="Base 32"
-          defaultChecked
-        />
-        <InputWithLabel type="radio" name="type" value="words" label="Words" />
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <InputWithLabel
+            type="radio"
+            name="type"
+            value="base32"
+            label="Base 32"
+            defaultChecked
+          />
+          <InputWithLabel
+            type="radio"
+            name="type"
+            value="words"
+            label="Words"
+          />
         </div>
         <InputWithLabel
           type="text"
