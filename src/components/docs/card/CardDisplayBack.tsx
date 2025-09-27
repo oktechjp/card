@@ -37,7 +37,7 @@ export const CardDisplayBack: DocPageView<CardV1Type> = ({
   );
   const colorInfo = ColorInfo[json.color] ?? ColorInfo[DEFAULT_COLOR];
   return (
-    <BusinessCardSvg ref={ref} isCut={showMargins} background={colorInfo.bg}>
+    <BusinessCardSvg ref={ref} isCut={!showMargins} background={colorInfo.bg}>
       <style>{`
             ${PermanentMarker}
             ${ShipporiAntique}
