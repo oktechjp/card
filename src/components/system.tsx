@@ -18,21 +18,6 @@ export const setup = setupSafeDocReact(
         fileName: `${publicKey}.json`,
       })),
     }),
-    createDocType({
-      type: {
-        ...CardV1,
-        humanName: "Business Card Legacy",
-        version: 0,
-      },
-      Form: CardForm,
-      Print: RaksulBusinessCardPrint,
-      View: CardView,
-      ...createGithubButtons((publicKey) => ({
-        repo: "oktechjp/public",
-        folder: "docs",
-        fileName: `${publicKey}.json`,
-      })),
-    }),
   ],
   CardV1,
   {
