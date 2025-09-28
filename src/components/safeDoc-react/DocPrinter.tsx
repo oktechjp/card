@@ -166,7 +166,7 @@ export function DocPrinter({ docKey, setup }: DocPrinterProps) {
       </section>
       {state_2 === "hidden" ? null : (
         <section>
-          <h2>❷ Verify the Business Card.</h2>
+          <h2>❷ Verify the {selected?.type.humanName}.</h2>
           <p>Preview the business card. Click the checkbox if it is okay!</p>
           {pages && selected && TypeView
             ? pages.map((page) => {
