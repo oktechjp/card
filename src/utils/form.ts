@@ -58,7 +58,7 @@ export function formToJSON(input: HTMLFormElement): JSONObj {
     }
     if (elem instanceof HTMLInputElement) {
       const name = elem.name.toString();
-      const value = elem.value.trim();
+      const value = elem.value;
       if (elem.type === "checkbox") {
         let arr = json[name] ?? [];
         if (elem.checked && value !== "") {
