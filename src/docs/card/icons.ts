@@ -46,15 +46,22 @@ export const EastAsianCountryTypes = {
   vn: "Viet Nam",
 } as const;
 export const WestAsianCountryTypes = {
+  ae: "United Arab Emirates",
+  af: "Afghanistan",
   am: "Armenia",
   az: "Azerbaijan",
+  bh: "Bahrain",
   ge: "Georgia",
+  il: "Israel",
+  iq: "Iraq",
+  ir: "Islamic Republic of Iran",
   jo: "Jordan",
   kg: "Kyrgyzstan",
   kw: "Kuwait",
   kz: "Kazakhstan",
   lb: "Lebanon",
   om: "Oman",
+  ps: "State of Palestine",
   pk: "Pakistan",
   qa: "Qatar",
   sa: "Saudi Arabia",
@@ -120,15 +127,6 @@ export const EuropeCountryType = {
   tr: "Turkey",
   ua: "Ukraine",
   va: "Holy See",
-} as const;
-export const MiddleEastCountryTypes = {
-  ae: "United Arab Emirates",
-  af: "Afghanistan",
-  bh: "Bahrain",
-  il: "Israel",
-  iq: "Iraq",
-  ir: "Islamic Republic of Iran",
-  ps: "State of Palestine",
 } as const;
 export const PacificCountryTypes = {
   as: "American Samoa",
@@ -339,7 +337,6 @@ export const AllIconTypes = {
   ...NorthAmericanCountryTypes,
   ...CentralAmericanCountryTypes,
   ...SouthAmericanCountryTypes,
-  ...MiddleEastCountryTypes,
   ...CaribbeanCountryTypes,
   ...NorthAfricanCountryTypes,
   ...EastAfricanCountryTypes,
