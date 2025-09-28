@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useId, type InputHTMLAttributes } from "react";
 
 export type InputWithLabelProps = Omit<
@@ -8,14 +9,13 @@ export type InputWithLabelProps = Omit<
 };
 export function InputWithLabel({
   label,
-  style,
   className,
   id,
   ...rest
 }: InputWithLabelProps) {
   const elemId = useId();
   return (
-    <span id={id} style={style} className={className}>
+    <span id={id} className={clsx("form--element", "form--input", className)}>
       <label htmlFor={elemId}>{label}</label>
       <input id={elemId} {...rest} />
     </span>

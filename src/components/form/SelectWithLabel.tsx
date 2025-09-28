@@ -1,25 +1,20 @@
-import { useId, type ReactNode } from "react";
+import clsx from "clsx";
+import { useId, type SelectHTMLAttributes } from "react";
 
-export type SelectWithLabelProps = {
+export type SelectWithLabelProps = SelectHTMLAttributes<HTMLSelectElement> & {
   label: string;
-  name: string;
-  defaultValue?: string;
-  children?: ReactNode;
 };
 
 export function SelectWithLabel({
   label,
-  name,
-  defaultValue,
-  children,
+  className,
+  ...rest
 }: SelectWithLabelProps) {
   const id = useId();
   return (
-    <div>
+    <span className={clsx("form--element", "form--select", className)}>
       <label htmlFor={id}>{label}</label>
-      <select id={id} name={name} defaultValue={defaultValue}>
-        {children}
-      </select>
-    </div>
+      <select id={id} {...rest} />
+    </span>
   );
 }

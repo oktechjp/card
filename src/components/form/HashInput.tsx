@@ -1,5 +1,7 @@
 import { useId, type ChangeEvent, type FormEvent } from "react";
 import { useHash } from "@/hooks/useHash";
+import clsx from "clsx";
+import { InputWithLabel } from "./InputWithLabel";
 
 export interface HashInputProps {
   label: string;
@@ -14,25 +16,24 @@ export function HashInput({ label }: HashInputProps) {
     }
     setHash(value);
   };
-  const id = useId();
   return (
     <form
-      className="hash-input"
+      className={clsx("form-hash")}
       onSubmit={(e) => {
         e.preventDefault();
         onchange(e);
       }}
     >
-      <label htmlFor={id}>{label}</label>
-      <input
-        id={id}
+      <InputWithLabel
+        label={label}
+        className={clsx("form-hash")}
         name="code"
         type="text"
         value={hash}
         onChange={onchange}
         width={50}
         autoFocus
-      ></input>
+      />
     </form>
   );
 }
