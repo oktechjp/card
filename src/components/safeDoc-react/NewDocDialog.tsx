@@ -101,7 +101,7 @@ export function NewDocDialog({
         <button
           type="submit"
           onClick={(e) => {
-            onSuccess(types[0], privateKey);
+            onSuccess(type, privateKey);
             setLastRefresh(Date.now());
             ref.current!.close();
             e.preventDefault();
