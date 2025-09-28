@@ -53,48 +53,75 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
   const discardChanges = () => {
     discard(`Discard Changes ${docState.docKey}`);
   };
-  const discardCard = () => {
+  const deleteCard = () => {
     discard(`Delete Draft ${docState.docKey}`);
   };
   const link = docState.type.getLink(docState.docKey);
   const TypeForm = setup.forms.get(type)!;
   const TypeView = setup.views.get(type)!;
   const pages = activeDoc.type.getPages(activeDoc.data);
-  return (
-    <>
-      <div>
-        {docState.doc ? (
-          docState.draft ? (
-            <>
-              Diverged from server <a href={link}>{link}</a>,{" "}
-              <setup.UpdateDocButton doc={docState.draft!}>
-                Update Storage
-              </setup.UpdateDocButton>
-              <button onClick={discardChanges}>Discard Changes</button>
-            </>
-          ) : (
-            <a href={link}>{link}</a>
-          )
-        ) : docState.draft &&
-          docState.draft.type.isEmpty(docState.draft.data) ? (
-          <>
-            Card Empty
-            <button onClick={discardChanges}>Discard</button>
-          </>
-        ) : (
-          <>
-            Not Stored on server{" "}
-            <setup.CreateDocButton doc={docState.draft!}>
+  const discardBtn = (
+    <button key="discard" onClick={discardChanges}>
+      Discard
+    </button>
+  );
+  const deleteBtn = (
+    <button key="delete" onClick={deleteCard}>
+      Delete
+    </button>
+  );
+
+  const liveBtn = (
+    <a key="live" href={link}>
+      live version
+    </a>
+  );
+  const { title, links } = docState.doc
+    ? docState.draft
+      ? {
+          title: "Diverged from server",
+          links: [
+            liveBtn,
+            <setup.UpdateDocButton doc={docState.draft!}>
+              Update Storage
+            </setup.UpdateDocButton>,
+            discardBtn,
+          ],
+        }
+      : {
+          title: "Stored on Server",
+          links: [liveBtn],
+        }
+    : docState.draft && docState.draft.type.isEmpty(docState.draft.data)
+      ? {
+          title: "Card Empty",
+          links: [deleteBtn],
+        }
+      : {
+          title: "Not Stored on server",
+          links: [
+            <setup.CreateDocButton key="create-doc" doc={docState.draft!}>
               Store
-            </setup.CreateDocButton>
-            <button onClick={discardCard}>Discard Card</button>
-          </>
-        )}
-      </div>
-      <div>
-        <a href={setup.printUrl(docState.docKey)}>Print</a>
-      </div>
-      <div>
+            </setup.CreateDocButton>,
+            deleteBtn,
+          ],
+        };
+  links.push(
+    <a key="print" href={setup.printUrl(docState.docKey)}>
+      Print
+    </a>,
+  );
+  return (
+    <div className="sd--editor">
+      <nav className="sd--editor--nav">
+        <h2>{title}</h2>
+        <ul className="sd--editor--nav-list">
+          {links.map((entry) => (
+            <li key={entry.key}>{entry}</li>
+          ))}
+        </ul>
+      </nav>
+      <div className="sd--editor--pages">
         {pages.map((page) => (
           <TypeView
             key={page.id}
@@ -105,10 +132,14 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
           />
         ))}
       </div>
-      <form ref={formRef} onInput={handleFormChange}>
+      <form
+        className="sd--editor--form"
+        ref={formRef}
+        onInput={handleFormChange}
+      >
         <TypeForm {...activeDoc} />
       </form>
-      <details>
+      <details className="sd--editor--advanced">
         <summary>Advanced</summary>
         <div>
           <input
@@ -132,6 +163,6 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
           />
         </div>
       </details>
-    </>
+    </div>
   );
 };
