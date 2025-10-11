@@ -8,7 +8,8 @@
     "preview": "astro preview",
     "lint:test": "prettier -c .",
     "lint:fix": "prettier -w .",
-    "astro": "astro"
+    "astro": "astro",
+    "import:fonts": "./scripts/import-fonts"
   },
   "dependencies": {
     "@astrojs/react": "^4.3.1",

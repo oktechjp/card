@@ -1,0 +1,68 @@
+#!/usr/bin/env node --permission --allow-fs-write=src/components/fonts/* --allow-fs-write=public/fonts/* --allow-fs-read=public/fonts/*
+import { writeFile, readdir, unlink } from "node:fs/promises";
+
+const fonts = [
+  { family: "Noto Sans JP", weights: "100..900" },
+  { family: "Permanent Marker", weights: "400" },
+  { family: "Shippori Antique B1", weights: "400" },
+];
+
+function* getUrls(inputCss) {
+  const regex = /https:\/\/(((?!https).)*)(ttf|otf)/g;
+  let found = new Set();
+  let match;
+  while ((match = regex.exec(inputCss))) {
+    const url = match[0];
+    if (found.has(url)) {
+      continue;
+    }
+    found.add(url);
+    yield url;
+  }
+}
+
+const sha256 = async (input) =>
+  Buffer.from(
+    await crypto.subtle.digest("SHA-256", Buffer.from(input)),
+  ).toString("hex");
+
+async function fetchSafe(input) {
+  const res = await fetch(input);
+  if (res.status !== 200) {
+    throw new Error(`HTTP Status error (status=${res.status}) ${input}`);
+  }
+  return Buffer.from(await res.arrayBuffer());
+}
+
+const fontsServerFolder = `fonts`
+const fontsFolder = `public/${fontsServerFolder}`;
+
+for (const file of await readdir(fontsFolder)) {
+  await unlink(`${fontsFolder}/${file}`);
+}
+
+await Promise.all(
+  fonts.map(async ({ family, weights }) => {
+    const inputCss = (
+      await fetchSafe(
+        `https://fonts.googleapis.com/css2?family=${family.replaceAll(" ", "+")}:wght@${weights}`,
+      )
+    ).toString();
+    const urls = {};
+    let outputCss = inputCss;
+    for (const url of getUrls(inputCss)) {
+      const fontData = await fetchSafe(url);
+      const hash = await sha256(fontData);
+      const file = `/${hash}.${url.endsWith(".ttf") ? "ttf" : "otf"}`;
+      const location = `${fontsFolder}${file}`;
+      await writeFile(location, fontData);
+      urls[url] = location;
+      outputCss = outputCss.replaceAll(url, `${fontsServerFolder}${file}`);
+    }
+    const tsName = family.replaceAll(" ", "");
+    await writeFile(
+      `src/components/fonts/${tsName}.ts`,
+      `export const ${tsName} = \`\n${outputCss}\`;`,
+    );
+  }),
+);

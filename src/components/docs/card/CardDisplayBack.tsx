@@ -4,7 +4,7 @@ import {
   CARD_WIDTH,
   BusinessCardSvg,
 } from "@/components/docs/BusinessCardSvg";
-import { ShipporiAntique } from "@/components/fonts/ShipporiAntiqueB1";
+import { ShipporiAntiqueB1 } from "@/components/fonts/ShipporiAntiqueB1";
 import { PermanentMarker } from "@/components/fonts/PermanentMarker";
 import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
 import { useSvgSize } from "@/hooks/useSvgSize";
@@ -40,7 +40,7 @@ export const CardDisplayBack: DocPageView<CardV1Type> = ({
     <BusinessCardSvg ref={ref} isCut={!showMargins} background={colorInfo.bg}>
       <style>{`
             ${PermanentMarker}
-            ${ShipporiAntique}
+            ${ShipporiAntiqueB1}
             .font--shippori {
                 font-family: 'Shippori Antique B1'
             }

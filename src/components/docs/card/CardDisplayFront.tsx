@@ -150,7 +150,11 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
     },
   );
   const isEmpty = type.isEmpty(json);
-  const link = isDraft ? (isEmpty ? "https://card.oktech.jp/new" : "https://oktech.jp") : docKey;
+  const link = isDraft
+    ? isEmpty
+      ? "https://card.oktech.jp/new"
+      : "https://oktech.jp"
+    : docKey;
   const qrCode = useQRCode(link);
   const { bottom1, bottom2 } = json;
   return (
