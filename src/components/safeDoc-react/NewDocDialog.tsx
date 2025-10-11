@@ -29,7 +29,7 @@ export function NewDocDialog({
 
   return (
     <dialog ref={ref} onAuxClick={() => ref.current?.close()}>
-      <h3>Create New Card</h3>
+      <h3>Create New {type.humanName}</h3>
       <form
         action=""
         onChange={(e) => {
@@ -43,8 +43,7 @@ export function NewDocDialog({
             types.find((type) => {
               const other = `${type.type}#${type.version}`;
               const mine = (typeForm["type" as any] as any as RadioNodeList)
-                .value;
-              console.log({ mine, other });
+                ?.value;
               return mine === other;
             }) ?? types[0],
           );
@@ -66,38 +65,55 @@ export function NewDocDialog({
             })}
           </SelectWithLabel>
         ) : null}
-        <div style={{ display: "flex", flexDirection: "row" }}>
+        <div>
+          <p>
+            For you to share your {type.humanName}, this dialog creates a{" "}
+            <strong>very strong</strong> password.
+          </p>
+          <p>
+            This password will encrypt all stored data in your browser. No
+            unencrypted data will be shared anywhere. Only when{" "}
+            <strong>you</strong> share this password with other people, it is
+            possible for them to look at your {type.humanName}.
+          </p>
+          <p>
+            We have two kinds of passwords possible, both are equally safe. The
+            "Base 32"-variant is a bit shorter but harder to read while the
+            "Words"-variant is easier
+          </p>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <InputWithLabel
+              type="radio"
+              name="idType"
+              value="base32"
+              label="Base 32"
+              defaultChecked
+            />
+            <InputWithLabel
+              type="radio"
+              name="idType"
+              value="words"
+              label="Words"
+            />
+          </div>
           <InputWithLabel
-            type="radio"
-            name="idType"
-            value="base32"
-            label="Base 32"
-            defaultChecked
+            type="text"
+            name="text"
+            disabled
+            label="Password"
+            size={40}
+            value={privateKey}
           />
-          <InputWithLabel
-            type="radio"
-            name="idType"
-            value="words"
-            label="Words"
-          />
+          <button
+            type="button"
+            onClick={(e) => {
+              setLastRefresh(Date.now());
+              e.preventDefault();
+            }}
+          >
+            ↻
+          </button>
         </div>
-        <InputWithLabel
-          type="text"
-          name="text"
-          disabled
-          label="Document Key"
-          size={40}
-          value={privateKey}
-        />
-        <button
-          type="button"
-          onClick={(e) => {
-            setLastRefresh(Date.now());
-            e.preventDefault();
-          }}
-        >
-          ↻
-        </button>
         <button
           type="submit"
           onClick={(e) => {

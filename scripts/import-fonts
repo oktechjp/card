@@ -34,7 +34,7 @@ async function fetchSafe(input) {
   return Buffer.from(await res.arrayBuffer());
 }
 
-const fontsServerFolder = `fonts`
+const fontsServerFolder = `fonts`;
 const fontsFolder = `public/${fontsServerFolder}`;
 
 for (const file of await readdir(fontsFolder)) {

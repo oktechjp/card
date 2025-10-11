@@ -1,8 +1,11 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import { Editors } from '@/components/system';
+import NewIntro from '@/pages/new-intro.md'
+import { NewDoc } from '@/components/system'
+import { CardV1 } from '@/docs/card'
 ---
 
 <BaseLayout>
-    <Editors client:only="react" />
+    <NewIntro />
+    <NewDoc type={CardV1} client:only="react" />
 </BaseLayout>

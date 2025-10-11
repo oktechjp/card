@@ -22,9 +22,12 @@ export const setup = setupSafeDocReact(
   CardV1,
   {
     viewUrl: (docKey) => `/#${docKey}`,
-    editUrl: (docKey) => `/new#${docKey}`,
+    editUrl: (docKey) => `/edit#${docKey}`,
     printUrl: (docKey) => `/print#${docKey}`,
+    redirect: (url) => {
+      globalThis.location.href = url;
+    },
   },
 );
 
-export const { Editors, Viewer, Printer } = setup;
+export const { Editors, Viewer, Printer, NewDoc } = setup;

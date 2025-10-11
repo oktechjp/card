@@ -36,6 +36,7 @@ import { atom, type MapCreator } from "nanostores";
 import { useStore } from "@nanostores/react";
 import { hashStore, setHash } from "@/store/hash";
 import { useAsyncMemo } from "@/hooks/useAsyncMemo";
+import type { DocNewProps } from "@/components/safeDoc-react/DocNew";
 export {
   DocViewer,
   type DocViewerProps,
@@ -44,6 +45,7 @@ export {
   DocEditor,
   type DocEditorProps,
 } from "@/components/safeDoc-react/DocEditor";
+export { DocNew, type DocNewProps } from "@/components/safeDoc-react/DocNew";
 
 export interface UpdateCreateButtonProps {
   publicKey?: string;
@@ -77,6 +79,7 @@ export type SetupOptions = {
   viewUrl(docKey: string): string;
   editUrl(docKey: string): string;
   printUrl(docKey: string): string;
+  redirect(url: string): void;
 };
 
 export interface SafeDocReact extends SetupOptions {
@@ -92,6 +95,7 @@ export interface SafeDocReact extends SetupOptions {
   Editor: (props: Omit<DocEditorProps, "setup">) => ReactElement;
   Editors: (props: Omit<DocsEditorProps, "setup">) => ReactElement;
   Printer: (props: Omit<DocPrinterProps, "setup">) => ReactElement;
+  NewDoc: (props: Omit<DocNewProps, "setup">) => ReactElement;
   useDoc: (docKey?: string) => DocState;
   useHashDoc: (override?: string) => DocState;
 }
@@ -113,6 +117,9 @@ const Editors = lazy(async () => ({
 }));
 const Printer = lazy(async () => ({
   default: (await import("@/components/safeDoc-react/DocPrinter")).DocPrinter,
+}));
+const NewDoc = lazy(async () => ({
+  default: (await import("@/components/safeDoc-react/DocNew")).DocNew,
 }));
 
 function useDoc(store: DocStore, input?: string): DocState {
@@ -216,6 +223,7 @@ export function setupSafeDocReact(
     Editor: (props) => createElement(Editor, { setup, ...props }),
     Editors: (props) => createElement(Editors, { setup, ...props }),
     Printer: (props) => createElement(Printer, { setup, ...props }),
+    NewDoc: (props) => createElement(NewDoc, { setup, ...props }),
     useDoc: useDoc.bind(null, store),
     useHashDoc: useHashDoc.bind(null, store),
     ...options,
