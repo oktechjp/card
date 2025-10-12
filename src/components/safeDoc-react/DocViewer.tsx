@@ -75,7 +75,7 @@ export function DocViewer({
                 <div className="sd--draft-diverges">
                   This draft is different from the published{" "}
                   {doc.type.humanName}!{" "}
-                  <a href={setup.previewUrl(doc.docKey)}>
+                  <a href={setup.viewUrl(doc.docKey)}>
                     Show the published {doc.type.humanName}
                   </a>{" "}
                   or <a href={setup.editUrl(doc.docKey)}>continue editing</a>.
