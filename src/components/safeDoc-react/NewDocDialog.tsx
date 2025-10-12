@@ -74,19 +74,23 @@ export function NewDocDialog({
         </h3>
         <div>
           <p>
-            For privacy, we need to create a <strong>very strong</strong> password for your {type.humanName}.
+            For privacy, we need to create a <strong>very strong</strong>{" "}
+            password for your {type.humanName}.
           </p>
           <p>
-            At first, all information will be stored only in your browser. When <strong>you decide to publish</strong> the business card, {' '}
-            all data on the server will be encrypted using this password!
+            At first, all information will be stored only in your browser. When{" "}
+            <strong>you decide to publish</strong> the business card, all data
+            on the server will be encrypted using this password!
           </p>
           <p>
-            After it is published and <strong>you</strong> share this password with other people, it is possible for them to look at your data!
+            After it is published and <strong>you</strong> share this password
+            with other people, it is possible for them to look at your data!
           </p>
           <p>
             We have two shapes for the password,{" "}
-            <strong>both are equally safe</strong>! The <em>"Base 32"-variant</em> is a
-            bit shorter but harder to read and enter. Choose as you like.
+            <strong>both are equally safe</strong>! The{" "}
+            <em>"Base 32"-variant</em> is a bit shorter but harder to read and
+            enter. Choose as you like.
           </p>
           <div style={{ display: "flex", flexDirection: "row" }}>
             <InputWithLabel

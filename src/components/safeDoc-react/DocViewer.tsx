@@ -41,7 +41,9 @@ export function DocViewer({
         <HashInput
           label={
             ready
-              ? (hasDraft ? "Enter a different ID" : "Document not found. Maybe you mistook?")
+              ? hasDraft
+                ? "Enter a different ID"
+                : "Document not found. Maybe you mistook?"
               : "Please enter the ID from the card."
           }
         />
@@ -68,7 +70,8 @@ export function DocViewer({
               <div className="sd--draft">Draft</div>
               {hasPublished ? (
                 <div className="sd--draft-diverges">
-                  This draft is different from the published {doc.type.humanName}!{" "}
+                  This draft is different from the published{" "}
+                  {doc.type.humanName}!{" "}
                   <a href={setup.previewUrl(doc.docKey)}>
                     Show the published {doc.type.humanName}
                   </a>{" "}
