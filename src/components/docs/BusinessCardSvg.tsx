@@ -30,27 +30,35 @@ export function BusinessCardSvg({
   style: styleRaw,
   ref,
 }: BusinessCardSvgProps) {
-  const { width: styleWidth, ...style } = styleRaw ?? {};
+  let { width: styleWidth, ...style } = styleRaw ?? {};
+  isCut = isCut ?? true;
+  const padding = isCut ? 0 : PADDING * 2;
   const width = CARD_WIDTH + PADDING * 2;
   const height = CARD_HEIGHT + PADDING * 2;
+  const docWidth = isCut ? CARD_WIDTH : width;
+  const docHeight = isCut ? CARD_HEIGHT : height;
+  if (!styleWidth) {
+    styleWidth = CARD_WIDTH + padding;
+  }
+  const styleHeight = (styleWidth / docWidth) * docHeight;
+  const stylePadding = (styleWidth / width) * (isCut ? PADDING : 0);
   const viewBox = `${-PADDING} ${-PADDING} ${width} ${height}`;
-  isCut = isCut ?? true;
   const boxStyle: CSSProperties = {
-    width: isCut ? CARD_WIDTH : width,
-    height: isCut ? CARD_HEIGHT : height,
+    width: styleWidth,
+    height: styleHeight,
     overflow: "hidden",
     display: "inline-block",
     ...style,
   };
   return (
     <div style={boxStyle}>
-      <div style={isCut ? { marginLeft: -PADDING, marginTop: -PADDING } : {}}>
+      <div style={isCut ? { margin: -stylePadding } : {}}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="business-card"
           ref={ref}
           viewBox={viewBox}
-          width={width}
+          width={styleWidth}
         >
           <rect
             x={-PADDING}
