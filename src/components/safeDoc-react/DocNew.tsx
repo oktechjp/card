@@ -17,7 +17,10 @@ export const DocNew = ({ setup }: DocNewProps) => {
   const onOpenDialog = () => newDocDialog.current?.showModal();
   return (
     <>
-      <button onClickCapture={onOpenDialog}>Create</button>
+      <button onClickCapture={onOpenDialog}>
+        Create a new{" "}
+        {setup.types.length === 1 ? setup.types[0].humanName : "document"}
+      </button>
       <NewDocDialog
         ref={newDocDialog}
         types={setup.types}

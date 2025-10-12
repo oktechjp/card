@@ -1,10 +1,10 @@
+import type { DocTypeDefinition } from "@/utils/codecs";
 import { useEffect, useMemo, useRef, useState, type Ref } from "react";
 import { InputWithLabel } from "@/components/form/InputWithLabel";
 import { createPrivateKeyBase32 } from "@/utils/private-key-base32";
 import { createPrivateKeyWords } from "@/utils/private-key-words";
 import { applyRef } from "@/utils/applyRef";
-import type { DocTypeDefinition } from "@/utils/codecs";
-import { SelectWithLabel } from "../form/SelectWithLabel";
+import { SelectWithLabel } from "@/components/form/SelectWithLabel";
 
 export interface NewDocDialogProps {
   types: DocTypeDefinition[];
@@ -29,7 +29,6 @@ export function NewDocDialog({
 
   return (
     <dialog ref={ref} onAuxClick={() => ref.current?.close()}>
-      <h3>Create New {type.humanName}</h3>
       <form
         action=""
         onChange={(e) => {
@@ -49,22 +48,30 @@ export function NewDocDialog({
           );
         }}
       >
-        {types.length > 1 ? (
-          <SelectWithLabel
-            label="Type"
-            name="type"
-            defaultValue={`${type.type}#${type.version}`}
-          >
-            {types.map((type) => {
-              const key = `${type.type}#${type.version}`;
-              return (
-                <option key={key} value={key}>
-                  {type.humanName}
-                </option>
-              );
-            })}
-          </SelectWithLabel>
-        ) : null}
+        <h3>
+          Create a new{" "}
+          {types.length > 1 ? (
+            <>
+              <SelectWithLabel
+                label="document of type"
+                name="type"
+                className="safeDoc--element--type-selector"
+                defaultValue={`${type.type}#${type.version}`}
+              >
+                {types.map((type) => {
+                  const key = `${type.type}#${type.version}`;
+                  return (
+                    <option key={key} value={key}>
+                      {type.humanName}
+                    </option>
+                  );
+                })}
+              </SelectWithLabel>
+            </>
+          ) : (
+            type.humanName
+          )}
+        </h3>
         <div>
           <p>
             For you to share your {type.humanName}, this dialog creates a{" "}
@@ -77,9 +84,9 @@ export function NewDocDialog({
             possible for them to look at your {type.humanName}.
           </p>
           <p>
-            We have two kinds of passwords possible, both are equally safe. The
-            "Base 32"-variant is a bit shorter but harder to read while the
-            "Words"-variant is easier
+            We have two kinds of passwords possible,{" "}
+            <strong>both are equally safe</strong>. The "Base 32"-variant is a
+            bit shorter but harder to read and enter.
           </p>
           <div style={{ display: "flex", flexDirection: "row" }}>
             <InputWithLabel
@@ -106,6 +113,7 @@ export function NewDocDialog({
           />
           <button
             type="button"
+            aria-label="Create a new password"
             onClick={(e) => {
               setLastRefresh(Date.now());
               e.preventDefault();
