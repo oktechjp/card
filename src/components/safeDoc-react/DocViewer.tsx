@@ -1,4 +1,4 @@
-import { createElement } from "react";
+import { createElement, type ReactNode } from "react";
 import { HashInput } from "@/components/form/HashInput";
 import { isReadyState } from "@/store/safeDoc-store";
 import type { SafeDocReact } from ".";
@@ -9,6 +9,7 @@ export interface DocViewerProps {
   showMargins?: boolean;
   allowDraft: boolean;
   setup: SafeDocReact;
+  children?: ReactNode
 }
 
 export function DocViewer({
@@ -17,6 +18,7 @@ export function DocViewer({
   page,
   showMargins,
   allowDraft,
+  children,
 }: DocViewerProps) {
   const docState = setup.useHashDoc(docKey);
   const ready = isReadyState(docState) ? docState : null;
@@ -42,12 +44,13 @@ export function DocViewer({
           label={
             ready
               ? hasDraft
-                ? "Enter a different ID"
+                ? "Enter a different password"
                 : "Document not found. Maybe you mistook?"
-              : "Please enter the ID from the card."
+              : `Enter the password`
           }
         />
         {docState.state === "pending" ? <>Loading...</> : null}
+        {children ? <div className="sd--intro">{children}</div> : null}
       </>
     );
   }

@@ -1,8 +1,12 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import { Viewer } from '@/components/system';
+import IndexIntro from '@/pages/index-intro.md'
+
 ---
 
 <BaseLayout>
-    <Viewer client:only="react" allowDraft={false} />
+    <Viewer client:only="react" allowDraft={false}>
+        <IndexIntro />
+    </Viewer>
 </BaseLayout>
