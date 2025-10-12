@@ -2,9 +2,24 @@ import type { CSSProperties, ReactNode, Ref } from "react";
 import type { DocTypeDefinition } from "@/utils/safeDoc";
 import type { DocViewProps } from "@/components/safeDoc-react";
 
-export const CARD_WIDTH = 910;
-export const CARD_HEIGHT = 550;
-export const PADDING = 25;
+const rect = (width: number, height: number) => ({ width, height, ratio: height / width, center: { x: width / 2, y: height / 2 } })
+
+const size = (width: number, height: number, padding: number) => {
+  const normal = rect(width, height)
+  const padded = rect(width + padding * 2, height + padding * 2)
+  return {
+    normal,
+    padding,
+    padded,
+    viewBox: `${-padding} ${-padding} ${padded.width} ${padded.height}`,
+  }
+}
+
+export const CARD_SIZE = size(910, 550, 25);
+
+const PADDING_WHEN_CUT: CSSProperties = {
+  margin: `-${100 / CARD_SIZE.normal.width * CARD_SIZE.padding}%`
+}
 
 export type BusinessCardSvgDisplayProps<Type extends DocTypeDefinition> = Omit<
   DocViewProps<Type>,
@@ -23,48 +38,37 @@ export type BusinessCardSvgProps = {
     width: number;
   };
 };
+
 export function BusinessCardSvg({
   isCut,
   children,
   background,
-  style: styleRaw,
+  style,
   ref,
 }: BusinessCardSvgProps) {
-  let { width: styleWidth, ...style } = styleRaw ?? {};
   isCut = isCut ?? true;
-  const padding = isCut ? 0 : PADDING * 2;
-  const width = CARD_WIDTH + PADDING * 2;
-  const height = CARD_HEIGHT + PADDING * 2;
-  const docWidth = isCut ? CARD_WIDTH : width;
-  const docHeight = isCut ? CARD_HEIGHT : height;
-  if (!styleWidth) {
-    styleWidth = CARD_WIDTH + padding;
-  }
-  const styleHeight = (styleWidth / docWidth) * docHeight;
-  const stylePadding = (styleWidth / width) * (isCut ? PADDING : 0);
-  const viewBox = `${-PADDING} ${-PADDING} ${width} ${height}`;
   const boxStyle: CSSProperties = {
-    width: styleWidth,
-    height: styleHeight,
+    width: '100cqw',
+    height: `${100 * (isCut ? CARD_SIZE.normal : CARD_SIZE.padded).ratio}cqw`,
     overflow: "hidden",
     display: "inline-block",
     ...style,
   };
   return (
-    <div style={boxStyle}>
-      <div style={isCut ? { margin: -stylePadding } : {}}>
+    <div style={boxStyle} className="bc">
+      <div style={isCut ? PADDING_WHEN_CUT : undefined}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="business-card"
           ref={ref}
-          viewBox={viewBox}
-          width={styleWidth}
+          viewBox={CARD_SIZE.viewBox}
+          width={"100%"}
         >
           <rect
-            x={-PADDING}
-            y={-PADDING}
-            width={CARD_WIDTH + PADDING * 2}
-            height={CARD_HEIGHT + PADDING * 2}
+            x={-CARD_SIZE.padding}
+            y={-CARD_SIZE.padding}
+            width={CARD_SIZE.padded.width}
+            height={CARD_SIZE.padded.height}
             fill={background}
           />
           {children}

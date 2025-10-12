@@ -95,18 +95,20 @@ export function DocViewer({
           )}
         </div>
       ) : null}
+      <div className="sd--viewer">
       {ready.type
         .getPages(doc.data)
         .filter((p) => (page ? p.id === page : true))
-        .map((page) =>
-          createElement(View, {
+        .map((page) => <div className="sd--viewer-page">
+          {createElement(View, {
             isDraft,
             key: page.id,
             page: page.id,
             showMargins: showMargins ?? false,
             ...doc,
-          }),
+          })}</div>,
         )}
+        </div>
     </>
   );
 }

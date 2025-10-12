@@ -134,15 +134,16 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
           ))}
         </ul>
       </nav>
-      <div className="sd--editor--pages">
+      <div className="sd--editor-pages">
         {pages.map((page) => (
-          <TypeView
-            key={page.id}
-            page={page.id}
-            showMargins={false}
-            {...activeDoc}
-            isDraft={!docState.doc}
-          />
+          <div key={page.id} className="sd--editor-page">
+            <TypeView
+              page={page.id}
+              showMargins={false}
+              {...activeDoc}
+              isDraft={!docState.doc}
+            />
+          </div>
         ))}
       </div>
       <form

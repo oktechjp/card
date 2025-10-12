@@ -23,6 +23,33 @@
       .form--element-desc {
         margin-top: -0.5em;
       }
+      .bc {
+        border: 0.25cqw solid #eee;
+        box-shadow: 1cqw 1cqw 2cqw #ddd;
+      }
+      .sd--editor-pages {
+        position: sticky;
+        inset: 0;
+        padding: 1em;
+        background: rgba(255, 255, 255, 0.3);
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        margin-bottom: 0.5em;
+        gap: 1em;
+        backdrop-filter: blur(1em);
+        border-bottom: 1px solid white;
+      }
+      .sd--editor-page {
+        position: relative;
+        width: 350px;
+        container-type: inline-size;
+      }
+      .sd--viewer-page {
+        position: relative;
+        width: 40%;
+        container-type: inline-size;
+      }
     </style>
   </head>
   <body>

@@ -2,8 +2,7 @@ import clsx from "clsx";
 import type { Ref } from "react";
 import { NotoSansJP } from "@/components/fonts/NotoSansJP";
 import {
-  CARD_HEIGHT,
-  CARD_WIDTH,
+  CARD_SIZE,
   BusinessCardSvg,
 } from "@/components/docs/BusinessCardSvg";
 import { useSvgSize } from "@/hooks/useSvgSize";
@@ -95,23 +94,23 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
     }) => {
       let bottomX = 25;
       if (bottom1) {
-        bottom1.move(bottomX, CARD_HEIGHT - bottom1.bounds.height - 25);
+        bottom1.move(bottomX, CARD_SIZE.normal.height - bottom1.bounds.height - 25);
         bottomX += bottom1.bounds.width + 15;
       }
       if (bottom2) {
-        bottom2.move(bottomX, CARD_HEIGHT - bottom2.bounds.height - 25);
+        bottom2.move(bottomX, CARD_SIZE.normal.height - bottom2.bounds.height - 25);
         bottomX += bottom2.bounds.width + 15;
       }
       if (description) {
         description.move(
           bottomX,
-          CARD_HEIGHT - 25 - description.bounds.height * 0.1,
+          CARD_SIZE.normal.height - 25 - description.bounds.height * 0.1,
         );
       }
       if (link) {
         const line1 = link.bounds.height + 23;
-        link.move(CARD_WIDTH - link.bounds.width - 23, line1);
-        linkLine2?.move(CARD_WIDTH - linkLine2?.bounds.width - 23, line1 + 20);
+        link.move(CARD_SIZE.normal.width - link.bounds.width - 23, line1);
+        linkLine2?.move(CARD_SIZE.normal.width - linkLine2?.bounds.width - 23, line1 + 20);
       }
       let y = 0;
       let fOff = 0;
@@ -145,7 +144,7 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
         url.move(0, y);
       }
       if (main) {
-        main.move(140, (CARD_HEIGHT - main.bounds.height) / 2);
+        main.move(140, (CARD_SIZE.normal.height - main.bounds.height) / 2);
       }
     },
   );
@@ -243,8 +242,8 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
           width="100"
           height="100"
           opacity={0.7}
-          x={CARD_WIDTH - 100 - 15}
-          y={CARD_HEIGHT - 100 - 15}
+          x={CARD_SIZE.normal.width - 100 - 15}
+          y={CARD_SIZE.normal.height - 100 - 15}
         />
       ) : null}
       {bottom1 ? (

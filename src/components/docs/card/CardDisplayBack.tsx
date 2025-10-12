@@ -1,7 +1,6 @@
 import { DEFAULT_COLOR, type CardV1Type } from "@/docs/card";
 import {
-  CARD_HEIGHT,
-  CARD_WIDTH,
+  CARD_SIZE,
   BusinessCardSvg,
 } from "@/components/docs/BusinessCardSvg";
 import { ShipporiAntiqueB1 } from "@/components/fonts/ShipporiAntiqueB1";
@@ -20,8 +19,7 @@ export const CardDisplayBack: DocPageView<CardV1Type> = ({
     ["callname", "callname_kana"] as const,
     ({ callname, callname_kana }) => {
       if (callname) {
-        const centerX = CARD_WIDTH / 2;
-        const centerY = CARD_HEIGHT / 2;
+        const { x: centerX, y: centerY } = CARD_SIZE.normal.center
         callname.move(
           centerX - callname.bounds.width / 2,
           centerY + callname.bounds.height * 0.25,
