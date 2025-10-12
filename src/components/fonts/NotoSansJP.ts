@@ -1,3 +1,8 @@
+/**
+ * Generated from url=https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900
+ *
+ * Generated using -> npm run import:fonts
+ */
 export const NotoSansJP = `
 @font-face {
   font-family: 'Noto Sans JP';

@@ -1,3 +1,8 @@
+/**
+ * Generated from url=https://fonts.googleapis.com/css2?family=Shippori+Antique+B1:wght@400
+ *
+ * Generated using -> npm run import:fonts
+ */
 export const ShipporiAntiqueB1 = `
 @font-face {
   font-family: 'Shippori Antique B1';

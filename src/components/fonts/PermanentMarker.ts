@@ -1,3 +1,8 @@
+/**
+ * Generated from url=https://fonts.googleapis.com/css2?family=Permanent+Marker:wght@400
+ *
+ * Generated using -> npm run import:fonts
+ */
 export const PermanentMarker = `
 @font-face {
   font-family: 'Permanent Marker';

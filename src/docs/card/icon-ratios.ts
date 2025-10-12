@@ -1,5 +1,10 @@
-import type { AllIconTypes } from "@/docs/card/icons";
+import type { AllIconTypes } from "./icons";
 
+/**
+ * List of size ratios for all icons in the /public/svg folder.
+ *
+ * Generated using -> npm run import:icon-ratios
+ */
 export const ICON_RATIOS = {
   ad: 1.4285714285714286,
   ae: 2,

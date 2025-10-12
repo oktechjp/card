@@ -43,11 +43,8 @@ for (const file of await readdir(fontsFolder)) {
 
 await Promise.all(
   fonts.map(async ({ family, weights }) => {
-    const inputCss = (
-      await fetchSafe(
-        `https://fonts.googleapis.com/css2?family=${family.replaceAll(" ", "+")}:wght@${weights}`,
-      )
-    ).toString();
+    const url = `https://fonts.googleapis.com/css2?family=${family.replaceAll(" ", "+")}:wght@${weights}`;
+    const inputCss = (await fetchSafe(url)).toString();
     const urls = {};
     let outputCss = inputCss;
     for (const url of getUrls(inputCss)) {
@@ -62,7 +59,12 @@ await Promise.all(
     const tsName = family.replaceAll(" ", "");
     await writeFile(
       `src/components/fonts/${tsName}.ts`,
-      `export const ${tsName} = \`\n${outputCss}\`;`,
+      `/**
+ * Generated from url=${url}
+ * 
+ * Generated using -> npm run import:fonts
+ */
+export const ${tsName} = \`\n${outputCss}\`;`,
     );
   }),
 );

@@ -1,11 +1,17 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --permission --allow-fs-write=src/docs/card/* --allow-fs-read=public/svg/*
 import { readFile, readdir, writeFile } from "node:fs/promises";
 
-const dir = new URL("public/svg/", import.meta.url);
-const target = new URL("src/docs/card/icon-ratios.ts", import.meta.url);
+const root = new URL("..", import.meta.url);
+const dir = new URL("public/svg/", root);
+const target = new URL("src/docs/card/icon-ratios.ts", root);
 const files = await readdir(dir);
 let res = `import type { AllIconTypes } from "./icons";
 
+/**
+ * List of size ratios for all icons in the /public/svg folder.
+ * 
+ * Generated using -> npm run import:icon-ratios
+ */
 export const ICON_RATIOS = {
 `;
 for (const file of files) {
