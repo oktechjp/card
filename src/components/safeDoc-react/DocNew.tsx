@@ -6,7 +6,6 @@ import { NewDocDialog } from "./NewDocDialog";
 
 export type DocNewProps = {
   setup: SafeDocReact;
-  type: DocTypeDefinition;
 };
 export const DocNew = ({ setup }: DocNewProps) => {
   const newDocDialog = useRef<HTMLDialogElement>(null);

@@ -2,10 +2,9 @@
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import NewIntro from '@/pages/new-intro.md'
 import { NewDoc } from '@/components/system'
-import { CardV1 } from '@/docs/card'
 ---
 
 <BaseLayout>
     <NewIntro />
-    <NewDoc type={CardV1} client:only="react" />
+    <NewDoc client:only="react" />
 </BaseLayout>
