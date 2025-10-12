@@ -8,10 +8,7 @@ import type { DocEditorProps } from "@/components/safeDoc-react/DocEditor";
 import type { DocsEditorProps } from "@/components/safeDoc-react/DocsEditor";
 import type { DocPrinterProps } from "@/components/safeDoc-react/DocPrinter";
 export type { DocState } from "@/store/safeDoc-store";
-import {
-  createDocStore,
-  type DocState,
-} from "@/store/safeDoc-store";
+import { createDocStore, type DocState } from "@/store/safeDoc-store";
 import {
   createElement,
   lazy,
@@ -73,6 +70,7 @@ export interface EditButtonProps {
 
 export type SetupOptions = {
   viewUrl(docKey: string): string;
+  previewUrl(docKey: string): string;
   editUrl(docKey: string): string;
   printUrl(docKey: string): string;
   redirect(url: string): void;

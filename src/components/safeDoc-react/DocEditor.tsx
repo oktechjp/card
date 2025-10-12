@@ -30,7 +30,7 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
     return <>Not a document.</>;
   }
   if (docState.state === "no-stored") {
-    return <>Nothing stored for they key</>;
+    return <>No draft or publishe version for this key available.</>;
   }
   if (docState.state !== "ready" || !activeDoc) {
     return <>Loading/..</>;
@@ -71,9 +71,9 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
     </button>
   );
 
-  const liveBtn = (
-    <a key="live" href={link}>
-      live version
+  const publishedBtn = (
+    <a key="published" href={link}>
+      Published version
     </a>
   );
   const { title, links } = docState.doc
@@ -81,16 +81,16 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
       ? {
           title: "Diverged from server",
           links: [
-            liveBtn,
+            publishedBtn,
             <setup.UpdateDocButton doc={docState.draft!}>
-              Update Storage
+              Publish new version
             </setup.UpdateDocButton>,
             discardBtn,
           ],
         }
       : {
-          title: "Stored on Server",
-          links: [liveBtn],
+          title: "Published on server",
+          links: [publishedBtn],
         }
     : docState.draft && docState.draft.type.isEmpty(docState.draft.data)
       ? {
@@ -98,7 +98,7 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
           links: [deleteBtn],
         }
       : {
-          title: "Not Stored on server",
+          title: "Not Published",
           links: [
             <setup.CreateDocButton key="create-doc" doc={docState.draft!}>
               Store

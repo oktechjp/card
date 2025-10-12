@@ -131,20 +131,20 @@ export function DocPrinter({ docKey, setup }: DocPrinterProps) {
         ) : (
           <p>
             <code>{docState.docKey}</code> selected. Looks like you havn't
-            stored the document yet!{" "}
+            published the {selected?.type.humanName}!{" "}
             {docState.state === "ready" && docState.draft ? (
               <>
                 {docState.doc ? (
                   <>
                     <setup.UpdateDocButton doc={docState.doc}>
-                      Update Storage
+                      republish
                     </setup.UpdateDocButton>
                     ,{" "}
                   </>
                 ) : (
                   <>
                     <setup.CreateDocButton doc={docState.draft}>
-                      Store
+                      publish
                     </setup.CreateDocButton>
                     ,{" "}
                   </>

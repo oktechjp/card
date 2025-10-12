@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { InputWithLabel } from "./InputWithLabel";
 
 export interface HashInputProps {
+  draftAvailable?: boolean;
   label: string;
 }
 export function HashInput({ label }: HashInputProps) {
