@@ -1,11 +1,8 @@
-import type { DocForm, DocFormProps } from "@/components/safeDoc-react/DocForm";
+import type { DocFormProps } from "@/components/safeDoc-react/DocForm";
 export type { DocForm, DocFormProps } from "@/components/safeDoc-react/DocForm";
-import type { DocView, DocViewProps } from "@/components/safeDoc-react/DocView";
+import type { DocViewProps } from "@/components/safeDoc-react/DocView";
 export type { DocView, DocViewProps } from "@/components/safeDoc-react/DocView";
-import type {
-  DocPrint,
-  DocPrintProps,
-} from "@/components/safeDoc-react/DocPrint";
+import type { DocPrintProps } from "@/components/safeDoc-react/DocPrint";
 import type { DocViewerProps } from "@/components/safeDoc-react/DocViewer";
 import type { DocEditorProps } from "@/components/safeDoc-react/DocEditor";
 import type { DocsEditorProps } from "@/components/safeDoc-react/DocsEditor";
@@ -14,7 +11,6 @@ export type { DocState } from "@/store/safeDoc-store";
 import {
   createDocStore,
   type DocState,
-  type DocStore,
 } from "@/store/safeDoc-store";
 import {
   createElement,
@@ -82,24 +78,6 @@ export type SetupOptions = {
   redirect(url: string): void;
 };
 
-export interface SafeDocReact extends SetupOptions {
-  types: DocTypeDefinition[];
-  store: MapCreator<DocState, []>;
-  codec: DocCodec;
-  views: Map<DocTypeDefinition, DocView>;
-  forms: Map<DocTypeDefinition, DocForm>;
-  prints: Map<DocTypeDefinition, DocPrint>;
-  CreateDocButton(doc: EditButtonProps): ReactElement;
-  UpdateDocButton(doc: EditButtonProps): ReactElement;
-  Viewer: (props: Omit<DocViewerProps, "setup">) => ReactElement;
-  Editor: (props: Omit<DocEditorProps, "setup">) => ReactElement;
-  Editors: (props: Omit<DocsEditorProps, "setup">) => ReactElement;
-  Printer: (props: Omit<DocPrinterProps, "setup">) => ReactElement;
-  NewDoc: (props: Omit<DocNewProps, "setup">) => ReactElement;
-  useDoc: (docKey?: string) => DocState;
-  useHashDoc: (override?: string) => DocState;
-}
-
 export function createDocType<T extends DocTypeDefinition = DocTypeDefinition>(
   type: SafeDocReactType<T>,
 ): SafeDocReactType {
@@ -121,22 +99,6 @@ const Printer = lazy(async () => ({
 const NewDoc = lazy(async () => ({
   default: (await import("@/components/safeDoc-react/DocNew")).DocNew,
 }));
-
-function useDoc(store: DocStore, input?: string): DocState {
-  const docKey = input ? getPossibleDocKey(input) : null;
-  return useStore(docKey ? store(docKey) : nullStore);
-}
-
-function useHashDoc(store: DocStore, override?: string) {
-  const hash = useStore(hashStore);
-  const doc = useDoc(store, override ?? hash);
-  useEffect(() => {
-    if (doc.isValid && doc.docKey !== hash) {
-      setHash(doc.docKey);
-    }
-  }, [doc.docKey, hash]);
-  return doc;
-}
 
 function CreateDoc({
   codec,
@@ -196,7 +158,7 @@ export function setupSafeDocReact(
   reactTypes: SafeDocReactType[],
   defaultType: DocTypeDefinition,
   options: SetupOptions,
-): SafeDocReact {
+) {
   const types: DocTypeDefinition[] = [];
   const lookup = new Map<DocTypeDefinition, SafeDocReactType>();
   for (const react of reactTypes) {
@@ -208,25 +170,45 @@ export function setupSafeDocReact(
   }
   const store = createDocStore(types, defaultType);
   const codec = createDocCodec(types);
-  const setup: SafeDocReact = {
+  const useDoc = (input?: string) => {
+    const docKey = input ? getPossibleDocKey(input) : null;
+    return useStore(docKey ? store(docKey) : nullStore);
+  };
+  const setup = {
     store,
     types,
     codec,
-    CreateDocButton: ({ doc, children }) =>
+    CreateDocButton: ({ doc, children }: EditButtonProps) =>
       createElement(CreateDoc, { doc, codec, lookup, children }),
-    UpdateDocButton: ({ doc, children }) =>
+    UpdateDocButton: ({ doc, children }: EditButtonProps) =>
       createElement(UpdateDoc, { doc, codec, lookup, children }),
     views: new Map(reactTypes.map(({ type, View }) => [type, View])),
     forms: new Map(reactTypes.map(({ type, Form }) => [type, Form])),
     prints: new Map(reactTypes.map(({ type, Print }) => [type, Print])),
-    Viewer: (props) => createElement(Viewer, { setup, ...props }),
-    Editor: (props) => createElement(Editor, { setup, ...props }),
-    Editors: (props) => createElement(Editors, { setup, ...props }),
-    Printer: (props) => createElement(Printer, { setup, ...props }),
-    NewDoc: (props) => createElement(NewDoc, { setup, ...props }),
-    useDoc: useDoc.bind(null, store),
-    useHashDoc: useHashDoc.bind(null, store),
+    Viewer: (props: Omit<DocViewerProps, "setup">) =>
+      createElement(Viewer, { setup, ...props }),
+    Editor: (props: Omit<DocEditorProps, "setup">) =>
+      createElement(Editor, { setup, ...props }),
+    Editors: (props: Omit<DocsEditorProps, "setup">) =>
+      createElement(Editors, { setup, ...props }),
+    Printer: (props: Omit<DocPrinterProps, "setup">) =>
+      createElement(Printer, { setup, ...props }),
+    NewDoc: (props: Omit<DocNewProps, "setup">) =>
+      createElement(NewDoc, { setup, ...props }),
+    useDoc,
+    useHashDoc(override?: string) {
+      const hash = useStore(hashStore);
+      const doc = useDoc(override ?? hash);
+      useEffect(() => {
+        if (doc.isValid && doc.docKey !== hash) {
+          setHash(doc.docKey);
+        }
+      }, [doc.docKey, hash]);
+      return doc;
+    },
     ...options,
   };
   return setup;
 }
+
+export type SafeDocReact = ReturnType<typeof setupSafeDocReact>;
