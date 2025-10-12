@@ -60,7 +60,9 @@ export function DocPrinter({ docKey, setup }: DocPrinterProps) {
       return;
     }
     const name = `${selected.type.type}_v${selected.type.version}_${selected.docKey}_${formatTime(selected.time)}.png`;
-    downloadSvgImage(svg, name, {}).then(
+    downloadSvgImage(svg, name, {
+      scaleFactor: 4
+    }).then(
       () =>
         setDownloaded((input) => ({
           ...input,
