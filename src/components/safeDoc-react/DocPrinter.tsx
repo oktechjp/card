@@ -140,9 +140,9 @@ export function DocPrinter({ docKey, setup }: DocPrinterProps) {
               <>
                 {docState.doc ? (
                   <>
-                    <setup.RepublishButton doc={docState.doc}>
+                    <setup.PublishButton doc={docState.doc} republish>
                       republish
-                    </setup.RepublishButton>
+                    </setup.PublishButton>
                     ,{" "}
                   </>
                 ) : (

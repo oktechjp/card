@@ -181,8 +181,6 @@ export function setupSafeDocReact(
     codec,
     PublishButton: ({ doc, children }: PublisButtonProps) =>
       createElement(Publish, { doc, codec, lookup, children }),
-    RepublishButton: ({ doc, children }: PublisButtonProps) =>
-      createElement(Republish, { doc, codec, lookup, children }),
     views: new Map(reactTypes.map(({ type, View }) => [type, View])),
     forms: new Map(reactTypes.map(({ type, Form }) => [type, Form])),
     prints: new Map(reactTypes.map(({ type, Print }) => [type, Print])),

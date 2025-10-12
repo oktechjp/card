@@ -93,9 +93,9 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
           links: [
             previewBtn,
             publishedBtn,
-            <setup.RepublishButton doc={docState.draft!}>
+            <setup.PublishButton doc={docState.draft!} republish>
               Publish new version
-            </setup.RepublishButton>,
+            </setup.PublishButton>,
             discardBtn,
           ],
         }
