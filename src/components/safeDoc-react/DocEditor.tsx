@@ -30,7 +30,7 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
     return <>Not a document.</>;
   }
   if (docState.state === "no-stored") {
-    return <>No draft or publishe version for this key available.</>;
+    return <>No draft or published version for this key available.</>;
   }
   if (docState.state !== "ready" || !activeDoc) {
     return <>Loading/..</>;
@@ -61,12 +61,12 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
   const TypeView = setup.views.get(type)!;
   const pages = activeDoc.type.getPages(activeDoc.data);
   const discardBtn = (
-    <button key="discard" onClick={discardChanges}>
+    <button key="discard" onClickCapture={discardChanges}>
       Discard
     </button>
   );
   const deleteBtn = (
-    <button key="delete" onClick={deleteCard}>
+    <button key="delete" onClickCapture={deleteCard}>
       Delete
     </button>
   );
@@ -76,15 +76,26 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
       Published version
     </a>
   );
+  const publishBtn = (
+    <setup.PublishButton key="publish-doc" doc={docState.draft!}>
+      Publish
+    </setup.PublishButton>
+  )
+  const previewBtn = (
+    <a key="preview" href={setup.previewUrl(docState.docKey)}>
+      Preview
+    </a>
+  )
   const { title, links } = docState.doc
     ? docState.draft
       ? {
           title: "Diverged from server",
           links: [
+            previewBtn,
             publishedBtn,
-            <setup.UpdateDocButton doc={docState.draft!}>
+            <setup.RepublishButton doc={docState.draft!}>
               Publish new version
-            </setup.UpdateDocButton>,
+            </setup.RepublishButton>,
             discardBtn,
           ],
         }
@@ -95,14 +106,16 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
     : docState.draft && docState.draft.type.isEmpty(docState.draft.data)
       ? {
           title: "Card Empty",
-          links: [deleteBtn],
+          links: [
+            publishBtn,
+            deleteBtn
+          ],
         }
       : {
           title: "Not Published",
           links: [
-            <setup.CreateDocButton key="create-doc" doc={docState.draft!}>
-              Store
-            </setup.CreateDocButton>,
+            previewBtn,
+            publishBtn,
             deleteBtn,
           ],
         };

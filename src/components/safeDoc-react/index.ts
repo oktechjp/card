@@ -25,7 +25,7 @@ import {
   type DocCodec,
   type WorkDocument,
 } from "@/utils/safeDoc";
-import { atom, type MapCreator } from "nanostores";
+import { atom } from "nanostores";
 import { useStore } from "@nanostores/react";
 import { hashStore, setHash } from "@/store/hash";
 import { useAsyncMemo } from "@/hooks/useAsyncMemo";
@@ -40,10 +40,11 @@ export {
 } from "@/components/safeDoc-react/DocEditor";
 export { DocNew, type DocNewProps } from "@/components/safeDoc-react/DocNew";
 
-export interface UpdateCreateButtonProps {
+export interface PublishButtonProps {
   publicKey?: string;
   encrypted?: EncryptedDoc;
   children?: ReactNode;
+  republish?: boolean;
 }
 
 export interface SafeDocReactType<
@@ -53,8 +54,7 @@ export interface SafeDocReactType<
   View: (props: DocViewProps<T>) => ReactElement;
   Form: (props: DocFormProps<T>) => ReactElement;
   Print: (props: DocPrintProps<T>) => ReactElement;
-  CreateDocButton(props: UpdateCreateButtonProps): ReactElement;
-  UpdateDocButton(props: UpdateCreateButtonProps): ReactElement;
+  PublishButton(props: PublishButtonProps): ReactElement;
 }
 
 const nullStore = atom<DocState>({
@@ -63,8 +63,9 @@ const nullStore = atom<DocState>({
   isValid: false,
 });
 
-export interface EditButtonProps {
+export interface PublisButtonProps {
   children?: ReactNode;
+  republish?: boolean;
   doc: WorkDocument;
 }
 
@@ -98,7 +99,7 @@ const NewDoc = lazy(async () => ({
   default: (await import("@/components/safeDoc-react/DocNew")).DocNew,
 }));
 
-function CreateDoc({
+function Publish({
   codec,
   lookup,
   doc,
@@ -118,14 +119,15 @@ function CreateDoc({
     return "Unexpected doctype given.";
   }
   const data = state.state === "success" ? state.data : null;
-  return createElement(react.CreateDocButton, {
+  return createElement(react.PublishButton, {
     encrypted: data ? data.encrypted : undefined,
     publicKey: data ? data.publicKey : undefined,
+    republish: false,
     children,
   });
 }
 
-function UpdateDoc({
+function Republish({
   codec,
   lookup,
   doc,
@@ -145,9 +147,10 @@ function UpdateDoc({
     return "Unexpected doctype given.";
   }
   const data = state.state === "success" ? state.data : null;
-  return createElement(react.UpdateDocButton, {
+  return createElement(react.PublishButton, {
     encrypted: data ? data.encrypted : undefined,
     publicKey: data ? data.publicKey : undefined,
+    republish: true,
     children,
   });
 }
@@ -176,10 +179,10 @@ export function setupSafeDocReact(
     store,
     types,
     codec,
-    CreateDocButton: ({ doc, children }: EditButtonProps) =>
-      createElement(CreateDoc, { doc, codec, lookup, children }),
-    UpdateDocButton: ({ doc, children }: EditButtonProps) =>
-      createElement(UpdateDoc, { doc, codec, lookup, children }),
+    PublishButton: ({ doc, children }: PublisButtonProps) =>
+      createElement(Publish, { doc, codec, lookup, children }),
+    RepublishButton: ({ doc, children }: PublisButtonProps) =>
+      createElement(Republish, { doc, codec, lookup, children }),
     views: new Map(reactTypes.map(({ type, View }) => [type, View])),
     forms: new Map(reactTypes.map(({ type, Form }) => [type, Form])),
     prints: new Map(reactTypes.map(({ type, Print }) => [type, Print])),

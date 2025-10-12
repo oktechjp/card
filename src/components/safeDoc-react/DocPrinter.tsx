@@ -114,6 +114,7 @@ export function DocPrinter({ docKey, setup }: DocPrinterProps) {
         ) : state_1 === "doc-ready" ? (
           <p>
             <code>{docState.docKey}</code> selected.{" "}
+            <a href="#">Change</a>
             <a href={docState.docKey ? setup.editUrl(docState.docKey) : ""}>
               Edit
             </a>
@@ -132,22 +133,23 @@ export function DocPrinter({ docKey, setup }: DocPrinterProps) {
           </p>
         ) : (
           <p>
-            <code>{docState.docKey}</code> selected. Looks like you havn't
+            <code>{docState.docKey}</code> selected.
+            <a href="#">Change</a> Looks like you havn't
             published the {selected?.type.humanName}!{" "}
             {docState.state === "ready" && docState.draft ? (
               <>
                 {docState.doc ? (
                   <>
-                    <setup.UpdateDocButton doc={docState.doc}>
+                    <setup.RepublishButton doc={docState.doc}>
                       republish
-                    </setup.UpdateDocButton>
+                    </setup.RepublishButton>
                     ,{" "}
                   </>
                 ) : (
                   <>
-                    <setup.CreateDocButton doc={docState.draft}>
+                    <setup.PublishButton doc={docState.draft}>
                       publish
-                    </setup.CreateDocButton>
+                    </setup.PublishButton>
                     ,{" "}
                   </>
                 )}

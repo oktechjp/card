@@ -1,4 +1,4 @@
-import type { SafeDocReactType, UpdateCreateButtonProps } from ".";
+import type { SafeDocReactType, PublishButtonProps } from ".";
 
 export type GithubFormatter = (publicKey: string) => {
   repo: string;
@@ -8,7 +8,7 @@ export type GithubFormatter = (publicKey: string) => {
   baseUrl?: string;
 };
 
-export type GithubButtonProps = UpdateCreateButtonProps & {
+export type GithubButtonProps = PublishButtonProps & {
   toUrl: GithubFormatter;
 };
 
@@ -84,9 +84,11 @@ export function GithubUpdateButton({
 
 export function createGithubButtons(
   toUrl: GithubFormatter,
-): Pick<SafeDocReactType, "CreateDocButton" | "UpdateDocButton"> {
+): Pick<SafeDocReactType, "PublishButton"> {
   return {
-    CreateDocButton: (props) => <GithubCreateButton toUrl={toUrl} {...props} />,
-    UpdateDocButton: (props) => <GithubUpdateButton toUrl={toUrl} {...props} />,
+    PublishButton: (props) =>
+      props.republish
+        ? <GithubUpdateButton toUrl={toUrl} {...props} />
+        : <GithubCreateButton toUrl={toUrl} {...props} />,
   };
 }
