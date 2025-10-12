@@ -1,15 +1,23 @@
 ---
+
 ---
+
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type="text/css" is:global>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
       .sd--editor--form label {
         margin-right: 0.3em;
       }
-      .form--element {
+      .form--element:not(.button) {
         margin-bottom: 0.5em;
       }
       fieldset {
@@ -17,8 +25,14 @@
         flex-direction: column;
         gap: 1.5em;
       }
-      label {
+      .form--element:not(.button) > label {
         font-weight: bold;
+      }
+      .form--element:not(.button) > label::after {
+        content: ":";
+      }
+      label::after {
+        margin-right: 0.2em;
       }
       .form--element-desc {
         margin-top: -0.5em;
@@ -27,22 +41,104 @@
         border: 0.25cqw solid #eee;
         box-shadow: 1cqw 1cqw 2cqw #ddd;
       }
+      dialog::backdrop,
       .sd--editor-pages {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(0.15em);
+      }
+      dialog::backdrop {
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height:;
+      }
+      dialog {
+        z-index: 1;
+        border-radius: 1em;
+        border: 1px solid #aaa;
+        padding: 2em;
+        width: 40em;
+      }
+      dialog h3 {
+        line-height: 1em;
+        margin: 0;
+      }
+      .sd--button-box {
+        height: 3em;
+      }
+      .sd--editors-menu {
         position: sticky;
         inset: 0;
-        padding: 1em;
-        background: rgba(255, 255, 255, 0.3);
+      }
+      .sd--button-box,
+      .sd--button-list,
+      .sd--editors-menu {
         display: flex;
         flex-direction: row;
-        justify-content: center;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+      }
+      .sd--editors-menu {
+        background: #efefef;
+        height: 3em;
+      }
+      .sd--editors-menu > .sd--editors-select {
+        margin: 0;
+        margin-right: 1em;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+      .sd--editors-select select {
+        min-width: 40px;
+        max-width: 100%;
+        width: 100%;
+        padding: 0.5em;
+        margin-left: 1em;
+      }
+      .sd--editors-select label {
+        display: none;
+      }
+      .sd--button-list {
+        gap: 0.5em;
+      }
+      .sd--button-list > li {
+        list-style-type: none;
+        margin: 0;
+      }
+      .sd--editor-pages {
+        position: sticky;
+        inset: 3em;
+        padding: 1em;
+        display: flex;
+        flex-direction: row;
         margin-bottom: 0.5em;
         gap: 1em;
-        backdrop-filter: blur(1em);
-        border-bottom: 1px solid white;
+        border-bottom: 2px solid white;
+      }
+      button,
+      .button {
+        background: #ddd;
+        color: #000;
+        border-radius: 100vw;
+        padding: 0.5em 1em;
+        display: inline-flex;
+        text-decoration: none;
+        align-items: center;
+        border: none;
+        cursor: pointer;
+        font-size: 0.8em;
+        text-transform: uppercase;
+      }
+      button:hover,
+      .button:hover {
+        background: #333;
+        color: white;
       }
       .sd--editor-page {
         position: relative;
-        width: 350px;
+        width: 400px;
         container-type: inline-size;
       }
       .sd--viewer-page {
@@ -50,14 +146,63 @@
         width: 40%;
         container-type: inline-size;
       }
+      .print--pages {
+        display: flex;
+        flex-direction: row;
+        gap: 1em;
+      }
+      .print--page {
+        position: relative;
+        width: 47%;
+        container-type: inline-size;
+      }
+      article {
+        padding: 1em 1em;
+      }
+      fieldset {
+        margin: 1em 0;
+        padding: 1em;
+        border-radius: 0.2em;
+      }
+      fieldset > legend {
+        color: #666;
+      }
+      figure {
+        margin: 1.5em 0;
+      }
+      figure > img {
+        box-shadow: 0.5em 0.5em 1em #ddd;
+      }
+      .form--element.form-hash {
+        display: flex;
+        border-radius: 1em;
+        font-size: 1.2em;
+        background: #eee;
+        padding: 1em;
+        align-items: center;
+        margin: 0;
+      }
+      .form-hash > label {
+        font-weight: normal !important;
+        white-space: nowrap;
+      }
+      .form-hash > input {
+        font-size: 1em;
+        margin-left: 0.2em;
+        font-family: monospace;
+        background-color: rgba(255 255 255 / 0.75);
+        outline: 2px solid #ccc;
+        border: none;
+        padding: 0.5em;
+        flex: 1;
+      }
+      .form-hash input:focus {
+        outline: 2px solid #000;
+      }
     </style>
   </head>
   <body>
-    <article>
-      <slot />
-    </article>
+    <slot />
   </body>
-  <style>
-  </style>
+  <style></style>
 </html>
- 

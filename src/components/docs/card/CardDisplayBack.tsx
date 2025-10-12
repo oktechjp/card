@@ -1,8 +1,5 @@
 import { DEFAULT_COLOR, type CardV1Type } from "@/docs/card";
-import {
-  CARD_SIZE,
-  BusinessCardSvg,
-} from "@/components/docs/BusinessCardSvg";
+import { CARD_SIZE, BusinessCardSvg } from "@/components/docs/BusinessCardSvg";
 import { ShipporiAntiqueB1 } from "@/components/fonts/ShipporiAntiqueB1";
 import { PermanentMarker } from "@/components/fonts/PermanentMarker";
 import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
@@ -19,7 +16,7 @@ export const CardDisplayBack: DocPageView<CardV1Type> = ({
     ["callname", "callname_kana"] as const,
     ({ callname, callname_kana }) => {
       if (callname) {
-        const { x: centerX, y: centerY } = CARD_SIZE.normal.center
+        const { x: centerX, y: centerY } = CARD_SIZE.normal.center;
         callname.move(
           centerX - callname.bounds.width / 2,
           centerY + callname.bounds.height * 0.25,

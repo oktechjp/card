@@ -30,6 +30,7 @@ import { useStore } from "@nanostores/react";
 import { hashStore, setHash } from "@/store/hash";
 import { useAsyncMemo } from "@/hooks/useAsyncMemo";
 import type { DocNewProps } from "@/components/safeDoc-react/DocNew";
+import type { DocEditorMenuProps } from "./DocEditorMenu";
 export {
   DocViewer,
   type DocViewerProps,
@@ -88,6 +89,10 @@ const Viewer = lazy(async () => ({
 }));
 const Editor = lazy(async () => ({
   default: (await import("@/components/safeDoc-react/DocEditor")).DocEditor,
+}));
+const EditorMenu = lazy(async () => ({
+  default: (await import("@/components/safeDoc-react/DocEditorMenu"))
+    .DocEditorMenu,
 }));
 const Editors = lazy(async () => ({
   default: (await import("@/components/safeDoc-react/DocsEditor")).DocsEditor,
@@ -188,6 +193,8 @@ export function setupSafeDocReact(
       createElement(Viewer, { setup, ...props }),
     Editor: (props: Omit<DocEditorProps, "setup">) =>
       createElement(Editor, { setup, ...props }),
+    EditorMenu: (props: Omit<DocEditorMenuProps, "setup">) =>
+      createElement(EditorMenu, { setup, ...props }),
     Editors: (props: Omit<DocsEditorProps, "setup">) =>
       createElement(Editors, { setup, ...props }),
     Printer: (props: Omit<DocPrinterProps, "setup">) =>

@@ -1,10 +1,12 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import NewIntro from '@/pages/new-intro.md'
-import { NewDoc } from '@/components/system'
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import NewIntro from "@/pages/new-intro.md";
+import { NewDoc } from "@/components/system";
 ---
 
 <BaseLayout>
+  <article>
     <NewIntro />
     <NewDoc client:only="react" />
+  </article>
 </BaseLayout>

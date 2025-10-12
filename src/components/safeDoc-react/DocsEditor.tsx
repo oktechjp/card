@@ -21,36 +21,43 @@ export function DocsEditor({ setup }: DocsEditorProps) {
   const isPossibleDocKey = getPossibleDocKey(hash) != null;
   return (
     <>
-      <SelectWithLabel
-        label="Selected Document"
-        defaultValue={hash}
-        onChange={(elem) => setHash(elem.currentTarget.value)}
-      >
-        <option value="">-</option>
-        {isPossibleDocKey && !knownIds.includes(hash) ? (
-          <optgroup label="Persisted">
-            <option key={hash} value={hash}>
-              {hash}
-            </option>
-          </optgroup>
-        ) : null}
-        {knownIds.length > 0 ? (
-          <optgroup label="Drafts">
-            {knownIds.map((privateKey) => (
-              <option key={privateKey} value={privateKey}>
-                {privateKey}
+      <div className="sd--editors-menu">
+        <SelectWithLabel
+          label="Selected"
+          className="sd--editors-select"
+          defaultValue={hash}
+          onChange={(event) => {
+            if (event.currentTarget.value === "new") {
+              newDocDialog.current?.showModal();
+              event.preventDefault();
+              event.stopPropagation();
+              event.currentTarget.value = hash;
+              return;
+            }
+            setHash(event.currentTarget.value);
+          }}
+        >
+          <option value="">-</option>
+          <option value="new">New</option>
+          {isPossibleDocKey && !knownIds.includes(hash) ? (
+            <optgroup label="Persisted">
+              <option key={hash} value={hash}>
+                {hash}
               </option>
-            ))}
-          </optgroup>
-        ) : null}
-      </SelectWithLabel>
-      <button
-        onClick={() => {
-          newDocDialog.current!.showModal();
-        }}
-      >
-        New Document
-      </button>
+            </optgroup>
+          ) : null}
+          {knownIds.length > 0 ? (
+            <optgroup label="Drafts">
+              {knownIds.map((privateKey) => (
+                <option key={privateKey} value={privateKey}>
+                  {privateKey}
+                </option>
+              ))}
+            </optgroup>
+          ) : null}
+        </SelectWithLabel>
+        <setup.EditorMenu docKey={hash} />
+      </div>
       <NewDocDialog
         ref={newDocDialog}
         types={setup.types}

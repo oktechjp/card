@@ -17,18 +17,21 @@ export function SelectGroupWithLabel({
   children,
   defaultValue,
 }: CountrySelectProps) {
-  return (<>
-    <SelectWithLabel name={name} defaultValue={defaultValue ?? ''} label={label}>
-      {defaultValue ? null : <option value="">-</option>}
-      {groups.map((group) => (
-        <SelectGroupOption key={group.name} group={group} />
-      ))}
-    </SelectWithLabel>
-    {
-      children ?
-        <span className={"form--element-desc"}>
-          {children}
-        </span> : null
-    }
-  </>);
+  return (
+    <>
+      <SelectWithLabel
+        name={name}
+        defaultValue={defaultValue ?? ""}
+        label={label}
+      >
+        {defaultValue ? null : <option value="">-</option>}
+        {groups.map((group) => (
+          <SelectGroupOption key={group.name} group={group} />
+        ))}
+      </SelectWithLabel>
+      {children ? (
+        <span className={"form--element-desc"}>{children}</span>
+      ) : null}
+    </>
+  );
 }

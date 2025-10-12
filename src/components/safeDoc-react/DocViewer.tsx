@@ -2,6 +2,7 @@ import { createElement, type ReactNode } from "react";
 import { HashInput } from "@/components/form/HashInput";
 import { isReadyState } from "@/store/safeDoc-store";
 import type { SafeDocReact } from ".";
+import { DocButtonList } from "./DocButtonList";
 
 export interface DocViewerProps {
   docKey?: string;
@@ -9,7 +10,7 @@ export interface DocViewerProps {
   showMargins?: boolean;
   allowDraft: boolean;
   setup: SafeDocReact;
-  children?: ReactNode
+  children?: ReactNode;
 }
 
 export function DocViewer({
@@ -31,15 +32,6 @@ export function DocViewer({
   if (!ready || !doc) {
     return (
       <>
-        {hasDraft && docState.docKey ? (
-          <div className="sd--notice">
-            <div className="sd--draft-notice">
-              There is a draft available!{" "}
-              <a href={setup.previewUrl(docState.docKey)}>Show the Preview</a>{" "}
-              or <a href={setup.editUrl(docState.docKey)}>continue editing</a>.
-            </div>
-          </div>
-        ) : null}
         <HashInput
           label={
             ready
@@ -49,8 +41,25 @@ export function DocViewer({
               : `Enter the password`
           }
         />
-        {docState.state === "pending" ? <>Loading...</> : null}
-        {children ? <div className="sd--intro">{children}</div> : null}
+        {docState.state === "pending" ? (
+          <>Loading...</>
+        ) : hasDraft && docState.docKey ? (
+          <div className="sd--notice">
+            <div className="sd--draft-notice">
+              There is a draft available!{" "}
+              <DocButtonList>
+                <a href={setup.previewUrl(docState.docKey)} className="button">
+                  Show the Preview
+                </a>
+                <a href={setup.editUrl(docState.docKey)} className="button">
+                  continue editing
+                </a>
+              </DocButtonList>
+            </div>
+          </div>
+        ) : children ? (
+          <div className="sd--intro">{children}</div>
+        ) : null}
       </>
     );
   }
@@ -75,40 +84,54 @@ export function DocViewer({
                 <div className="sd--draft-diverges">
                   This draft is different from the published{" "}
                   {doc.type.humanName}!{" "}
-                  <a href={setup.viewUrl(doc.docKey)}>
-                    Show the published {doc.type.humanName}
-                  </a>{" "}
-                  or <a href={setup.editUrl(doc.docKey)}>continue editing</a>.
+                  <DocButtonList>
+                    <a href={setup.viewUrl(doc.docKey)} className="button">
+                      Show the published {doc.type.humanName}
+                    </a>
+                    <a href={setup.editUrl(doc.docKey)} className="button">
+                      continue editing
+                    </a>
+                  </DocButtonList>
                 </div>
               ) : (
                 <div className="sd--draft-fresh">
-                  This draft has not been published.{" "}
-                  <a href={setup.editUrl(doc.docKey)}>continue editing</a>
+                  This draft has not been published.
+                  <DocButtonList>
+                    <a href={setup.editUrl(doc.docKey)} className="button">
+                      continue editing
+                    </a>
+                  </DocButtonList>
                 </div>
               )}
             </>
           ) : (
             <div className="sd--draft-available">
-              This is the published version!{" "}
-              <a href={setup.previewUrl(doc.docKey)}>Show the edited Draft!</a>
+              This is the published version!
+              <DocButtonList>
+                <a href={setup.previewUrl(doc.docKey)} className="button">
+                  Show Draft Preview
+                </a>
+              </DocButtonList>
             </div>
           )}
         </div>
       ) : null}
       <div className="sd--viewer">
-      {ready.type
-        .getPages(doc.data)
-        .filter((p) => (page ? p.id === page : true))
-        .map((page) => <div className="sd--viewer-page">
-          {createElement(View, {
-            isDraft,
-            key: page.id,
-            page: page.id,
-            showMargins: showMargins ?? false,
-            ...doc,
-          })}</div>,
-        )}
-        </div>
+        {ready.type
+          .getPages(doc.data)
+          .filter((p) => (page ? p.id === page : true))
+          .map((page) => (
+            <div className="sd--viewer-page">
+              {createElement(View, {
+                isDraft,
+                key: page.id,
+                page: page.id,
+                showMargins: showMargins ?? false,
+                ...doc,
+              })}
+            </div>
+          ))}
+      </div>
     </>
   );
 }

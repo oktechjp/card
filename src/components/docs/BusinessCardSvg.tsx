@@ -2,24 +2,29 @@ import type { CSSProperties, ReactNode, Ref } from "react";
 import type { DocTypeDefinition } from "@/utils/safeDoc";
 import type { DocViewProps } from "@/components/safeDoc-react";
 
-const rect = (width: number, height: number) => ({ width, height, ratio: height / width, center: { x: width / 2, y: height / 2 } })
+const rect = (width: number, height: number) => ({
+  width,
+  height,
+  ratio: height / width,
+  center: { x: width / 2, y: height / 2 },
+});
 
 const size = (width: number, height: number, padding: number) => {
-  const normal = rect(width, height)
-  const padded = rect(width + padding * 2, height + padding * 2)
+  const normal = rect(width, height);
+  const padded = rect(width + padding * 2, height + padding * 2);
   return {
     normal,
     padding,
     padded,
     viewBox: `${-padding} ${-padding} ${padded.width} ${padded.height}`,
-  }
-}
+  };
+};
 
 export const CARD_SIZE = size(910, 550, 25);
 
 const PADDING_WHEN_CUT: CSSProperties = {
-  margin: `-${100 / CARD_SIZE.normal.width * CARD_SIZE.padding}%`
-}
+  margin: `-${(100 / CARD_SIZE.normal.width) * CARD_SIZE.padding}%`,
+};
 
 export type BusinessCardSvgDisplayProps<Type extends DocTypeDefinition> = Omit<
   DocViewProps<Type>,
@@ -48,7 +53,7 @@ export function BusinessCardSvg({
 }: BusinessCardSvgProps) {
   isCut = isCut ?? true;
   const boxStyle: CSSProperties = {
-    width: '100cqw',
+    width: "100cqw",
     height: `${100 * (isCut ? CARD_SIZE.normal : CARD_SIZE.padded).ratio}cqw`,
     overflow: "hidden",
     display: "inline-block",

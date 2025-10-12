@@ -1,10 +1,7 @@
 import clsx from "clsx";
 import type { Ref } from "react";
 import { NotoSansJP } from "@/components/fonts/NotoSansJP";
-import {
-  CARD_SIZE,
-  BusinessCardSvg,
-} from "@/components/docs/BusinessCardSvg";
+import { CARD_SIZE, BusinessCardSvg } from "@/components/docs/BusinessCardSvg";
 import { useSvgSize } from "@/hooks/useSvgSize";
 import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
 import { useQRCode } from "@/hooks/useQrCode";
@@ -94,11 +91,17 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
     }) => {
       let bottomX = 25;
       if (bottom1) {
-        bottom1.move(bottomX, CARD_SIZE.normal.height - bottom1.bounds.height - 25);
+        bottom1.move(
+          bottomX,
+          CARD_SIZE.normal.height - bottom1.bounds.height - 25,
+        );
         bottomX += bottom1.bounds.width + 15;
       }
       if (bottom2) {
-        bottom2.move(bottomX, CARD_SIZE.normal.height - bottom2.bounds.height - 25);
+        bottom2.move(
+          bottomX,
+          CARD_SIZE.normal.height - bottom2.bounds.height - 25,
+        );
         bottomX += bottom2.bounds.width + 15;
       }
       if (description) {
@@ -110,7 +113,10 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
       if (link) {
         const line1 = link.bounds.height + 23;
         link.move(CARD_SIZE.normal.width - link.bounds.width - 23, line1);
-        linkLine2?.move(CARD_SIZE.normal.width - linkLine2?.bounds.width - 23, line1 + 20);
+        linkLine2?.move(
+          CARD_SIZE.normal.width - linkLine2?.bounds.width - 23,
+          line1 + 20,
+        );
       }
       let y = 0;
       let fOff = 0;

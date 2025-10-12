@@ -5,6 +5,7 @@ import { createPrivateKeyBase32 } from "@/utils/private-key-base32";
 import { createPrivateKeyWords } from "@/utils/private-key-words";
 import { applyRef } from "@/utils/applyRef";
 import { SelectWithLabel } from "@/components/form/SelectWithLabel";
+import { DocButtonList } from "./DocButtonList";
 
 export interface NewDocDialogProps {
   types: DocTypeDefinition[];
@@ -126,25 +127,28 @@ export function NewDocDialog({
             ↻
           </button>
         </div>
-        <button
-          type="submit"
-          onClick={(e) => {
-            onSuccess(type, privateKey);
-            setLastRefresh(Date.now());
-            ref.current!.close();
-            e.preventDefault();
-          }}
-        >
-          Continue
-        </button>
-        <button
-          onClick={(e) => {
-            ref.current?.close();
-            e.preventDefault();
-          }}
-        >
-          Cancel
-        </button>
+        <hr />
+        <DocButtonList>
+          <button
+            type="submit"
+            onClick={(e) => {
+              onSuccess(type, privateKey);
+              setLastRefresh(Date.now());
+              ref.current!.close();
+              e.preventDefault();
+            }}
+          >
+            Continue
+          </button>
+          <button
+            onClick={(e) => {
+              ref.current?.close();
+              e.preventDefault();
+            }}
+          >
+            Cancel
+          </button>
+        </DocButtonList>
       </form>
     </dialog>
   );

@@ -6,7 +6,7 @@ export type InputWithLabelProps = Omit<
   "label" | "children"
 > & {
   label: string;
-  children?: ReactNode
+  children?: ReactNode;
 };
 export function InputWithLabel({
   label,
@@ -16,16 +16,17 @@ export function InputWithLabel({
   ...rest
 }: InputWithLabelProps) {
   const elemId = useId();
-  return (<>
-    <span id={id} className={clsx("form--element", "form--input", className)}>
-      <label htmlFor={elemId}>{label}</label>
-      <input id={elemId} {...rest} />
-    </span>
-    {
-      children ?
+  return (
+    <>
+      <span id={id} className={clsx("form--element", "form--input", className)}>
+        <label htmlFor={elemId}>{label}</label>
+        <input id={elemId} {...rest} />
+      </span>
+      {children ? (
         <span className={clsx("form--element-desc", className)}>
           {children}
-        </span> : null
-    }
-  </>);
+        </span>
+      ) : null}
+    </>
+  );
 }

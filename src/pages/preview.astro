@@ -1,8 +1,13 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import { Viewer } from '@/components/system';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Viewer } from "@/components/system";
+import PreviewIntro from "@/pages/preview-intro.md";
 ---
 
 <BaseLayout>
-    <Viewer client:only="react" allowDraft={true} />
+  <article>
+    <Viewer client:only="react" allowDraft={true}>
+      <PreviewIntro />
+    </Viewer>
+  </article>
 </BaseLayout>

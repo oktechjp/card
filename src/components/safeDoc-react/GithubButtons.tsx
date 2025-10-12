@@ -32,7 +32,7 @@ export function GithubCreateButton({
     link = prCreateURL.toString();
   }
   return (
-    <a href={link} target="_blank">
+    <a href={link} className="button" target="_blank">
       {children}
     </a>
   );
@@ -87,8 +87,10 @@ export function createGithubButtons(
 ): Pick<SafeDocReactType, "PublishButton"> {
   return {
     PublishButton: (props) =>
-      props.republish
-        ? <GithubUpdateButton toUrl={toUrl} {...props} />
-        : <GithubCreateButton toUrl={toUrl} {...props} />,
+      props.republish ? (
+        <GithubUpdateButton toUrl={toUrl} {...props} />
+      ) : (
+        <GithubCreateButton toUrl={toUrl} {...props} />
+      ),
   };
 }
