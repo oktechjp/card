@@ -54,7 +54,7 @@ await Promise.all(
       const location = `${fontsFolder}${file}`;
       await writeFile(location, fontData);
       urls[url] = location;
-      outputCss = outputCss.replaceAll(url, `${fontsServerFolder}${file}`);
+      outputCss = outputCss.replaceAll(url, `/${fontsServerFolder}${file}`);
     }
     const tsName = family.replaceAll(" ", "");
     await writeFile(
