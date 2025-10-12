@@ -18,7 +18,7 @@
     "@astrojs/ts-plugin": "^1.10.4",
     "@nanostores/persistent": "github:nanostores/persistent",
     "@nanostores/react": "^1.0.0",
-    "astro": "^5.13.7",
+    "astro": "^5.14.3",
     "canvg": "^4.0.3",
     "clsx": "^2.1.1",
     "fast-deep-equal": "^3.1.3",
