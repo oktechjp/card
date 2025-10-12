@@ -22,7 +22,7 @@ export const setup = setupSafeDocReact(
   CardV1,
   {
     viewUrl: (docKey) => `/#${docKey}`,
-    previewUrl: (docKey) => `preview#${docKey}`,
+    previewUrl: (docKey) => `/preview#${docKey}`,
     editUrl: (docKey) => `/edit#${docKey}`,
     printUrl: (docKey) => `/print#${docKey}`,
     redirect: (url) => {
