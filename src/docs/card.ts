@@ -21,6 +21,9 @@ const schema = z.object({
   color: z.enum(ColorEnum).default(ColorEnum.red),
   bottom1: z.enum(Object.keys(AllIconTypes)).optional(),
   bottom2: z.enum(Object.keys(AllIconTypes)).optional(),
+  bottom3: z.enum(Object.keys(AllIconTypes)).optional(),
+  bottom4: z.enum(Object.keys(AllIconTypes)).optional(),
+  bottom5: z.enum(Object.keys(AllIconTypes)).optional(),
 });
 
 export const PAGE_FRONT = { id: "front", label: "Front" } as const;

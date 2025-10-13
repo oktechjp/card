@@ -66,6 +66,9 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
     [
       "bottom1",
       "bottom2",
+      "bottom3",
+      "bottom4",
+      "bottom5",
       "description",
       "link",
       "linkLine2",
@@ -79,6 +82,9 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
     ({
       bottom1,
       bottom2,
+      bottom3,
+      bottom4,
+      bottom5,
       description,
       link,
       linkLine2,
@@ -103,6 +109,27 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
           CARD_SIZE.normal.height - bottom2.bounds.height - 25,
         );
         bottomX += bottom2.bounds.width + 15;
+      }
+      if (bottom3) {
+        bottom3.move(
+          bottomX,
+          CARD_SIZE.normal.height - bottom3.bounds.height - 25,
+        );
+        bottomX += bottom3.bounds.width + 15;
+      }
+      if (bottom4) {
+        bottom4.move(
+          bottomX,
+          CARD_SIZE.normal.height - bottom4.bounds.height - 25,
+        );
+        bottomX += bottom4.bounds.width + 15;
+      }
+      if (bottom5) {
+        bottom5.move(
+          bottomX,
+          CARD_SIZE.normal.height - bottom5.bounds.height - 25,
+        );
+        bottomX += bottom5.bounds.width + 15;
       }
       if (description) {
         description.move(
@@ -161,7 +188,7 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
       : "https://oktech.jp"
     : docKey;
   const qrCode = useQRCode(link);
-  const { bottom1, bottom2 } = json;
+  const { bottom1, bottom2, bottom3, bottom4, bottom5 } = json;
   return (
     <BusinessCardSvg ref={ref} isCut={!showMargins} background="white">
       <style>{`
@@ -262,6 +289,24 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
         <BottomIcon
           ref={refs.bottom2}
           value={bottom2 as keyof typeof AllIconTypes}
+        />
+      ) : null}
+      {bottom3 ? (
+        <BottomIcon
+          ref={refs.bottom3}
+          value={bottom3 as keyof typeof AllIconTypes}
+        />
+      ) : null}
+      {bottom4 ? (
+        <BottomIcon
+          ref={refs.bottom4}
+          value={bottom4 as keyof typeof AllIconTypes}
+        />
+      ) : null}
+      {bottom5 ? (
+        <BottomIcon
+          ref={refs.bottom5}
+          value={bottom5 as keyof typeof AllIconTypes}
         />
       ) : null}
     </BusinessCardSvg>
