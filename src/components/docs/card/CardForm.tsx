@@ -6,12 +6,12 @@ import { SelectGroupWithLabel } from "@/components/form/SelectGroupWithLabel";
 import { ColorEnum, CountryGroups, DEFAULT_COLOR } from "@/docs/card";
 import { ColorInfo } from "@/components/docs/card/ColorInfo";
 
-export const CardForm: DocForm = () => (
+export const CardForm: DocForm = ({ data }) => (
   <>
     <fieldset>
       <legend>Front Side</legend>
       <InputWithLabel name="surname" label="Surname">
-        Enter your surname, the name you expect to be used with ”様" in your
+        Enter your surname, the name you expect to be used with "様" in your
         language.
         <br />
         Your surname is not required but strongly recommended. <br />
@@ -146,13 +146,42 @@ export const CardForm: DocForm = () => (
         </a>{" "}
         for adding new Icons that you like.
       </SelectGroupWithLabel>
-      <SelectGroupWithLabel
-        groups={CountryGroups as OptionGroup[]}
-        name="bottom2"
-        label="Icon B"
-      >
-        Additional Icon that you can use if you feel like it.
-      </SelectGroupWithLabel>
+      {data.bottom1 ? (
+        <SelectGroupWithLabel
+          groups={CountryGroups as OptionGroup[]}
+          name="bottom2"
+          label="Icon B"
+        >
+          Additional Icon that you can use if you feel like it.
+        </SelectGroupWithLabel>
+      ) : null}
+      {data.bottom2 ? (
+        <SelectGroupWithLabel
+          groups={CountryGroups as OptionGroup[]}
+          name="bottom3"
+          label="Icon C"
+        >
+          Additional Icon that you can use if you feel like it.
+        </SelectGroupWithLabel>
+      ) : null}
+      {data.bottom3 ? (
+        <SelectGroupWithLabel
+          groups={CountryGroups as OptionGroup[]}
+          name="bottom4"
+          label="Icon D"
+        >
+          Additional Icon that you can use if you feel like it.
+        </SelectGroupWithLabel>
+      ) : null}
+      {data.bottom4 ? (
+        <SelectGroupWithLabel
+          groups={CountryGroups as OptionGroup[]}
+          name="bottom5"
+          label="Icon E"
+        >
+          Additional Icon that you can use if you feel like it.
+        </SelectGroupWithLabel>
+      ) : null}
     </fieldset>
     <fieldset>
       <legend>Back Side</legend>
