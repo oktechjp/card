@@ -50,7 +50,7 @@ export function RaksulBusinessCardPrint() {
             <figure className="print-instruction">
               <img
                 src="/images/screenshot-09-positioning.png"
-                style={{ height: "10em" }}
+                style={{ height: "14em" }}
               />
             </figure>
           </li>
