@@ -1,5 +1,4 @@
-import words from "@/utils/words.json" assert { type: "json" };
-import { permutations } from "@/utils/words-permutations";
+import { words, permutations } from "@/utils/words";
 import { getRandomEntry, getSecureRandomInt } from "@/utils/crypto";
 
 class RandomWeighted<T extends { weight: number }> {

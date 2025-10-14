@@ -1,5 +1,8 @@
-#!/usr/bin/env node --permission --allow-fs-write=src/utils/words-permutations.ts --allow-fs-write=src/utils/words.json --allow-fs-read=words-dictionary.txt
+#!/usr/bin/env node --permission --allow-fs-write=src/utils/words.ts --allow-fs-read=words-dictionary.txt
 import { writeFile, readFile } from "fs/promises";
+
+const PASSWORD_LENGTH = 38;
+const MIN_ENTROPY = BigInt(Math.pow(255, 12)); // 12 bytes (96bits) of random
 
 const wordlist = (
   await readFile(new URL("../words-dictionary.txt", import.meta.url), "utf-8")
@@ -28,14 +31,6 @@ for (const word of wordlist) {
   }
   bucket.push(word);
 }
-
-await writeFile(
-  new URL("../src/utils/words.json", import.meta.url),
-  JSON.stringify(words),
-);
-
-const PASSWORD_LENGTH = 38;
-const MIN_ENTROPY = BigInt(Math.pow(255, 12)); // 12 bytes (96bits) of random
 
 let shortest = Number.MAX_VALUE;
 const lengths = [];
@@ -92,15 +87,13 @@ while (permutations.length > 0) {
 
 let str = `
 /**
- * Generated using → npm run import:words
+ * Generated from "words-dictionary.txt" using → npm run import:words
  **/
+export const words = ${JSON.stringify(words)}
 export const permutations = [\n`;
 for (const permutation of permutations) {
   str += `  [${permutation.map((len) => len - shortest).join(", ")}],`;
 }
 str += "\n]\n";
 
-await writeFile(
-  new URL("../src/utils/words-permutations.ts", import.meta.url),
-  str,
-);
+await writeFile(new URL("../src/utils/words.ts", import.meta.url), str);
