@@ -4,6 +4,8 @@ import { writeFile } from 'fs/promises'
 import words from '../src/utils/words.json' with { type: 'json' }
 
 const PASSWORD_LENGTH = 38
+const MIN_ENTROPY = BigInt(Math.pow(255, 12)) // 12 bytes (96bits) of random
+
 let shortest = Number.MAX_VALUE
 const lengths = []
 const counts = {}
@@ -34,8 +36,31 @@ function * permutate (current = [], length = 0) {
     }
 }
 
+let permutations = Array.from(permutate())
+while (permutations.length > 0) {
+    let tooSmall = 0
+    const permutationCount = BigInt(permutations.length)
+    const bigEnough = []
+
+    for (const permutation of permutations) {
+        let entropy = permutationCount
+        for (const charLen of permutation) {
+            entropy *= counts[charLen]
+        }
+        if (entropy >= MIN_ENTROPY) {
+            bigEnough.push(permutation)
+        } else {
+            tooSmall += 1
+        }
+    }
+    permutations = bigEnough
+    if (tooSmall === 0) {
+        break
+    }
+}
+
 let str = ''
-for (const permutation of permutate()) {
+for (const permutation of permutations) {
     if (str === '') {
         str += '[\n'
     } else {
