@@ -51,4 +51,4 @@ class RandomBase32 implements PasswordGenerator {
   }
 }
 
-export const passwordBase32 = new RandomBase32("Base 32", 12);
+export const passwordBase32 = new RandomBase32("Base 32", 16);

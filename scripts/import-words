@@ -9,7 +9,7 @@ for (const wordSet of [
     dictFile: "dict-words.txt",
     outFile: "src/utils/password-dict-words.ts",
     constName: "passwordWords",
-    targetLength: 37,
+    targetLength: 49,
   },
 ]) {
   const { humanName, dictFile, targetLength, outFile, constName } = wordSet;
