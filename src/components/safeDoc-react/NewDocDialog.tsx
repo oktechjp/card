@@ -1,11 +1,12 @@
 import type { DocTypeDefinition } from "@/utils/codecs";
 import { useEffect, useMemo, useRef, useState, type Ref } from "react";
 import { InputWithLabel } from "@/components/form/InputWithLabel";
-import { createPrivateKeyBase32 } from "@/utils/private-key-base32";
-import { createPrivateKeyWords } from "@/utils/private-key-words";
+import { passwordBase32 } from "@/utils/password-base32";
+import { passwordWords } from "@/utils/password-dict-words";
 import { applyRef } from "@/utils/applyRef";
 import { SelectWithLabel } from "@/components/form/SelectWithLabel";
 import { DocButtonList } from "./DocButtonList";
+import { createRandom } from "@/utils/crypto";
 
 export interface NewDocDialogProps {
   types: DocTypeDefinition[];
@@ -20,9 +21,24 @@ export function NewDocDialog({
   const [idType, setIdType] = useState<"base32" | "words">("base32");
   const [type, setType] = useState<DocTypeDefinition>(types[0]);
   const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
-  const privateKeyBase32 = useMemo(createPrivateKeyBase32, [lastRefresh]);
-  const privateKeyWords = useMemo(createPrivateKeyWords, [lastRefresh]);
-  const privateKey = idType === "base32" ? privateKeyBase32 : privateKeyWords;
+  const random = useMemo(
+    () =>
+      createRandom(
+        Math.ceil(
+          Math.max(passwordBase32.entropyNeeded, passwordWords.entropyNeeded) /
+            8,
+        ),
+      ),
+    [lastRefresh],
+  );
+  const passwordGenerator = useMemo(
+    () => (idType === "base32" ? passwordBase32 : passwordWords),
+    [idType],
+  );
+  const password = useMemo(
+    () => passwordGenerator.getRandom(random()),
+    [random, passwordGenerator],
+  );
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     applyRef(parentRef, ref.current);
@@ -112,10 +128,11 @@ export function NewDocDialog({
             type="text"
             name="text"
             disabled
+            title={`${passwordGenerator.entropyProvided} bits of entropy provided`}
             label="Password"
             style={{ fontFamily: "monospace" }}
-            size={idType === "words" ? 38 : 23}
-            value={privateKey}
+            size={password.length}
+            value={password}
           />
           <button
             style={{ marginLeft: "0.5em" }}
@@ -132,9 +149,10 @@ export function NewDocDialog({
         <hr />
         <DocButtonList>
           <button
+            key="submit"
             type="submit"
             onClick={(e) => {
-              onSuccess(type, privateKey);
+              onSuccess(type, password);
               setLastRefresh(Date.now());
               ref.current!.close();
               e.preventDefault();
@@ -143,6 +161,7 @@ export function NewDocDialog({
             Continue
           </button>
           <button
+            key="close"
             onClick={(e) => {
               ref.current?.close();
               e.preventDefault();

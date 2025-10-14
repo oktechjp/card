@@ -1,99 +1,88 @@
-#!/usr/bin/env node --permission --allow-fs-write=src/utils/words.ts --allow-fs-read=words-dictionary.txt
+#!/usr/bin/env node --permission --allow-fs-write=src/utils/password-dict-*.ts --allow-fs-read=dict-*.txt
 import { writeFile, readFile } from "fs/promises";
 
-const PASSWORD_LENGTH = 38;
-const MIN_ENTROPY = BigInt(Math.pow(255, 12)); // 12 bytes (96bits) of random
+const BASE = new URL("..", import.meta.url);
 
-const wordlist = (
-  await readFile(new URL("../words-dictionary.txt", import.meta.url), "utf-8")
-)
-  .split("\n")
-  .sort((a, b) =>
-    a.length > b.length
-      ? 1
-      : a.length < b.length
-        ? -1
-        : a > b
-          ? 1
-          : a < b
-            ? -1
-            : 0,
-  );
-
-const words = [];
-let bucketLen = 0;
-let bucket = [];
-for (const word of wordlist) {
-  if (bucketLen < word.length) {
-    bucket = [];
-    bucketLen = word.length;
-    words.push(bucket);
+for (const wordSet of [
+  {
+    dictFile: "dict-words.txt",
+    outFile: "src/utils/password-dict-words.ts",
+    constName: "passwordWords",
+    targetLength: 37,
+  },
+]) {
+  const { dictFile, targetLength, outFile, constName } = wordSet;
+  const wordlist = (await readFile(new URL(dictFile, BASE), "utf-8"))
+    .split("\n")
+    .sort((a, b) =>
+      a.length > b.length
+        ? 1
+        : a.length < b.length
+          ? -1
+          : a > b
+            ? 1
+            : a < b
+              ? -1
+              : 0,
+    );
+  const words = [];
+  let bucketLen = 0;
+  let bucket = [];
+  for (const word of wordlist) {
+    if (bucketLen < word.length) {
+      bucket = [];
+      bucketLen = word.length;
+      words.push(bucket);
+    }
+    bucket.push(word);
   }
-  bucket.push(word);
-}
 
-let shortest = Number.MAX_VALUE;
-const lengths = [];
-const counts = {};
-for (const byChars of words) {
-  const word = byChars[0];
-  console.log(`len=${word.length}: ${byChars.length}`);
-  if (word.length < shortest) {
-    shortest = word.length;
+  let shortest = Number.MAX_VALUE;
+  const lengths = [];
+  const counts = {};
+  for (const byChars of words) {
+    const word = byChars[0];
+    console.log(`len=${word.length}: ${byChars.length}`);
+    if (word.length < shortest) {
+      shortest = word.length;
+    }
+    lengths.unshift(word.length);
+    counts[word.length] = BigInt(byChars.length);
   }
-  lengths.unshift(word.length);
-  counts[word.length] = BigInt(byChars.length);
-}
 
-function* permutate(current = [], length = 0) {
-  for (const len of lengths) {
-    const nextLen = length === 0 ? len : length + 1 + len;
-    if (nextLen > PASSWORD_LENGTH) {
-      continue;
-    }
-    const next = [...current, len];
-    if (nextLen === PASSWORD_LENGTH) {
-      yield next;
-      continue;
-    }
-    for (const found of permutate(next, nextLen)) {
-      yield found;
-    }
-  }
-}
-
-let permutations = Array.from(permutate());
-while (permutations.length > 0) {
-  let tooSmall = 0;
-  const permutationCount = BigInt(permutations.length);
-  const bigEnough = [];
-
-  for (const permutation of permutations) {
-    let entropy = permutationCount;
-    for (const charLen of permutation) {
-      entropy *= counts[charLen];
-    }
-    if (entropy >= MIN_ENTROPY) {
-      bigEnough.push(permutation);
-    } else {
-      tooSmall += 1;
+  function* permutate(current = [], length = 0) {
+    for (const len of lengths) {
+      const nextLen = length === 0 ? len : length + 1 + len;
+      if (nextLen > targetLength) {
+        continue;
+      }
+      const next = [...current, len];
+      if (nextLen === targetLength) {
+        yield next;
+        continue;
+      }
+      for (const found of permutate(next, nextLen)) {
+        yield found;
+      }
     }
   }
-  permutations = bigEnough;
-  if (tooSmall === 0) {
-    break;
-  }
-}
 
-let str = `
+  let str = `
 /**
- * Generated from "words-dictionary.txt" using → npm run import:words
+ * Generated from "${outFile}" using → npm run import:words
  **/
-export const words = ${JSON.stringify(words)}
-export const permutations = [\n`;
-for (const permutation of permutations) {
-  str += `  [${permutation.map((len) => len - shortest).join(", ")}],`;
-}
-str += "\n]\n";
+import { RandomWords } from '@/utils/crypto';
 
-await writeFile(new URL("../src/utils/words.ts", import.meta.url), str);
+const words: string[][] = ${JSON.stringify(words, null, 2)}
+export const ${constName} = new RandomWords(${targetLength}, [
+`;
+  for (const permutation of permutate()) {
+    str += `  [${permutation.map((len) => len - shortest).join(", ")}],\n`;
+  }
+  str += `
+  ].map((counts) => counts.map(count => words[count]))
+);
+`;
+
+  await writeFile(new URL(outFile, BASE), str);
+}

@@ -6,13 +6,13 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "lint:test": "prettier -c .",
-    "lint:fix": "prettier -w .",
+    "lint:test": "prettier -c . \"!src/utils/password-dict-*.ts\"",
+    "lint:fix": "prettier -w . \"!src/utils/password-dict-*.ts\"",
     "astro": "astro",
-    "import": "./scripts/import-fonts && ./scripts/import-icon-ratios && ./scripts/import-words && npm run lint:fix",
+    "import": "./scripts/import-fonts && ./scripts/import-icon-ratios && ./scripts/import-words && prettier -w .",
     "import:fonts": "./scripts/import-fonts && npm run lint:fix",
     "import:icon-ratios": "./scripts/import-icon-ratios && npm run lint:fix",
-    "import:words": "./scripts/import-words && npm run lint:fix"
+    "import:words": "./scripts/import-words && prettier -w src/utils/password-dict-*.ts"
   },
   "dependencies": {
     "@astrojs/react": "^4.3.1",
