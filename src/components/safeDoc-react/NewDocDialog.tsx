@@ -24,17 +24,18 @@ export function NewDocDialog({
     () =>
       createRandom(
         Math.ceil(
-          passwordGenerators.reduce((maxNeeded, { entropyNeeded }) => Math.max(maxNeeded, entropyNeeded), 0) / 8
-        )
+          passwordGenerators.reduce(
+            (maxNeeded, { entropyNeeded }) =>
+              Math.max(maxNeeded, entropyNeeded),
+            0,
+          ) / 8,
+        ),
       ),
     [lastRefresh],
   );
-  const passwordGenerator = useMemo(
-    () => {
-      return passwordGenerators[idType]
-    },
-    [idType],
-  );
+  const passwordGenerator = useMemo(() => {
+    return passwordGenerators[idType];
+  }, [idType]);
   const password = useMemo(
     () => passwordGenerator.getRandom(random()),
     [random, passwordGenerator],
@@ -51,7 +52,10 @@ export function NewDocDialog({
         onChange={(e) => {
           const typeForm = e.currentTarget.elements;
           setIdType(
-            parseInt((typeForm["idType" as any] as any as RadioNodeList).value, 10),
+            parseInt(
+              (typeForm["idType" as any] as any as RadioNodeList).value,
+              10,
+            ),
           );
           setType(
             types.find((type) => {
@@ -108,18 +112,16 @@ export function NewDocDialog({
             enter. Choose as you like.
           </p>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            {
-              passwordGenerators.map(({ humanName }, num) => 
-                <InputWithLabel
-                  type="radio"
-                  name="idType"
-                  key={num}
-                  value={num}
-                  label={humanName}
-                  defaultChecked={num === 0}
-                />
-              )
-            }
+            {passwordGenerators.map(({ humanName }, num) => (
+              <InputWithLabel
+                type="radio"
+                name="idType"
+                key={num}
+                value={num}
+                label={humanName}
+                defaultChecked={num === 0}
+              />
+            ))}
           </div>
           <InputWithLabel
             type="text"
