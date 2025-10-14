@@ -113,10 +113,12 @@ export function NewDocDialog({
             name="text"
             disabled
             label="Password"
-            size={40}
+            style={{fontFamily: 'monospace'}}
+            size={idType === 'words' ? 38 : 23}
             value={privateKey}
           />
           <button
+            style={{marginLeft: '0.5em'}}
             type="button"
             aria-label="Create a new password"
             onClick={(e) => {
