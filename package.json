@@ -12,7 +12,7 @@
     "import": "./scripts/import-fonts && ./scripts/import-icon-ratios && npm run lint:fix",
     "import:fonts": "./scripts/import-fonts && npm run lint:fix",
     "import:icon-ratios": "./scripts/import-icon-ratios && npm run lint:fix",
-    "create:permutations": "./scripts/create-permutations"
+    "create:permutations": "./scripts/create-permutations && npm run lint:fix"
   },
   "dependencies": {
     "@astrojs/react": "^4.3.1",

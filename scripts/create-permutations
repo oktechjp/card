@@ -59,18 +59,17 @@ while (permutations.length > 0) {
   }
 }
 
-let str = "";
+let str = `
+/**
+ * Generated using → npm run create:permutations
+ **/
+export const permutations = [\n`;
 for (const permutation of permutations) {
-  if (str === "") {
-    str += "[\n";
-  } else {
-    str += ",\n";
-  }
-  str += `  [${permutation.map((len) => len - shortest).join(", ")}]`;
+  str += `  [${permutation.map((len) => len - shortest).join(", ")}],`;
 }
 str += "\n]\n";
 
 await writeFile(
-  new URL("../src/utils/words-permutations.json", import.meta.url),
+  new URL("../src/utils/words-permutations.ts", import.meta.url),
   str,
 );
