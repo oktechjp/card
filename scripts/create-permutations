@@ -1,0 +1,48 @@
+#!/usr/bin/env node --permission --allow-fs-write=src/utils/words-permutations.json --allow-fs-read=src/utils/words.json
+import { writeFile } from 'fs/promises'
+
+import words from '../src/utils/words.json' with { type: 'json' }
+
+const PASSWORD_LENGTH = 38
+let shortest = Number.MAX_VALUE
+const lengths = []
+const counts = {}
+for (const byChars of words) {
+    const word = byChars[0]
+    console.log(`len=${word.length}: ${byChars.length}`)
+    if (word.length < shortest) {
+        shortest = word.length
+    }
+    lengths.unshift(word.length)
+    counts[word.length] = BigInt(byChars.length)
+}
+
+function * permutate (current = [], length = 0) {
+    for (const len of lengths) {
+        const nextLen = length === 0 ? len : length + 1 + len
+        if (nextLen > PASSWORD_LENGTH) {
+            continue
+        }
+        const next = [...current, len]
+        if (nextLen === PASSWORD_LENGTH) {
+            yield next
+            continue
+        }
+        for (const found of permutate(next, nextLen)) {
+            yield found
+        }
+    }
+}
+
+let str = ''
+for (const permutation of permutate()) {
+    if (str === '') {
+        str += '[\n'
+    } else {
+        str += ',\n'
+    }
+    str += `  [${permutation.map(len => len - shortest).join(', ')}]`
+}
+str += '\n]\n';
+
+await writeFile(new URL('../src/utils/words-permutations.json', import.meta.url), str)
