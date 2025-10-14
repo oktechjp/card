@@ -12,7 +12,7 @@ class RandomBase32 implements PasswordGenerator {
   entropyNeeded: number;
   entropyProvided: number;
 
-  constructor(bytes: number) {
+  constructor(public humanName: string, bytes: number) {
     const bits = bytes * 8;
     const buffer = new Uint8Array(bytes);
     this.buffer = buffer;
@@ -26,4 +26,4 @@ class RandomBase32 implements PasswordGenerator {
   }
 }
 
-export const passwordBase32 = new RandomBase32(12);
+export const passwordBase32 = new RandomBase32("Base 32", 12);

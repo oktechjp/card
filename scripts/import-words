@@ -5,13 +5,14 @@ const BASE = new URL("..", import.meta.url);
 
 for (const wordSet of [
   {
+    humanName: "Words",
     dictFile: "dict-words.txt",
     outFile: "src/utils/password-dict-words.ts",
     constName: "passwordWords",
     targetLength: 37,
   },
 ]) {
-  const { dictFile, targetLength, outFile, constName } = wordSet;
+  const { humanName, dictFile, targetLength, outFile, constName } = wordSet;
   const wordlist = (await readFile(new URL(dictFile, BASE), "utf-8"))
     .split("\n")
     .sort((a, b) =>
@@ -74,7 +75,7 @@ for (const wordSet of [
 import { RandomWords } from '@/utils/crypto';
 
 const words: string[][] = ${JSON.stringify(words, null, 2)}
-export const ${constName} = new RandomWords(${targetLength}, [
+export const ${constName} = new RandomWords("${humanName}", ${targetLength}, [
 `;
   for (const permutation of permutate()) {
     str += `  [${permutation.map((len) => len - shortest).join(", ")}],\n`;

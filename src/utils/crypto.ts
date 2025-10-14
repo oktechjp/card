@@ -117,6 +117,7 @@ export class RandomWeighted<T extends { weight: number }> {
 }
 
 export interface PasswordGenerator {
+  humanName: string;
   targetLength: number;
   entropyNeeded: number;
   entropyProvided: number;
@@ -129,6 +130,7 @@ export class RandomWords implements PasswordGenerator {
   entropyProvided: number = -1; // TODO
 
   constructor(
+    public humanName: string,
     public targetLength: number,
     public words: string[][][],
   ) {

@@ -1,8 +1,7 @@
 import type { DocTypeDefinition } from "@/utils/codecs";
 import { useEffect, useMemo, useRef, useState, type Ref } from "react";
 import { InputWithLabel } from "@/components/form/InputWithLabel";
-import { passwordBase32 } from "@/utils/password-base32";
-import { passwordWords } from "@/utils/password-dict-words";
+import { passwordGenerators } from "@/utils/password-generators";
 import { applyRef } from "@/utils/applyRef";
 import { SelectWithLabel } from "@/components/form/SelectWithLabel";
 import { DocButtonList } from "./DocButtonList";
@@ -18,21 +17,22 @@ export function NewDocDialog({
   ref: parentRef,
   onSuccess,
 }: NewDocDialogProps) {
-  const [idType, setIdType] = useState<"base32" | "words">("base32");
+  const [idType, setIdType] = useState<number>(0);
   const [type, setType] = useState<DocTypeDefinition>(types[0]);
   const [lastRefresh, setLastRefresh] = useState<number>(Date.now());
   const random = useMemo(
     () =>
       createRandom(
         Math.ceil(
-          Math.max(passwordBase32.entropyNeeded, passwordWords.entropyNeeded) /
-            8,
-        ),
+          passwordGenerators.reduce((maxNeeded, { entropyNeeded }) => Math.max(maxNeeded, entropyNeeded), 0) / 8
+        )
       ),
     [lastRefresh],
   );
   const passwordGenerator = useMemo(
-    () => (idType === "base32" ? passwordBase32 : passwordWords),
+    () => {
+      return passwordGenerators[idType]
+    },
     [idType],
   );
   const password = useMemo(
@@ -51,9 +51,7 @@ export function NewDocDialog({
         onChange={(e) => {
           const typeForm = e.currentTarget.elements;
           setIdType(
-            (typeForm["idType" as any] as any as RadioNodeList).value as any as
-              | "base32"
-              | "words",
+            parseInt((typeForm["idType" as any] as any as RadioNodeList).value, 10),
           );
           setType(
             types.find((type) => {
@@ -109,20 +107,19 @@ export function NewDocDialog({
             <em>"Base 32"-variant</em> is a bit shorter but harder to read and
             enter. Choose as you like.
           </p>
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <InputWithLabel
-              type="radio"
-              name="idType"
-              value="base32"
-              label="Base 32"
-              defaultChecked
-            />
-            <InputWithLabel
-              type="radio"
-              name="idType"
-              value="words"
-              label="Words"
-            />
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {
+              passwordGenerators.map(({ humanName }, num) => 
+                <InputWithLabel
+                  type="radio"
+                  name="idType"
+                  key={num}
+                  value={num}
+                  label={humanName}
+                  defaultChecked={num === 0}
+                />
+              )
+            }
           </div>
           <InputWithLabel
             type="text"

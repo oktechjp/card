@@ -43061,6 +43061,7 @@ const words: string[][] = [
   ],
 ];
 export const passwordWords = new RandomWords(
+  "Words",
   37,
   [
     [5, 5, 5, 3, 0],
