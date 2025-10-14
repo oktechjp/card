@@ -9,10 +9,10 @@
     "lint:test": "prettier -c .",
     "lint:fix": "prettier -w .",
     "astro": "astro",
-    "import": "./scripts/import-fonts && ./scripts/import-icon-ratios && npm run lint:fix",
+    "import": "./scripts/import-fonts && ./scripts/import-icon-ratios && ./scripts/import-words && npm run lint:fix",
     "import:fonts": "./scripts/import-fonts && npm run lint:fix",
     "import:icon-ratios": "./scripts/import-icon-ratios && npm run lint:fix",
-    "create:permutations": "./scripts/create-permutations && npm run lint:fix"
+    "import:words": "./scripts/import-words && npm run lint:fix"
   },
   "dependencies": {
     "@astrojs/react": "^4.3.1",

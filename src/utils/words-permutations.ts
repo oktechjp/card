@@ -1,5 +1,5 @@
 /**
- * Generated using → npm run create:permutations
+ * Generated using → npm run import:words
  **/
 export const permutations = [
   [5, 2, 0, 0, 0, 0, 0, 0],
