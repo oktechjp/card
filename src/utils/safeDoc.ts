@@ -11,6 +11,7 @@ import type {
 } from "@/utils/codecs";
 import { codecs } from "@/utils/codecs";
 import { uniqueRequests } from "@/utils/requests";
+import { passwordGenerators } from "./password-generators";
 
 export {
   createDocCodec,
@@ -91,25 +92,13 @@ export async function toPublicKey(privateKey: string) {
   );
 }
 
-export function getPossibleDocKey(input: string) {
-  return getPossibleBase32Key(input) ?? getPossibleWordsKey(input);
-}
-
-function getPossibleWordsKey(input: string) {
-  if (/^[a-z-]{38}/.test(input)) {
-    return input;
+export function getPossibleDocKey(input: string): string | undefined {
+  for (const generator of passwordGenerators) {
+    const key = generator.getPossiblePassword(input);
+    if (key !== undefined) {
+      return key;
+    }
   }
-}
-
-function getPossibleBase32Key(input: string) {
-  const key = sanitizeCrockfordBase32(input, false);
-  if (!key) {
-    return undefined;
-  }
-  if (key.length !== 23) {
-    return undefined;
-  }
-  return key;
 }
 
 export interface ParsedDocument<

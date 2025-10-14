@@ -1,20 +1,27 @@
-import { crockfordBase32 } from "@/utils/codecs/crockford-base32";
+import {
+  crockfordBase32,
+  sanitizeCrockfordBase32,
+  splitBase32,
+} from "@/utils/codecs/crockford-base32";
 import type { PasswordGenerator, RandomSource } from "@/utils/crypto";
 
 function toReadableHash(input: Uint8Array) {
   const c = crockfordBase32.encode(input);
-  const middle = Math.floor(c.length / 2);
-  const quart = Math.floor(middle / 2);
-  const secondQuart = middle + Math.floor((c.length - middle) / 2);
-  return (
-    c.substring(0, quart) +
-    "-" +
-    c.substring(quart, middle) +
-    "-" +
-    c.substring(middle, secondQuart) +
-    "-" +
-    c.substring(secondQuart)
-  );
+  return splitBase32(c);
+}
+
+export function getPossibleBase32Password(
+  input: string,
+  size: number,
+): string | undefined {
+  const key = sanitizeCrockfordBase32(input, false);
+  if (!key) {
+    return undefined;
+  }
+  if (key.length !== size) {
+    return undefined;
+  }
+  return key;
 }
 
 class RandomBase32 implements PasswordGenerator {
@@ -33,6 +40,10 @@ class RandomBase32 implements PasswordGenerator {
     this.targetLength = toReadableHash(buffer).length;
     this.entropyNeeded = bits;
     this.entropyProvided = bits;
+  }
+
+  getPossiblePassword(input: string): string | undefined {
+    return getPossibleBase32Password(input, this.targetLength);
   }
 
   getRandom(random: RandomSource) {

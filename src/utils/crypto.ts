@@ -122,6 +122,17 @@ export interface PasswordGenerator {
   entropyNeeded: number;
   entropyProvided: number;
   getRandom(random: RandomSource): string;
+  getPossiblePassword(input: string): string | undefined;
+}
+
+export function getPossibleWordsPassword(input: string, size: number) {
+  if (input.length !== size) {
+    return undefined;
+  }
+  if (!/^[a-z-]+$/.test(input)) {
+    return undefined;
+  }
+  return input;
 }
 
 export class RandomWords implements PasswordGenerator {
@@ -152,6 +163,10 @@ export class RandomWords implements PasswordGenerator {
     );
     this.entropyNeeded = this.weighted.entropyNeeded + maxNeeded;
     this.entropyProvided = this.weighted.entropyProvided;
+  }
+
+  getPossiblePassword(input: string): string | undefined {
+    return getPossibleWordsPassword(input, this.targetLength);
   }
 
   getRandom(random: RandomSource): string {

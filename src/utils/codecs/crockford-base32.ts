@@ -68,6 +68,21 @@ function encode(input: Uint8Array) {
   return output.map((byte) => c32[byte]).join("");
 }
 
+export function splitBase32(input: string): string {
+  const middle = Math.floor(input.length / 2);
+  const quart = Math.floor(middle / 2);
+  const secondQuart = middle + Math.floor((input.length - middle) / 2);
+  return (
+    input.substring(0, quart) +
+    "-" +
+    input.substring(quart, middle) +
+    "-" +
+    input.substring(middle, secondQuart) +
+    "-" +
+    input.substring(secondQuart)
+  );
+}
+
 export function sanitizeCrockfordBase32(
   input: string,
   ignoreUnknown: true,
@@ -85,16 +100,13 @@ export function sanitizeCrockfordBase32(input: string, ignoreUnknown: boolean) {
       continue;
     }
     if (validChar !== undefined) {
-      if (count % 5 === 0 && count !== 0) {
-        sane += "-";
-      }
       count += 1;
       sane += c32[validChar];
     } else if (!ignoreUnknown) {
       return null;
     }
   }
-  return sane;
+  return splitBase32(sane);
 }
 
 function decode(input: string) {
