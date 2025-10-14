@@ -3,7 +3,18 @@ import type { PasswordGenerator, RandomSource } from "@/utils/crypto";
 
 function toReadableHash(input: Uint8Array) {
   const c = crockfordBase32.encode(input);
-  return (c.match(/.{5}/g) ?? []).join("-");
+  const middle = Math.floor(c.length / 2);
+  const quart = Math.floor(middle / 2);
+  const secondQuart = middle + Math.floor((c.length - middle) / 2);
+  return (
+    c.substring(0, quart) +
+    "-" +
+    c.substring(quart, middle) +
+    "-" +
+    c.substring(middle, secondQuart) +
+    "-" +
+    c.substring(secondQuart)
+  );
 }
 
 class RandomBase32 implements PasswordGenerator {
