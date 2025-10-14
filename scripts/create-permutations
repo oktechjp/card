@@ -1,73 +1,76 @@
-#!/usr/bin/env node --permission --allow-fs-write=src/utils/words-permutations.json --allow-fs-read=src/utils/words.json
-import { writeFile } from 'fs/promises'
+#!/usr/bin/env node --permission --allow-fs-write=src/utils/words-permutations.ts --allow-fs-read=src/utils/words.json
+import { writeFile } from "fs/promises";
 
-import words from '../src/utils/words.json' with { type: 'json' }
+import words from "../src/utils/words.json" with { type: "json" };
 
-const PASSWORD_LENGTH = 38
-const MIN_ENTROPY = BigInt(Math.pow(255, 12)) // 12 bytes (96bits) of random
+const PASSWORD_LENGTH = 38;
+const MIN_ENTROPY = BigInt(Math.pow(255, 12)); // 12 bytes (96bits) of random
 
-let shortest = Number.MAX_VALUE
-const lengths = []
-const counts = {}
+let shortest = Number.MAX_VALUE;
+const lengths = [];
+const counts = {};
 for (const byChars of words) {
-    const word = byChars[0]
-    console.log(`len=${word.length}: ${byChars.length}`)
-    if (word.length < shortest) {
-        shortest = word.length
-    }
-    lengths.unshift(word.length)
-    counts[word.length] = BigInt(byChars.length)
+  const word = byChars[0];
+  console.log(`len=${word.length}: ${byChars.length}`);
+  if (word.length < shortest) {
+    shortest = word.length;
+  }
+  lengths.unshift(word.length);
+  counts[word.length] = BigInt(byChars.length);
 }
 
-function * permutate (current = [], length = 0) {
-    for (const len of lengths) {
-        const nextLen = length === 0 ? len : length + 1 + len
-        if (nextLen > PASSWORD_LENGTH) {
-            continue
-        }
-        const next = [...current, len]
-        if (nextLen === PASSWORD_LENGTH) {
-            yield next
-            continue
-        }
-        for (const found of permutate(next, nextLen)) {
-            yield found
-        }
+function* permutate(current = [], length = 0) {
+  for (const len of lengths) {
+    const nextLen = length === 0 ? len : length + 1 + len;
+    if (nextLen > PASSWORD_LENGTH) {
+      continue;
     }
+    const next = [...current, len];
+    if (nextLen === PASSWORD_LENGTH) {
+      yield next;
+      continue;
+    }
+    for (const found of permutate(next, nextLen)) {
+      yield found;
+    }
+  }
 }
 
-let permutations = Array.from(permutate())
+let permutations = Array.from(permutate());
 while (permutations.length > 0) {
-    let tooSmall = 0
-    const permutationCount = BigInt(permutations.length)
-    const bigEnough = []
+  let tooSmall = 0;
+  const permutationCount = BigInt(permutations.length);
+  const bigEnough = [];
 
-    for (const permutation of permutations) {
-        let entropy = permutationCount
-        for (const charLen of permutation) {
-            entropy *= counts[charLen]
-        }
-        if (entropy >= MIN_ENTROPY) {
-            bigEnough.push(permutation)
-        } else {
-            tooSmall += 1
-        }
+  for (const permutation of permutations) {
+    let entropy = permutationCount;
+    for (const charLen of permutation) {
+      entropy *= counts[charLen];
     }
-    permutations = bigEnough
-    if (tooSmall === 0) {
-        break
-    }
-}
-
-let str = ''
-for (const permutation of permutations) {
-    if (str === '') {
-        str += '[\n'
+    if (entropy >= MIN_ENTROPY) {
+      bigEnough.push(permutation);
     } else {
-        str += ',\n'
+      tooSmall += 1;
     }
-    str += `  [${permutation.map(len => len - shortest).join(', ')}]`
+  }
+  permutations = bigEnough;
+  if (tooSmall === 0) {
+    break;
+  }
 }
-str += '\n]\n';
 
-await writeFile(new URL('../src/utils/words-permutations.json', import.meta.url), str)
+let str = "";
+for (const permutation of permutations) {
+  if (str === "") {
+    str += "[\n";
+  } else {
+    str += ",\n";
+  }
+  str += `  [${permutation.map((len) => len - shortest).join(", ")}]`;
+}
+str += "\n]\n";
+
+await writeFile(
+  new URL("../src/utils/words-permutations.json", import.meta.url),
+  str,
+);
