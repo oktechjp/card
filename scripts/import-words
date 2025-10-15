@@ -11,6 +11,13 @@ for (const wordSet of [
     constName: "passwordWords",
     targetLength: 37,
   },
+  {
+    humanName: "Words BIP39",
+    dictFile: "dict-bip39-words.txt",
+    outFile: "src/utils/password-dict-words-bip39.ts",
+    constName: "passwordWordsBip39",
+    targetLength: 49,
+  },
 ]) {
   const { humanName, dictFile, targetLength, outFile, constName } = wordSet;
   const wordlist = (await readFile(new URL(dictFile, BASE), "utf-8"))
