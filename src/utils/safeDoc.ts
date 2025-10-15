@@ -12,6 +12,8 @@ import type {
 import { codecs } from "@/utils/codecs";
 import { uniqueRequests } from "@/utils/requests";
 import { passwordGenerators } from "./password-generators";
+import { getPossibleBase32Password } from "./password-base32";
+import { getPossibleWordsPassword } from "./crypto";
 
 export {
   createDocCodec,
@@ -99,6 +101,8 @@ export function getPossibleDocKey(input: string): string | undefined {
       return key;
     }
   }
+  // Legacy compatiblilty
+  return getPossibleBase32Password(input, 12) ?? getPossibleWordsPassword(input, 37);
 }
 
 export interface ParsedDocument<
