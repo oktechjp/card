@@ -186,7 +186,11 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
     ? isEmpty
       ? "https://card.oktech.jp/new"
       : "https://oktech.jp"
+    : `https://card.oktech.jp/#${docKey}`;
+  const linkLine1 = isDraft
+    ? link
     : docKey;
+
   const qrCode = useQRCode(link);
   const { bottom1, bottom2, bottom3, bottom4, bottom5 } = json;
   return (
@@ -260,7 +264,7 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
         ref={refs.link}
         style={{ fontSize: 16, marginTop: 40, fill: "#aaa" }}
       >
-        {link}
+        {linkLine1}
       </text>
       <text
         ref={refs.linkLine2}
