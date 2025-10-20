@@ -20,11 +20,10 @@ export {
 } from "@/utils/codecs";
 
 const PAGE_SALT = codecs.base64.decode("Ljeijq98ZyaFa5NV");
-const PAGE_KEY = "4sQNniS/0141scm8";
 const DERIVE = {
   name: "PBKDF2",
   salt: PAGE_SALT,
-  iterations: 100000,
+  iterations: Math.pow(2, 16),
   hash: "SHA-256",
 } as const satisfies Pbkdf2Params;
 const ENCRYPT = {
@@ -91,7 +90,28 @@ async function decryptDocument(
 
 const publicKeys = autoLru(10, async (privateKeyBase64) =>
   codecs.crockfordBase32.encode(
-    await encrypt(PAGE_KEY, codecs.base64.decode(privateKeyBase64)),
+    new Uint8Array(
+      await crypto.subtle.deriveBits(
+        {
+          ...DERIVE,
+          //
+          // Passwords are set to provide 96 bits of entropy.
+          // For 128 bit to be safe for brute force attacks we need 2^(120-96) or 2^32 iterations.
+          //
+          // See section A.2.2 of NIST SP 800-132 - https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-132.pdf
+          //
+          // That said, 2^32 operations exceed the 2^32-1 limit of PBKDF2 and for it to be practically usable
+          // we need to limit ourselves to 2^22 operations for a brute force complexity equal to 118bit of entropy.
+          //
+          // With 118bit considering https://bruteforce.bitsnbites.eu/ the computation time should still be practically
+          // unreachable.
+          //
+          iterations: Math.pow(2, 22),
+        },
+        await derivationKeys.get(privateKeyBase64),
+        128,
+      ),
+    ),
   ),
 );
 
