@@ -1,8 +1,4 @@
 import z, { type output } from "zod/v4";
-import {
-  sanitizeCrockfordBase32,
-  crockfordBase32,
-} from "@/utils/codecs/crockford-base32";
 import type {
   DocCodec,
   JSONDocument,
@@ -12,6 +8,7 @@ import type {
 import { codecs } from "@/utils/codecs";
 import { uniqueRequests } from "@/utils/requests";
 import { passwordGenerators } from "./password-generators";
+import { autoLru } from "./lru";
 
 export {
   createDocCodec,
@@ -23,7 +20,7 @@ export {
 } from "@/utils/codecs";
 
 const PAGE_SALT = codecs.base64.decode("Ljeijq98ZyaFa5NV");
-const PAGE_KEY = codecs.base64.decode("4sQNniS/0141scm8");
+const PAGE_KEY = "4sQNniS/0141scm8";
 const DERIVE = {
   name: "PBKDF2",
   salt: PAGE_SALT,
@@ -41,27 +38,36 @@ const ENCRYPT = {
   } satisfies AesDerivedKeyParams,
 } as const;
 
-async function deriveEncryptionKey(secret: Uint8Array<ArrayBuffer>) {
-  const deriveKey = await crypto.subtle.importKey(
+const derivationKeys = autoLru(10, (secretBase64) =>
+  crypto.subtle.importKey(
     "raw",
-    secret,
+    codecs.base64.decode(secretBase64),
     DERIVE.name,
     false,
-    ["deriveKey"],
-  );
-  return crypto.subtle.deriveKey(DERIVE, deriveKey, ENCRYPT.basekey, false, [
-    "encrypt",
-    "decrypt",
-  ]);
-}
-
+    ["deriveKey", "deriveBits"],
+  ),
+);
+const encryptionKeys = autoLru(
+  10,
+  async (privateKeyBase64) =>
+    await crypto.subtle.deriveKey(
+      DERIVE,
+      await derivationKeys.get(privateKeyBase64),
+      ENCRYPT.basekey,
+      false,
+      ["encrypt", "decrypt"],
+    ),
+);
 async function encrypt(
-  privateKey: Uint8Array<ArrayBuffer>,
+  privateKeyBase64: string,
   content: Uint8Array<ArrayBuffer>,
 ) {
-  const encryptionKey = await deriveEncryptionKey(privateKey);
   return new Uint8Array(
-    await crypto.subtle.encrypt(ENCRYPT.params, encryptionKey, content),
+    await crypto.subtle.encrypt(
+      ENCRYPT.params,
+      await encryptionKeys.get(privateKeyBase64),
+      content,
+    ),
   );
 }
 
@@ -71,26 +77,23 @@ export const EncryptedDocSchema = z.object({
 
 export type EncryptedDoc = output<typeof EncryptedDocSchema>;
 
-export async function decryptDocument(
-  privateKey: string,
+async function decryptDocument(
+  privateKeyBase64: string,
   { content }: output<typeof EncryptedDocSchema>,
 ) {
-  const encryptionKey = await deriveEncryptionKey(
-    codecs.utf8.encode(privateKey),
-  );
   const base = await crypto.subtle.decrypt(
     ENCRYPT.params,
-    encryptionKey,
+    await encryptionKeys.get(privateKeyBase64),
     codecs.base64.decode(content),
   );
   return codecs.json.decode(new Uint8Array(base));
 }
 
-export async function toPublicKey(privateKey: string) {
-  return crockfordBase32.encode(
-    await encrypt(PAGE_KEY, codecs.utf8.encode(privateKey)),
-  );
-}
+const publicKeys = autoLru(10, async (privateKeyBase64) =>
+  codecs.crockfordBase32.encode(
+    await encrypt(PAGE_KEY, codecs.base64.decode(privateKeyBase64)),
+  ),
+);
 
 export function getPossibleDocKey(input: string): string | undefined {
   for (const generator of passwordGenerators) {
@@ -110,6 +113,9 @@ export interface ParsedDocument<
   time: Date;
 }
 
+const utf8ToBase64 = (input: string) =>
+  codecs.base64.encode(codecs.utf8.encode(input));
+
 export async function fetchDocument(
   docKey: string,
   codec: DocCodec,
@@ -117,7 +123,7 @@ export async function fetchDocument(
   if (codec.types.length === 0) {
     throw new Error(`No Codecs defined to load`);
   }
-  const storageKey = await toPublicKey(docKey);
+  const storageKey = await publicKeys.get(utf8ToBase64(docKey));
   //
   // Requests may be the same for different types,
   // in case the location is the same, we need to load
@@ -147,7 +153,10 @@ export async function fetchDocument(
     }
     return codec.decode({
       docKey,
-      doc: await decryptDocument(docKey, json),
+      doc: await decryptDocument(
+        codecs.base64.encode(codecs.utf8.encode(docKey)),
+        json,
+      ),
     });
   }
   throw new Error(`Document not found`, { cause });
@@ -157,9 +166,10 @@ export async function encryptDocument(input: JSONDocument): Promise<{
   publicKey: string;
   encrypted: EncryptedDoc;
 }> {
+  const docKeyB64 = utf8ToBase64(input.docKey);
   const [publicKey, contentBuffer] = await Promise.all([
-    toPublicKey(input.docKey),
-    encrypt(codecs.utf8.encode(input.docKey), codecs.json.encode(input.doc)),
+    publicKeys.get(docKeyB64),
+    encrypt(docKeyB64, codecs.json.encode(input.doc)),
   ] as const);
   return {
     publicKey,

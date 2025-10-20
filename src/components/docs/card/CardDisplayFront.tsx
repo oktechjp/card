@@ -187,9 +187,7 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
       ? "https://card.oktech.jp/new"
       : "https://oktech.jp"
     : `https://card.oktech.jp/#${docKey}`;
-  const linkLine1 = isDraft
-    ? link
-    : docKey;
+  const linkLine1 = isDraft ? link : docKey;
 
   const qrCode = useQRCode(link);
   const { bottom1, bottom2, bottom3, bottom4, bottom5 } = json;
