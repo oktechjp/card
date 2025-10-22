@@ -140,8 +140,8 @@ function getSizes<Props extends string[]>(
   return Object.fromEntries(
     entries.map(([name, elem]) => {
       const bounds = (elem as SVGElement).getClientRects()[0];
-      const width = bounds.width * zoom.x;
-      const height = bounds.height * zoom.y;
+      const width = Math.round(bounds.width * zoom.x);
+      const height = Math.round(bounds.height * zoom.y);
       return [
         name,
         {
