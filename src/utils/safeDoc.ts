@@ -9,6 +9,7 @@ import { codecs } from "@/utils/codecs";
 import { uniqueRequests } from "@/utils/requests";
 import { passwordGenerators } from "./password-generators";
 import { autoLru } from "./lru";
+import { getPossibleWordsPassword } from "./crypto";
 
 export {
   createDocCodec,
@@ -102,6 +103,7 @@ export function getPossibleDocKey(input: string): string | undefined {
       return key;
     }
   }
+  return getPossibleWordsPassword(input, 38);
 }
 
 export interface ParsedDocument<
