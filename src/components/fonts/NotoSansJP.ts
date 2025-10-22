@@ -1,9 +1,12 @@
+import type { Font } from "./font";
 /**
  * Generated from url=https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900
  *
  * Generated using -> npm run import:fonts
  */
-export const NotoSansJP = `
+export const NotoSansJP = {
+  name: "Noto Sans JP",
+  css: `
 @font-face {
   font-family: 'Noto Sans JP';
   font-style: normal;
@@ -58,4 +61,5 @@ export const NotoSansJP = `
   font-weight: 900;
   src: url(/fonts/5d2a413852180fdb719b27c7de7abe84de26a8ce9b622a3060f9079c5ebc46ce.ttf) format('truetype');
 }
-`;
+`,
+} satisfies Font;

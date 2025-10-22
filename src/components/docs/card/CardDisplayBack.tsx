@@ -34,13 +34,13 @@ export const CardDisplayBack: DocPageView<CardV1Type> = ({
   return (
     <BusinessCardSvg ref={ref} isCut={!showMargins} background={colorInfo.bg}>
       <style>{`
-            ${PermanentMarker}
-            ${ShipporiAntiqueB1}
+            ${PermanentMarker.css}
+            ${ShipporiAntiqueB1.css}
             .font--shippori {
-                font-family: 'Shippori Antique B1'
+                font-family: '${ShipporiAntiqueB1.name}'
             }
             .font--permanent {
-                font-family: 'Permanent Marker'
+                font-family: '${PermanentMarker.name}'
             }
             .callname {
                 font-size: 120px;

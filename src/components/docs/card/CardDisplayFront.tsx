@@ -207,10 +207,10 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
   return (
     <BusinessCardSvg ref={ref} isCut={!showMargins} background="white">
       <style>{`
-            ${NotoSansJP}
+            ${NotoSansJP.css}
             /* Style the text */
             text {
-                font-family: "Noto Sans JP", sans-serif;
+                font-family: "${NotoSansJP.name}", sans-serif;
                 color: #111111;
             }
             .big--regular {

@@ -59,12 +59,16 @@ await Promise.all(
     const tsName = family.replaceAll(" ", "");
     await writeFile(
       `src/components/fonts/${tsName}.ts`,
-      `/**
+      `import type { Font } from './font'
+/**
  * Generated from url=${url}
  * 
  * Generated using -> npm run import:fonts
  */
-export const ${tsName} = \`\n${outputCss}\`;`,
+export const ${tsName} = {
+  name: "${family}",
+  css: \`\n${outputCss}\`,
+} satisfies Font;`,
     );
   }),
 );
