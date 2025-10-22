@@ -218,8 +218,6 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
             }
             .arabic {
                 font-family: "${NotoSansArabic.name}", sans-serif;
-                baseline-shift: .45em;
-                line-height: 1.1em;
             }
             .big--regular {
                 font-size: 50px;
