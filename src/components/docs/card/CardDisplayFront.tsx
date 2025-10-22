@@ -96,6 +96,8 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
       url,
     }) => {
       let bottomX = 25;
+      let firstNameX = 0;
+      const textXMax = 140;
       if (bottom1) {
         bottom1.move(
           bottomX,
@@ -156,6 +158,7 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
         fOff += surname.bounds.width + 20;
       }
       if (firstname) {
+        firstNameX = fOff;
         firstname.move(
           fOff,
           -Math.min(0, (surname?.bounds.height ?? 0) - firstname.bounds.height),
@@ -177,7 +180,17 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
         url.move(0, y);
       }
       if (main) {
-        main.move(140, (CARD_SIZE.normal.height - main.bounds.height) / 2);
+        let x = textXMax;
+        let nameWidth = 0;
+        if (firstname) {
+          nameWidth = firstNameX + firstname.bounds.width;
+        } else if (surname) {
+          nameWidth = surname.bounds.width;
+        }
+        main.move(
+          Math.min(x, (CARD_SIZE.normal.width - nameWidth) / 2),
+          (CARD_SIZE.normal.height - main.bounds.height) / 2,
+        );
       }
     },
   );
