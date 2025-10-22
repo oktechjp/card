@@ -113,7 +113,7 @@ export function move(
     return;
   }
   if (node instanceof SVGTextElement) {
-    if (node.classList.contains('arabic')) {
+    if (node.classList.contains("arabic")) {
       top -= node.getBoundingClientRect().height * 0.3;
     }
     node.setAttribute("x", left.toString());
