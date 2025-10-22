@@ -342,13 +342,18 @@ const BottomIcon = ({
   value: keyof typeof AllIconTypes;
 }) => {
   const border = ICON_WHITE_BG[value] ?? false;
+  const height = 20;
+  const width = ICON_RATIOS[value as keyof typeof ICON_RATIOS] * height;
   return (
-    <EmbeddedSVGImage
-      ref={ref}
-      href={`/svg/${value}.svg`}
-      height={20}
-      width={ICON_RATIOS[value as keyof typeof ICON_RATIOS] * 20}
-      style={border ? { outline: "1px solid #888" } : undefined}
-    />
+    <g ref={ref}>
+      <rect width={width+1} height={height+1} fill={border ? "black" : "rgba(255 255 255 / 0)"} />
+      <EmbeddedSVGImage
+        x={.5}
+        y={.5}
+        href={`/svg/${value}.svg`}
+        height={height}
+        width={width}
+      />
+    </g>
   );
 };
