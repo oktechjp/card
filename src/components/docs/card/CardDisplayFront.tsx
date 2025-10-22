@@ -9,6 +9,8 @@ import { ICON_RATIOS } from "@/docs/card/icon-ratios";
 import { ICON_WHITE_BG } from "@/docs/card/icon-white-bg";
 import type { AllIconTypes, CardV1Type } from "@/docs/card";
 import type { DocPageView } from "@/components/safeDoc-react/DocView";
+import { NotoSansArabic } from "@/components/fonts/NotoSansArabic";
+import { TextWithFont } from "@/components/fonts/TextWithFont";
 
 type BigProps = {
   kana?: string;
@@ -39,17 +41,17 @@ const Big = ({ kana, text, className, ref }: BigProps) => {
     <g ref={ref} className={clsx("big", className)}>
       {zoom}
       {text && kana ? (
-        <text ref={refs.kana} className={clsx("big--kana", className)}>
+        <TextWithFont ref={refs.kana} className={clsx("big--kana", className)}>
           {kana}
-        </text>
+        </TextWithFont>
       ) : null}
-      <text
+      <TextWithFont
         ref={refs.regular}
         className={clsx("big--regular", className)}
         fontSize="40px"
       >
         {text}
-      </text>
+      </TextWithFont>
     </g>
   );
 };
@@ -208,10 +210,16 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
     <BusinessCardSvg ref={ref} isCut={!showMargins} background="white">
       <style>{`
             ${NotoSansJP.css}
+            ${NotoSansArabic.css}
             /* Style the text */
             text {
                 font-family: "${NotoSansJP.name}", sans-serif;
                 color: #111111;
+            }
+            .arabic {
+                font-family: "${NotoSansArabic.name}", sans-serif;
+                baseline-shift: .45em;
+                line-height: 1.1em;
             }
             .big--regular {
                 font-size: 50px;

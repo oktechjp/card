@@ -3,6 +3,7 @@ import { writeFile, readdir, unlink } from "node:fs/promises";
 
 const fonts = [
   { family: "Noto Sans JP", weights: "400;700" },
+  { family: "Noto Sans Arabic", weights: "400;700" },
   { family: "Permanent Marker", weights: "400" },
   { family: "Shippori Antique B1", weights: "400" },
 ];
