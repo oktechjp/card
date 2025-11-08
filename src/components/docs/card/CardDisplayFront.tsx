@@ -346,10 +346,14 @@ const BottomIcon = ({
   const width = ICON_RATIOS[value as keyof typeof ICON_RATIOS] * height;
   return (
     <g ref={ref}>
-      <rect width={width+1} height={height+1} fill={border ? "black" : "rgba(255 255 255 / 0)"} />
+      <rect
+        width={width + 1}
+        height={height + 1}
+        fill={border ? "black" : "rgba(255 255 255 / 0)"}
+      />
       <EmbeddedSVGImage
-        x={.5}
-        y={.5}
+        x={0.5}
+        y={0.5}
         href={`/svg/${value}.svg`}
         height={height}
         width={width}
