@@ -1,5 +1,5 @@
 ---
-
+import Favicon from "@/components/Favicon.astro";
 ---
 
 <html lang="en">
@@ -7,11 +7,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="https://public.oktech.jp/images/logo-and-design/OKTech-favicon.svg"
-    />
+    <Favicon />
     <style type="text/css" is:global>
       html,
       body {
@@ -209,5 +205,4 @@
   <body>
     <slot />
   </body>
-  <style></style>
 </html>

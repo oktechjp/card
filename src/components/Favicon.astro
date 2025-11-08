@@ -1,0 +1,35 @@
+---
+
+---
+
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link
+  rel="icon"
+  type="image/svg+xml"
+  href="https://public.oktech.jp/images/logo-and-design/OKTech-favicon.svg"
+  data-inactive="https://public.oktech.jp/images/logo-and-design/OKTech-favicon-inactive.svg"
+/>
+<link
+  rel="apple-touch-icon"
+  href="https://public.oktech.jp/images/logo-and-design/OKTech-symbol-onwhite-apple-touch-icon.png"
+/>
+<script>
+  const activeHrefs = new WeakMap();
+  let timer: undefined | ReturnType<typeof setTimeout> = undefined;
+  function toggle(active: boolean) {
+    clearTimeout(timer);
+    for (const icon of document.querySelectorAll<HTMLLinkElement>(
+      'link[rel="icon"][data-inactive]',
+    )) {
+      const activeHref =
+        activeHrefs.get(icon) ?? activeHrefs.set(icon, icon.href).get(icon);
+      icon.href = active ? activeHref : icon.dataset.inactive;
+    }
+  }
+  // Start with disabled state
+  toggle(false);
+  // Enable after 500ms
+  timer = setTimeout(() => toggle(true), 500);
+  window.addEventListener("focus", () => toggle(true));
+  window.addEventListener("blur", () => toggle(false));
+</script>
