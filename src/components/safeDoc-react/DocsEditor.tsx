@@ -3,7 +3,7 @@ import { DocEditor } from "@/components/safeDoc-react/DocEditor";
 import { useStore } from "@nanostores/react";
 import { knownDraftIds, createDoc } from "@/store/safeDoc-store";
 import { hashStore, setHash } from "@/store/hash";
-import { useRef } from "react";
+import { createElement, useRef } from "react";
 import { NewDocDialog } from "@/components/safeDoc-react/NewDocDialog";
 import type { SafeDocReact } from ".";
 import { SelectWithLabel } from "../form/SelectWithLabel";
@@ -22,6 +22,7 @@ export function DocsEditor({ setup }: DocsEditorProps) {
   return (
     <>
       <div className="sd--editors-menu">
+        {createElement(setup.logo)}
         <SelectWithLabel
           label="Selected"
           className="sd--editors-select"

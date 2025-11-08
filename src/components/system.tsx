@@ -4,6 +4,7 @@ import { CardView } from "@/components/docs/card/CardView";
 import { createDocType, setupSafeDocReact } from "@/components/safeDoc-react";
 import { createGithubButtons } from "@/components/safeDoc-react/GithubButtons";
 import { RaksulBusinessCardPrint } from "@/components/docs/RaksulBusinessCardPrint";
+import { Logo } from "@/components/Logo";
 
 export const setup = setupSafeDocReact(
   [
@@ -21,6 +22,7 @@ export const setup = setupSafeDocReact(
   ],
   CardV1,
   {
+    logo: Logo,
     viewUrl: (docKey) => `/#${docKey}`,
     previewUrl: (docKey) => `/preview#${docKey}`,
     editUrl: (docKey) => `/edit#${docKey}`,

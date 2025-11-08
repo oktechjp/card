@@ -71,6 +71,7 @@ export interface PublisButtonProps {
 }
 
 export type SetupOptions = {
+  logo(): ReactNode;
   viewUrl(docKey: string): string;
   previewUrl(docKey: string): string;
   editUrl(docKey: string): string;
