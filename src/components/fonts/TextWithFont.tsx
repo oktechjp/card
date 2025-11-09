@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
 import type { SVGTextElementAttributes } from "react";
+import { isArabic } from "../utils/isArabic";
 
 export type TextWithFontProps = Omit<
   SVGTextElementAttributes<SVGTextElement>,
@@ -15,7 +16,7 @@ export function TextWithFont({
   return (
     <text
       className={clsx(className, {
-        arabic: text ? /[\u0600-\u06FF\u0750-\u077F]/.test(text) : false,
+        arabic: isArabic(text),
       })}
       {...rest}
     >
