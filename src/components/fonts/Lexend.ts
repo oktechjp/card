@@ -1,0 +1,23 @@
+import type { Font } from "./font";
+/**
+ * Generated from url=https://fonts.googleapis.com/css2?family=Lexend:wght@400;700
+ *
+ * Generated using -> npm run import:fonts
+ */
+export const Lexend = {
+  name: "Lexend",
+  css: `
+@font-face {
+  font-family: 'Lexend';
+  font-style: normal;
+  font-weight: 400;
+  src: url(/fonts/89d2152dafc3b2033dc61ca9c85695ab86dbe17f534732ae092c060023d7e4a3.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Lexend';
+  font-style: normal;
+  font-weight: 700;
+  src: url(/fonts/7eca286b060cae36de89344033a6deaaeb40ad809fbfc160bf872858300274c2.ttf) format('truetype');
+}
+`,
+} satisfies Font;

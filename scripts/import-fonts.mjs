@@ -6,6 +6,7 @@ const fonts = [
   { family: "Noto Sans Arabic", weights: "400;700" },
   { family: "Permanent Marker", weights: "400" },
   { family: "Shippori Antique B1", weights: "400" },
+  { family: "Lexend", weights: "400;700" },
 ];
 
 function* getUrls(inputCss) {
