@@ -1,4 +1,5 @@
 import { createElement, useEffect, useMemo, useRef } from "react";
+import deepEqual from "fast-deep-equal";
 
 export type SvgSizeElem = {
   elem: SVGElement;
@@ -182,7 +183,7 @@ export function useSvgSize<Props extends string[]>(
   }, [JSON.stringify(props)]);
 
   useEffect(() => {
-    let prevDeps: any[] = [];
+    let prevSizes = {};
     const render = () => {
       const zoomElem = zoomRef.current;
       if (!zoomElem) {
@@ -197,30 +198,8 @@ export function useSvgSize<Props extends string[]>(
       };
       zoomElem.style.visibility = "hidden";
       const sizes = getSizes(elems, zoom);
-      const entries = Object.entries(sizes) as [
-        name: string,
-        sizeElem: SvgSizeElem,
-      ][];
-      const deps = entries.reduce(
-        (result, [name, { elem, bounds }]) => {
-          result.push(name, elem, bounds.width, bounds.height);
-          return result;
-        },
-        [] as Array<string | number | SVGElement>,
-      );
-      let changed = false;
-      if (prevDeps.length !== deps.length) {
-        changed = true;
-      } else {
-        for (let i = 0; i < deps.length; i++) {
-          if (prevDeps[i] !== deps[i]) {
-            changed = true;
-            break;
-          }
-        }
-      }
-      prevDeps = deps;
-      if (changed) {
+      if (!deepEqual(sizes, prevSizes)) {
+        prevSizes = sizes;
         callback(sizes);
       }
     };
