@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import type { Ref } from "react";
+import { useMemo, type Ref } from "react";
 import { NotoSansJP } from "@/components/fonts/NotoSansJP";
 import { CARD_SIZE, BusinessCardSvg } from "@/components/docs/BusinessCardSvg";
 import { useSvgSize } from "@/hooks/useSvgSize";
@@ -8,7 +8,7 @@ import { useQRCode } from "@/hooks/useQrCode";
 import { ICON_RATIOS } from "@/docs/card/icon-ratios";
 import { ICON_WHITE_BG } from "@/docs/card/icon-white-bg";
 import type { AllIconTypes, CardV1Type } from "@/docs/card";
-import type { DocPageView } from "@/components/safeDoc-react/DocView";
+import type { DocFullView } from "@/components/safeDoc-react/DocView";
 import { NotoSansArabic } from "@/components/fonts/NotoSansArabic";
 import { TextWithFont } from "@/components/fonts/TextWithFont";
 import { useOnAllReady } from "@/hooks/useOnAllReady";
@@ -59,7 +59,7 @@ const Big = ({ kana, text, className, onReady, ref }: BigProps) => {
   );
 };
 
-export const CardDisplayFront: DocPageView<CardV1Type> = ({
+export const CardDisplayFront: DocFullView<CardV1Type> = ({
   type,
   docKey,
   data: json,

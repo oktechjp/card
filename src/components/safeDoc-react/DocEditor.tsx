@@ -42,7 +42,7 @@ export const DocEditor = ({ docKey, setup }: DocEditorProps) => {
     docState.saveDraft(type, formToJSON(formRef.current!));
   };
   const TypeForm = setup.forms.get(type)!;
-  const TypeView = setup.views.get(type)!;
+  const TypeView = setup.pageViews.get(type)!;
   const pages = activeDoc.type.getPages(activeDoc.data);
   return (
     <div className="sd--editor">

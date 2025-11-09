@@ -5,9 +5,9 @@ import { PermanentMarker } from "@/components/fonts/PermanentMarker";
 import { EmbeddedSVGImage } from "@/components/utils/EmbeddedSVGImage";
 import { useSvgSize } from "@/hooks/useSvgSize";
 import { ColorInfo } from "@/components/docs/card/ColorInfo";
-import type { DocPageView } from "@/components/safeDoc-react/DocView";
+import type { DocFullView } from "@/components/safeDoc-react/DocView";
 
-export const CardDisplayBack: DocPageView<CardV1Type> = ({
+export const CardDisplayBack: DocFullView<CardV1Type> = ({
   data: json,
   showMargins,
   onReady,

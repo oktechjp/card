@@ -1,4 +1,7 @@
-export const Logo = () => (
+export type LogoProps = {
+  src?: string;
+};
+export const Logo = ({ src }: LogoProps) => (
   <a
     href="https://oktech.jp"
     target="_blank"
@@ -6,7 +9,10 @@ export const Logo = () => (
   >
     <img
       alt="OKTech Logo"
-      src="https://public.oktech.jp/images/logo-and-design/OKTech-logo-onlight.svg"
+      src={
+        src ??
+        "https://public.oktech.jp/images/logo-and-design/OKTech-logo-onlight.svg"
+      }
       data-variant="winter"
       style={{ height: "2em", padding: "0.5em" }}
     />

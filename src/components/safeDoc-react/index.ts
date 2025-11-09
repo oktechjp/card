@@ -1,8 +1,10 @@
-import type { DocFormProps } from "@/components/safeDoc-react/DocForm";
+import type { DocForm, DocFormProps } from "@/components/safeDoc-react/DocForm";
 export type { DocForm, DocFormProps } from "@/components/safeDoc-react/DocForm";
-import type { DocViewProps } from "@/components/safeDoc-react/DocView";
-export type { DocView, DocViewProps } from "@/components/safeDoc-react/DocView";
-import type { DocPrintProps } from "@/components/safeDoc-react/DocPrint";
+import type {
+  DocFullView,
+  DocPageView,
+} from "@/components/safeDoc-react/DocView";
+import type { DocPrint } from "@/components/safeDoc-react/DocPrint";
 import type { DocViewerProps } from "@/components/safeDoc-react/DocViewer";
 import type { DocEditorProps } from "@/components/safeDoc-react/DocEditor";
 import type { DocsEditorProps } from "@/components/safeDoc-react/DocsEditor";
@@ -52,9 +54,10 @@ export interface SafeDocReactType<
   T extends DocTypeDefinition = DocTypeDefinition,
 > {
   type: T;
-  View: (props: DocViewProps<T>) => ReactElement;
-  Form: (props: DocFormProps<T>) => ReactElement;
-  Print: (props: DocPrintProps<T>) => ReactElement;
+  PageView: DocPageView<T>;
+  FullView: DocFullView<T>;
+  Form: DocForm<T>;
+  Print: DocPrint<T>;
   PublishButton(props: PublishButtonProps): ReactElement;
 }
 
@@ -71,7 +74,7 @@ export interface PublisButtonProps {
 }
 
 export type SetupOptions = {
-  logo(): ReactNode;
+  logo(props: {}): ReactNode;
   viewUrl(docKey: string): string;
   previewUrl(docKey: string): string;
   editUrl(docKey: string): string;
@@ -187,7 +190,12 @@ export function setupSafeDocReact(
     codec,
     PublishButton: ({ doc, children }: PublisButtonProps) =>
       createElement(Publish, { doc, codec, lookup, children }),
-    views: new Map(reactTypes.map(({ type, View }) => [type, View])),
+    pageViews: new Map(
+      reactTypes.map(({ type, PageView }) => [type, PageView]),
+    ),
+    fullViews: new Map(
+      reactTypes.map(({ type, FullView }) => [type, FullView]),
+    ),
     forms: new Map(reactTypes.map(({ type, Form }) => [type, Form])),
     prints: new Map(reactTypes.map(({ type, Print }) => [type, Print])),
     Viewer: (props: Omit<DocViewerProps, "setup">) =>

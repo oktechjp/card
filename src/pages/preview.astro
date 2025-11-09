@@ -5,9 +5,9 @@ import PreviewIntro from "@/pages/preview-intro.md";
 ---
 
 <BaseLayout>
-  <article>
-    <Viewer client:only="react" allowDraft={true}>
+  <Viewer client:only="react" allowDraft={true}>
+    <article>
       <PreviewIntro />
-    </Viewer>
-  </article>
+    </article>
+  </Viewer>
 </BaseLayout>

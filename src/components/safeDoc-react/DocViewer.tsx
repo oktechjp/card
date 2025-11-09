@@ -63,8 +63,8 @@ export function DocViewer({
       </>
     );
   }
-  const View = setup.views.get(doc.type);
-  if (!View) {
+  const FullView = setup.fullViews.get(doc.type);
+  if (!FullView) {
     return (
       <>
         Error: unknown view type {doc.type.type}#{doc.type.version}
@@ -117,20 +117,12 @@ export function DocViewer({
         </div>
       ) : null}
       <div className="sd--viewer">
-        {ready.type
-          .getPages(doc.data)
-          .filter((p) => (page ? p.id === page : true))
-          .map((page) => (
-            <div className="sd--viewer-page">
-              {createElement(View, {
-                isDraft,
-                key: page.id,
-                page: page.id,
-                showMargins: showMargins ?? false,
-                ...doc,
-              })}
-            </div>
-          ))}
+        {createElement(FullView, {
+          isDraft,
+          onReady: () => {},
+          showMargins: showMargins ?? false,
+          ...doc,
+        })}
       </div>
     </>
   );

@@ -19,6 +19,7 @@
     "@astrojs/ts-plugin": "^1.10.4",
     "@nanostores/persistent": "github:nanostores/persistent",
     "@nanostores/react": "^1.0.0",
+    "@react-three/drei": "^10.7.6",
     "astro": "^5.13.7",
     "canvg": "^4.0.3",
     "clsx": "^2.1.1",
@@ -27,6 +28,7 @@
     "qr": "^0.5.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-now-hook": "^0.0.2",
     "zod": "^3.25.76"
   },
   "prettier": {

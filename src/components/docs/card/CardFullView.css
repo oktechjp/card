@@ -1,0 +1,60 @@
+.fullcard--drei-loader {
+  position: absolute;
+  container-type: size;
+  top: -10000px;
+  left: -10000px;
+}
+.fullcard {
+  display: grid;
+  grid-template-columns: [full-start] 100px [borderless-start] 3em [content-start] 1fr [content-end] 3em [borderless-end] 100px [full-end];
+}
+.fullcard > * {
+  grid-column: content;
+}
+.fullcard > .full {
+  grid-column: full;
+}
+.fullcard footer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  padding: 1em 0;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(0.15em);
+  div {
+    display: flex;
+    gap: 0.4em;
+  }
+  .icon {
+    border: 1px solid transparent;
+  }
+  .border {
+    border: 1px solid #acacac;
+  }
+}
+.fullcard footer:before {
+  content: "";
+}
+.fullcard .text {
+  font-family: "Noto Sans JP";
+  padding-top: 2em;
+}
+.fullcard .name {
+  font-size: 1.5em;
+}
+.fullcard .arabic {
+  font-family: "Noto Sans Arabic";
+  rt {
+    margin-bottom: 0.2em;
+  }
+}
+.fullcard {
+  h1 {
+    font-family: "Permanent Marker";
+    font-size: 3em;
+    rt {
+      font-family: "Shippori Antique B1";
+      font-size: 0.3em;
+    }
+  }
+}

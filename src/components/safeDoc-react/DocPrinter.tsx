@@ -50,7 +50,9 @@ export function DocPrinter({ docKey, setup }: DocPrinterProps) {
   const draft = ready?.draft ? { isDraft: true, ...ready.draft } : undefined;
   const published = ready?.doc ? { isDraft: false, ...ready.doc } : undefined;
   const selected = confirmDraft ? (draft ?? published) : published;
-  const TypeView = selected?.type ? setup.views.get(selected.type) : undefined;
+  const TypeView = selected?.type
+    ? setup.pageViews.get(selected.type)
+    : undefined;
   const PrintView = selected?.type
     ? setup.prints.get(selected.type)
     : undefined;
@@ -223,6 +225,7 @@ export function DocPrinter({ docKey, setup }: DocPrinterProps) {
                   return (
                     <div key={page.id} className="print--page">
                       <TypeView
+                        onReady={() => {}}
                         page={page.id}
                         ref={(content) => {
                           if (content) {

@@ -1,10 +1,11 @@
 import { CardV1 } from "@/docs/card";
 import { CardForm } from "@/components/docs/card/CardForm";
-import { CardView } from "@/components/docs/card/CardView";
+import { CardPageView } from "@/components/docs/card/CardPageView";
 import { createDocType, setupSafeDocReact } from "@/components/safeDoc-react";
 import { createGithubButtons } from "@/components/safeDoc-react/GithubButtons";
 import { RaksulBusinessCardPrint } from "@/components/docs/RaksulBusinessCardPrint";
 import { Logo } from "@/components/Logo";
+import { CardFullView } from "./docs/card/CardFullView";
 
 export const setup = setupSafeDocReact(
   [
@@ -12,7 +13,8 @@ export const setup = setupSafeDocReact(
       type: CardV1,
       Form: CardForm,
       Print: RaksulBusinessCardPrint,
-      View: CardView,
+      PageView: CardPageView,
+      FullView: CardFullView,
       ...createGithubButtons((publicKey) => ({
         repo: "oktechjp/public",
         folder: "docs",

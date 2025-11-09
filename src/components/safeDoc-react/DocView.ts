@@ -4,7 +4,7 @@ import type { output } from "zod/v4";
 
 type ArrayType<T extends any[]> = T extends Array<infer T> ? T : never;
 
-export interface DocViewProps<
+export interface DocFullViewProps<
   Type extends DocTypeDefinition = DocTypeDefinition,
 > {
   ref?: Ref<SVGSVGElement>;
@@ -15,16 +15,15 @@ export interface DocViewProps<
   isDraft: boolean;
   showMargins: boolean;
   onReady?: () => void;
-  page: ArrayType<ReturnType<Type["getPages"]>>["id"];
 }
-export type DocView<Type extends DocTypeDefinition = DocTypeDefinition> = (
-  props: DocViewProps<Type>,
+export type DocFullView<Type extends DocTypeDefinition = DocTypeDefinition> = (
+  props: DocFullViewProps<Type>,
 ) => ReactElement;
 
-export type DocPageViewProps<Type extends DocTypeDefinition> = Omit<
-  DocViewProps<Type>,
-  "page"
->;
+export interface DocPageViewProps<Type extends DocTypeDefinition>
+  extends DocFullViewProps<Type> {
+  page: ArrayType<ReturnType<Type["getPages"]>>["id"];
+}
 export type DocPageView<Type extends DocTypeDefinition> = (
   props: DocPageViewProps<Type>,
 ) => ReactElement;

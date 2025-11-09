@@ -1,14 +1,17 @@
 import type { CardV1 } from "@/docs/card";
-import type { DocView, DocViewProps } from "@/components/safeDoc-react/DocView";
+import type {
+  DocPageView,
+  DocPageViewProps,
+} from "@/components/safeDoc-react/DocView";
 import { CardDisplayFront } from "@/components/docs/card/CardDisplayFront";
 import { CardDisplayBack } from "@/components/docs/card/CardDisplayBack";
 
-export type CardViewProps = DocViewProps<typeof CardV1>;
+export type CardPageViewProps = DocPageViewProps<typeof CardV1>;
 
-export const CardView: DocView<typeof CardV1> = ({
+export const CardPageView: DocPageView<typeof CardV1> = ({
   page,
   ...props
-}: CardViewProps) => {
+}: CardPageViewProps) => {
   if (page === "front") return <CardDisplayFront {...props} />;
   if (page === "back") return <CardDisplayBack {...props} />;
 
