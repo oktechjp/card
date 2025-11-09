@@ -59,9 +59,11 @@ await Promise.all(
       outputCss = outputCss.replaceAll(url, `/${fontsServerFolder}${file}`);
     }
     const tsName = family.replaceAll(" ", "");
-    await writeFile(
-      `src/components/fonts/${tsName}.ts`,
-      `import type { Font } from './font'
+    await Promise.all([
+      writeFile(`src/components/fonts/${tsName}.css`, outputCss),
+      writeFile(
+        `src/components/fonts/${tsName}.ts`,
+        `import type { Font } from './font'
 /**
  * Generated from url=${url}
  * 
@@ -71,6 +73,7 @@ export const ${tsName} = {
   name: "${family}",
   css: \`\n${outputCss}\`,
 } satisfies Font;`,
-    );
+      ),
+    ]);
   }),
 );
