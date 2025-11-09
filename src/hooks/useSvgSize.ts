@@ -76,13 +76,7 @@ function isInstanceOf<Types extends Function[]>(
   return false;
 }
 
-export function move(
-  node: SVGElement,
-  left: number,
-  top: number,
-  width: number,
-  height: number,
-) {
+export function moveElem(node: SVGElement, left: number, top: number) {
   left = Math.round(left * 1000) / 1000;
   top = Math.round(top * 1000) / 1000;
   if (node instanceof SVGCircleElement) {
@@ -129,6 +123,11 @@ type Zoom = {
   y: number;
 };
 
+const elemMoveMap = new WeakMap<
+  SVGElement,
+  (left: number, top: number) => void
+>();
+
 function getSizes<Props extends string[]>(
   elems: { [key in Props[number]]: SVGElement },
   zoom: Zoom,
@@ -142,14 +141,15 @@ function getSizes<Props extends string[]>(
       const bounds = (elem as SVGElement).getClientRects()[0];
       const width = Math.round(bounds.width * zoom.x);
       const height = Math.round(bounds.height * zoom.y);
+      const move =
+        elemMoveMap.get(elem) ??
+        elemMoveMap.set(elem, moveElem.bind(null, elem)).get(elem);
       return [
         name,
         {
           elem,
           bounds: { width, height },
-          move: (x: number, y: number) => {
-            move(elem, x, y, width, height);
-          },
+          move,
         },
       ];
     }),
