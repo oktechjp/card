@@ -10,9 +10,11 @@ import type { DocPageView } from "@/components/safeDoc-react/DocView";
 export const CardDisplayBack: DocPageView<CardV1Type> = ({
   data: json,
   showMargins,
+  onReady,
   ref,
 }) => {
   const { callname, callname_kana, zoom } = useSvgSize(
+    onReady,
     ["callname", "callname_kana"] as const,
     ({ callname, callname_kana }) => {
       if (callname) {

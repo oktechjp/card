@@ -11,15 +11,18 @@ import type { AllIconTypes, CardV1Type } from "@/docs/card";
 import type { DocPageView } from "@/components/safeDoc-react/DocView";
 import { NotoSansArabic } from "@/components/fonts/NotoSansArabic";
 import { TextWithFont } from "@/components/fonts/TextWithFont";
+import { useOnAllReady } from "@/hooks/useOnAllReady";
 
 type BigProps = {
+  onReady?: null | (() => void);
   kana?: string;
   text?: string;
   className?: string;
   ref?: Ref<SVGGElement>;
 };
-const Big = ({ kana, text, className, ref }: BigProps) => {
+const Big = ({ kana, text, className, onReady, ref }: BigProps) => {
   const { zoom, ...refs } = useSvgSize(
+    onReady,
     ["regular", "kana"] as const,
     ({ regular, kana }) => {
       if (!regular) {
@@ -62,9 +65,12 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
   data: json,
   isDraft,
   showMargins,
+  onReady,
   ref,
 }) => {
+  const [onCoreReady, onBigAReady, onBigBReady] = useOnAllReady(onReady, 3);
   const { zoom, ...refs } = useSvgSize(
+    onCoreReady,
     [
       "bottom1",
       "bottom2",
@@ -245,6 +251,7 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
           ref={refs.surname}
           className="big--surname"
           text={json.surname}
+          onReady={onBigAReady}
           kana={
             "surname-kana" in json
               ? (json["surname-kana"] as string)
@@ -252,6 +259,7 @@ export const CardDisplayFront: DocPageView<CardV1Type> = ({
           }
         />
         <Big
+          onReady={onBigBReady}
           ref={refs.firstname}
           text={json.firstname}
           kana={json.firstname_kana}

@@ -14,6 +14,7 @@ export interface DocViewProps<
   data: output<Type["schema"]>;
   isDraft: boolean;
   showMargins: boolean;
+  onReady?: () => void;
   page: ArrayType<ReturnType<Type["getPages"]>>["id"];
 }
 export type DocView<Type extends DocTypeDefinition = DocTypeDefinition> = (

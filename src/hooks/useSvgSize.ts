@@ -158,6 +158,7 @@ function getSizes<Props extends string[]>(
 }
 
 export function useSvgSize<Props extends string[]>(
+  onReady: undefined | null | (() => void),
   props: Props,
   callback: (elems: SvgSizeElems<Props>) => void,
 ) {
@@ -184,6 +185,7 @@ export function useSvgSize<Props extends string[]>(
 
   useEffect(() => {
     let prevSizes = {};
+    let settled = 0;
     const render = () => {
       const zoomElem = zoomRef.current;
       if (!zoomElem) {
@@ -201,6 +203,15 @@ export function useSvgSize<Props extends string[]>(
       if (!deepEqual(sizes, prevSizes)) {
         prevSizes = sizes;
         callback(sizes);
+        settled = 0;
+      } else {
+        settled += 1;
+        if (settled > 3) {
+          if (onReady) {
+            onReady();
+            clearInterval(int);
+          }
+        }
       }
     };
     render();
